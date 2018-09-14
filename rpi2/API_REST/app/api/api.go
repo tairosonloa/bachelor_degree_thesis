@@ -1,12 +1,11 @@
 package api
 
 import (
+	"app/controllers"
 	"app/models"
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 )
 
 var (
@@ -15,7 +14,7 @@ var (
 )
 
 // Initialize initializes the API server handlers and inner state
-func Initialize(tokenFile string) *http.ServeMux {
+func Initialize(apiAuthorizedToken string, hueBridgeAddress string, hueBridgeToken string) *http.ServeMux {
 	// Handlers
 	mux := http.NewServeMux()
 
@@ -27,14 +26,10 @@ func Initialize(tokenFile string) *http.ServeMux {
 
 	// Inner state
 	cpd = models.CPD{Temp: -1.0, Hum: -1.0, Light: false, UPSStatus: "online", WarningTemp: false, WarningUPS: false}
-	content, err := ioutil.ReadFile(tokenFile)
-	if err != nil {
-		log.Printf("ERROR: %v\n", err.Error())
-		authorized = ""
-	} else {
-		log.Printf("Token loaded from %s\n", tokenFile)
-		authorized = strings.TrimRight("Bearer "+string(content), "\n\r")
-	}
+	authorized = apiAuthorizedToken
+
+	// Connect to philips hue bridge
+	controllers.InitializeHue(hueBridgeAddress, hueBridgeToken)
 
 	return mux
 }
@@ -45,11 +40,8 @@ func Initialize(tokenFile string) *http.ServeMux {
 func index(w http.ResponseWriter, r *http.Request) {
 	// Only method GET is allowed
 	if r.Method != http.MethodGet {
-		err := models.ErrorAPIM{
-			Error: http.StatusText(http.StatusMethodNotAllowed),
-		}
-		respondWithJSON(w, http.StatusMethodNotAllowed, err)
-		log.Printf("%s / %d\n", r.Method, http.StatusMethodNotAllowed)
+		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
+		log.Printf("%s / from %s status%d\n", r.Method, r.RemoteAddr, http.StatusMethodNotAllowed)
 		return
 	}
 	// Responds with API status
@@ -57,7 +49,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		Message: "API is up and running",
 	}
 	respondWithJSON(w, http.StatusOK, response)
-	log.Printf("%s / %d\n", r.Method, http.StatusOK)
+	log.Printf("%s / from %s status %d\n", r.Method, r.RemoteAddr, http.StatusOK)
 }
 
 // cpdStatus is the API server handler for "/cpd-status"
@@ -66,11 +58,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 func cpdStatus(w http.ResponseWriter, r *http.Request) {
 	// Only method GET is allowed
 	if r.Method != http.MethodGet {
-		err := models.ErrorAPIM{
-			Error: http.StatusText(http.StatusMethodNotAllowed),
-		}
-		respondWithJSON(w, http.StatusMethodNotAllowed, err)
-		log.Printf("%s /cpd-status %d\n", r.Method, http.StatusMethodNotAllowed)
+		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
+		log.Printf("%s /cpd-status from %s status %d\n", r.Method, r.RemoteAddr, http.StatusMethodNotAllowed)
 		return
 	}
 	response := models.CPDStatusAPIM{
@@ -79,7 +68,7 @@ func cpdStatus(w http.ResponseWriter, r *http.Request) {
 		UPSStatus:   cpd.UPSStatus,
 	}
 	respondWithJSON(w, http.StatusOK, response)
-	log.Printf("%s /cpd-status %d\n", r.Method, http.StatusOK)
+	log.Printf("%s /cpd-status from %s status %d\n", r.Method, r.RemoteAddr, http.StatusOK)
 }
 
 // cpdUpdate is the API server handler for "/cpd-update"
@@ -88,41 +77,102 @@ func cpdStatus(w http.ResponseWriter, r *http.Request) {
 func cpdUpdate(w http.ResponseWriter, r *http.Request) {
 	// Only method POST is allowed
 	if r.Method != http.MethodPost {
-		err := models.ErrorAPIM{
-			Error: http.StatusText(http.StatusMethodNotAllowed),
-		}
-		respondWithJSON(w, http.StatusMethodNotAllowed, err)
-		log.Printf("%s /cpd-update %d\n", r.Method, http.StatusMethodNotAllowed)
+		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
+		log.Printf("%s /cpd-update from %s status %d\n", r.Method, r.RemoteAddr, http.StatusMethodNotAllowed)
 		return
 	}
 	// Check authentication
-	httpCode := validateToken(w, r)
-	if httpCode != http.StatusOK {
-		log.Printf("%s /cpd-update %d\n", r.Method, httpCode)
+	if !validateToken(w, r) {
+		log.Printf("%s /cpd-update from %s status %d\n", r.Method, r.RemoteAddr, http.StatusUnauthorized)
 		return
 	}
-	// TODO comprobar si rpi1 or ultraheroe y rutinas
-	log.Printf("%s /cpd-update %d\n", r.Method, httpCode)
+
+	// Read JSON from body request and update CPD values
+	oldLightStatus := cpd.Light
+	decoder := json.NewDecoder(r.Body)
+	e := decoder.Decode(&cpd)
+	if e != nil {
+		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		log.Printf("%s /cpd-update from %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+		return
+	}
+
+	// Check if light inside CPD has changed
+	checkLightStatusChanged(oldLightStatus)
+	// Check if in a warning state after inner state update
+	checkNewWarningStatus()
+
+	// Respond with JSON and 200
+	m := models.MessageAPIM{
+		Message: "OK",
+	}
+	respondWithJSON(w, http.StatusOK, m)
+	log.Printf("%s /cpd-update from %s status %d %+v\n", r.Method, r.RemoteAddr, http.StatusOK, cpd)
 }
 
 // validateToken checks if the request is authenticated (bearer token) and authorized
-func validateToken(w http.ResponseWriter, r *http.Request) int {
+func validateToken(w http.ResponseWriter, r *http.Request) bool {
 	token := r.Header.Get("Authorization")
 	if token != authorized {
-		var err models.ErrorAPIM
+		var err string
 		if token == "" {
-			err = models.ErrorAPIM{
-				Error: "Authorization header not provided or empty",
-			}
+			err = "Authorization header not provided or empty"
 		} else {
-			err = models.ErrorAPIM{
-				Error: http.StatusText(http.StatusUnauthorized),
-			}
+			err = http.StatusText(http.StatusUnauthorized)
 		}
-		respondWithJSON(w, http.StatusUnauthorized, err)
-		return http.StatusUnauthorized
+		respondWithError(w, http.StatusUnauthorized, err)
+		return false
 	}
-	return http.StatusOK
+	return true
+}
+
+// checkLightStatusChanged checks if light inside CPD has changed and sets proper visual identifier
+func checkLightStatusChanged(oldLightStatus bool) {
+	if cpd.Light != oldLightStatus && !cpd.IsWarning() {
+		if cpd.Light {
+			controllers.LightON()
+			log.Println("INFO: light on")
+		} else {
+			controllers.LightOff()
+			log.Println("INFO: light off")
+		}
+	}
+}
+
+// checkNewWarningStatus checks if were are in a warning state and fires alarm
+func checkNewWarningStatus() {
+	onAlarm := cpd.IsWarning()
+	// Check high temperature
+	if cpd.Temp >= 30 {
+		cpd.WarningTemp = true
+		log.Println("WARNING: CPD temperature is high (>= 30ºC)")
+	} else if cpd.WarningTemp {
+		cpd.WarningTemp = false
+		log.Println("WARNING-UPDATE: CPD temperature is safe (< 30ºC)")
+	}
+
+	// Check power cut
+	if cpd.UPSStatus == "battery" {
+		cpd.WarningUPS = true
+		log.Println("WARNING: UPS on battery")
+	} else if cpd.WarningUPS {
+		cpd.WarningUPS = false
+		log.Println("WARNING-UPDATE: UPS online")
+	}
+
+	// If not on a previous alarm, fire it on a thread
+	if !onAlarm {
+		go controllers.FireAlarm()
+	}
+
+}
+
+// respondWithError responds to a request with a http code and a JSON containing an error message
+func respondWithError(w http.ResponseWriter, code int, message string) {
+	err := models.ErrorAPIM{
+		Error: message,
+	}
+	respondWithJSON(w, code, err)
 }
 
 // respondWithJSON responds to a request with a http code and a JSON
