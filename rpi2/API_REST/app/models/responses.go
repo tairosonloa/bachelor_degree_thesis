@@ -14,5 +14,5 @@ type ErrorAPIM struct {
 type CPDStatusAPIM struct {
 	Temperature float32 `json:"temperature"`
 	Humidity    float32 `json:"humidity"`
-	UPSStatus   string  `json:"ups_status (LDI rack)"`
+	UPSStatus   string  `json:"ups status (LDI rack)"`
 }

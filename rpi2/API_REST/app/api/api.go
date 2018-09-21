@@ -65,12 +65,32 @@ func cpdStatus(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s /cpd-status from %s status %d\n", r.Method, r.RemoteAddr, http.StatusMethodNotAllowed)
 		return
 	}
-	response := models.CPDStatusAPIM{
-		Temperature: cpd.Temp,
-		Humidity:    cpd.Hum,
-		UPSStatus:   cpd.UPSStatus,
+
+	// Check if URL params
+	params := r.URL.Query()
+	if len(params) == 0 {
+		// Respond all
+		response := models.CPDStatusAPIM{
+			Temperature: cpd.Temp,
+			Humidity:    cpd.Hum,
+			UPSStatus:   cpd.UPSStatus,
+		}
+		respondWithJSON(w, http.StatusOK, response)
+	} else {
+		// Filter response by params
+		response := make(map[string]interface{})
+		if _, ok := params["ups"]; ok {
+			response["ups status (LDI rack)"] = cpd.UPSStatus
+		}
+		if _, ok := params["hum"]; ok {
+			response["humidity"] = cpd.Hum
+		}
+		if _, ok := params["temp"]; ok {
+			response["temperature"] = cpd.Temp
+		}
+		respondWithJSON(w, http.StatusOK, response)
 	}
-	respondWithJSON(w, http.StatusOK, response)
+
 	log.Printf("%s /cpd-status from %s status %d\n", r.Method, r.RemoteAddr, http.StatusOK)
 }
 
