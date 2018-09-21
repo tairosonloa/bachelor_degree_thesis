@@ -1,13 +1,14 @@
 package app
 
 import (
-	"app/api"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"app/api"
 )
 
 // configValues represents config values readed from JSON on initialization
@@ -17,6 +18,7 @@ type configValues struct {
 	APIAuthorizedToken string
 	HueBridgeAddress   string
 	HueBridgeToken     string
+	AlarmSoundPath     string
 }
 
 // App represents the core of the application (server and API)
@@ -59,7 +61,7 @@ func (a *App) Initialize() {
 	a.readCmd()
 	a.loadConfig()
 	log.Println("Initializating server")
-	a.handlers = api.Initialize(a.config.APIAuthorizedToken, a.config.HueBridgeAddress, a.config.HueBridgeToken)
+	a.handlers = api.Initialize(a.config.APIAuthorizedToken, a.config.HueBridgeAddress, a.config.HueBridgeToken, a.config.AlarmSoundPath)
 	a.server = &http.Server{Handler: a.handlers, Addr: fmt.Sprintf("%s:%d", a.config.APIAddress, a.config.APIPort)}
 }
 

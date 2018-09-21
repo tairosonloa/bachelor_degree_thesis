@@ -1,20 +1,22 @@
 package api
 
 import (
-	"app/controllers"
-	"app/models"
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"app/controllers"
+	"app/models"
 )
 
 var (
 	cpd        models.CPD
 	authorized string // Bearer token for authorized POST
+	alarmSound string // Path tho the alarm sound
 )
 
 // Initialize initializes the API server handlers and inner state
-func Initialize(apiAuthorizedToken string, hueBridgeAddress string, hueBridgeToken string) *http.ServeMux {
+func Initialize(apiAuthorizedToken string, hueBridgeAddress string, hueBridgeToken string, alarmSoundPath string) *http.ServeMux {
 	// Handlers
 	mux := http.NewServeMux()
 
@@ -27,6 +29,7 @@ func Initialize(apiAuthorizedToken string, hueBridgeAddress string, hueBridgeTok
 	// Inner state
 	cpd = models.CPD{Temp: -1.0, Hum: -1.0, Light: false, UPSStatus: "online", WarningTemp: false, WarningUPS: false}
 	authorized = apiAuthorizedToken
+	alarmSound = alarmSoundPath
 
 	// Connect to philips hue bridge
 	controllers.InitializeHue(hueBridgeAddress, hueBridgeToken)
@@ -94,6 +97,7 @@ func cpdUpdate(w http.ResponseWriter, r *http.Request) {
 	if e != nil {
 		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		log.Printf("%s /cpd-update from %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+		log.Println(e.Error())
 		return
 	}
 
@@ -160,9 +164,9 @@ func checkNewWarningStatus() {
 		log.Println("WARNING-UPDATE: UPS online")
 	}
 
-	// If not on a previous alarm, fire it on a thread
-	if !onAlarm {
-		go controllers.FireAlarm()
+	// If there is an alarm and we are not on a previous alarm, fire it
+	if !onAlarm && cpd.IsWarning() {
+		controllers.FireAlarm(&cpd, alarmSound)
 	}
 
 }
