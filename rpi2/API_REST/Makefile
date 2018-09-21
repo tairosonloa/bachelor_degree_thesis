@@ -21,6 +21,6 @@ clean:
 
 # Cross compilation
 linux:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_NAME) -v
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_x64) -v
 rpi:
-	GOOS=linux GOARCH=arm GOARM=5 $(GOBUILD) -o $(BINARY_NAME) -v
+	GOOS=linux GOARCH=arm GOARM=5 $(GOBUILD) -o $(BINARY_RPI) -v
