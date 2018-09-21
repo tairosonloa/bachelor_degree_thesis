@@ -1,1 +1,4 @@
+# Config including secret tokens
 rpi2/API_REST/config.json
+# Compiled binaries
+cpd_api_*
