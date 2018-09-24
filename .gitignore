@@ -1,4 +1,6 @@
-# Config including secret tokens
-rpi2/API_REST/config.json
-# Compiled binaries
+# API REST config including secret tokens
+config.json
+# API REST compiled binaries
 cpd_api_*
+# Secret token to API authenticated POST request from python scripts
+token.txt

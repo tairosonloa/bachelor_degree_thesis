@@ -1,0 +1,6 @@
+{
+	"APIAddress" :         "localhost",
+	"APIPort" :            3000,
+	"APIAuthorizedToken" : "Bearer top_secret_string",
+	"HueBridgeAddress" :   "192.168.1.123"
+}
