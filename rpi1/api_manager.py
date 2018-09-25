@@ -3,7 +3,7 @@ def update_values_api(values_dict):
     config = {}
     with open("config.json", "r") as f:
         config = json.load(f)
-    headers = { "Authorization" : "Bearer " + config["APIAuthorizedToken"] }
+    headers = { "Authorization" : config["APIAuthorizedToken"] }
     for key in values_dict:
         payload[key] = values_dict[key]
     r = requests.post("http://" + config["APIAddress"] + ":" + str(config["APIPort"]) + "/cpd-update", json=payload, headers=headers)
