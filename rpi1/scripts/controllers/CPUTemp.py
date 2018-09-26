@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 class CPUTemp:
     def __init__(self, temp_file_path="/sys/class/thermal/thermal_zone0/temp"):
         self.temp_file_path = temp_file_path

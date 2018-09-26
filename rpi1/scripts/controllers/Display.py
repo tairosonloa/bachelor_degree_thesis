@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from models.digits import digits
 
 from sense_hat import SenseHat
@@ -6,6 +8,7 @@ from time import sleep
 
 
 PIXEL_OFF = [0,0,0] # RGB for pixel off
+
 
 def colour_by_temp(temp):
     """Returns rgb color code list based on temperature range and pixel off rgb list"""
