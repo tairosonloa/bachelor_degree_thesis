@@ -5,7 +5,7 @@ from time import sleep
 import requests, json
 
 
-CONFIG_FILE = "../../../config.json" # File with API IP, API port, and Bearer token
+CONFIG_FILE = "../../config.json" # File with API IP, API port, and Bearer token
 TRIES = 3 # Number of tries to call the API if first try failed
 WAIT_SECONDS = 5 # Seconds to wait between API calls on retry
 
@@ -15,7 +15,7 @@ def update_values_api(values_dict):
         config = json.load(f)
 
     # Set authorization header needed for authorized POST requests
-    headers = { "Authorization" : "Bearer " + config["APIAuthorizedToken"] }
+    headers = { "Authorization" : config["APIAuthorizedToken"] }
 
     # Prepare body JSON
     payload = {}
