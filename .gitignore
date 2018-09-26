@@ -1,6 +1,10 @@
-# API REST config including secret tokens
+# Config including secret tokens
 config.json
 # API REST compiled binaries
 cpd_api_*
-# Secret token to API authenticated POST request from python scripts
-token.txt
+
+#### VSCode ####
+.vscode
+
+#### Python virtualenv for rpi1 ####
+virtualenv_rpi1_scripts
