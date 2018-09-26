@@ -9,7 +9,7 @@ import picamera, picamera.array
 import time, os, math, json
 
 
-WATCHER_SECONDS = 10 # Time between two measurements
+WATCHER_SECONDS = 5 # Time between two measurements
 TRESHOLD = 50 # Brightness treshold to distinguish light off from light on
 
 
