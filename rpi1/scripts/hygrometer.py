@@ -50,7 +50,8 @@ def get_hum():
             tries += 1
 
     # If we did a wrong measurement, use the last measurement as current measurement
-    if math.isnan(hum) or hum <= 0.0 or abs(last_hum - hum) > 4 or hum > 100.0:
+    # (if last_hum == -100, first measure from reboot)
+    if (math.isnan(hum) or hum <= 0.0 or abs(last_hum - hum) > 4 or hum > 100.0) and last_hum != -100:
         update_state(last_hum) # Save measurement and call API to update
         return last_hum
     update_state(hum) # Save measurement and call API to update

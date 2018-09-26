@@ -59,7 +59,8 @@ def get_temp():
             tries += 1
 
     # If we did a wrong measurement, use the last measurement as current measurement
-    if math.isnan(temp) or temp == 0.0 or abs(last_temp - temp) > ERROR_TRESHOLD:
+    # (if last_temp == -100, first measure from reboot)
+    if (math.isnan(temp) or temp == 0.0 or abs(last_temp - temp) > ERROR_TRESHOLD) and last_temp != -100:
         update_state(last_temp) # Save measurement and call API to update
         return last_temp
     update_state(temp) # Save measurement and call API to update
