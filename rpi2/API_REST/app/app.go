@@ -45,7 +45,8 @@ func (a *App) loadConfig() {
 	fd, err := os.Open(a.configFile)
 	defer fd.Close()
 	if err != nil {
-		log.Printf("ERROR app/loadConfig(): %v\n", err.Error())
+		log.Printf("ERROR app/loadConfig(): %v\nExiting...", err.Error())
+		os.Exit(1)
 	} else {
 		decoder := json.NewDecoder(fd)
 		err = decoder.Decode(&a.config)
