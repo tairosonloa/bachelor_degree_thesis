@@ -1,18 +1,18 @@
-#! /usr/bin/python3
 # -*- coding: utf-8 -*-
+
+from controllers.config_loader import load_config
 
 from time import sleep
 import requests, json
 
 
-CONFIG_FILE = "../../config.json" # File with API IP, API port, and Bearer token
 TRIES = 3 # Number of tries to call the API if first try failed
 WAIT_SECONDS = 5 # Seconds to wait between API calls on retry
 
+
 def update_values_api(values_dict):
-    # Read config (philips hue bridge) from file
-    with open(CONFIG_FILE, "r") as f:
-        config = json.load(f)
+    # Read config (API values and authorized token) from file
+    config = load_config()
 
     # Set authorization header needed for authorized POST requests
     headers = { "Authorization" : config["APIAuthorizedToken"] }
