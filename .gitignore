@@ -1,5 +1,6 @@
 # Config including secret tokens
 config.json
+
 # API REST compiled binaries
 cpd_api_*
 
@@ -8,3 +9,7 @@ cpd_api_*
 
 #### Python virtualenv for rpi1 ####
 virtualenv_rpi1_scripts
+
+#### Python cache ####
+__pycache__
+*.pyc
