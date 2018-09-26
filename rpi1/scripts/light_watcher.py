@@ -36,7 +36,7 @@ def is_cpd_light_on():
 def main():
     """Checks light status every 10 seconds and updates API"""
     # Read config (philips hue bridge) from file
-    with open("config.json", "r") as f:
+    with open("../../config.json", "r") as f:
         config = json.load(f)
     # Connect to philips hue bridge
     b = Bridge(config["HueBridgeAddress"])
