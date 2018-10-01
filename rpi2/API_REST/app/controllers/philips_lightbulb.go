@@ -61,4 +61,5 @@ func BlinkingAlarm(cpd *models.CPD) {
 		LightOff()
 		time.Sleep(time.Second)
 	}
+	LightOff()
 }
