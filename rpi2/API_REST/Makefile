@@ -7,7 +7,7 @@ GOGET=$(GOCMD) get
 BINARY_x64=cpd_api_amd64
 BINARY_RPI=cpd_api_arm
 
-all: test build
+all: build
 build:
 	$(GOBUILD) -o $(BINARY_x64) -v
 # test:
@@ -22,5 +22,9 @@ clean:
 # Cross compilation
 linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_x64) -v
+amd64: # Same as Linux
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_x64) -v
 rpi:
+	GOOS=linux GOARCH=arm GOARM=5 $(GOBUILD) -o $(BINARY_RPI) -v
+arm: # Same as rpi
 	GOOS=linux GOARCH=arm GOARM=5 $(GOBUILD) -o $(BINARY_RPI) -v

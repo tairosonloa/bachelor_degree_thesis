@@ -1,9 +1,6 @@
 # Config including secret tokens
 config.json
 
-# API REST compiled binaries
-cpd_api_*
-
 #### VSCode ####
 .vscode
 
