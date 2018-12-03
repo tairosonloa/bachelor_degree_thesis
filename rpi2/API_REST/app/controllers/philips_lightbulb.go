@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"app/models"
+	"rpi2/API_REST/app/models"
 
 	"github.com/collinux/GoHue"
 )

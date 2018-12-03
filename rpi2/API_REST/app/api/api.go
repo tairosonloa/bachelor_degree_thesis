@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"app/controllers"
-	"app/models"
+	"rpi2/API_REST/app/controllers"
+	"rpi2/API_REST/app/models"
 )
 
 var (

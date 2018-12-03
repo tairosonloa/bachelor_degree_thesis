@@ -4,7 +4,7 @@ import (
 	"log"
 	"os/exec"
 
-	"app/models"
+	"rpi2/API_REST/app/models"
 )
 
 // FireAlarm starts a loud and visual alarm

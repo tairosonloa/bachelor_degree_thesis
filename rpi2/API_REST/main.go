@@ -1,7 +1,7 @@
 package main
 
 import (
-	"app"
+	"rpi2/API_REST/app"
 )
 
 func main() {

@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"app/api"
+	"rpi2/API_REST/app/api"
 )
 
 // configValues represents config values readed from JSON on initialization
