@@ -25,7 +25,7 @@ def update_values_api(values_dict):
     # Try to call the API thre times
     for _ in range(0,2):
         # Make the request to the API
-        r = requests.post("http://" + config["APIAddress"] + ":" + str(config["APIPort"]) + "/cpd-update", json=payload, headers=headers)
+        r = requests.post("http://" + config["Rpi2APIAddress"] + ":" + str(config["Rpi2APIPort"]) + "/cpd-update", json=payload, headers=headers)
         # If response status code != 200, wait 5s and retry
         if r.status_code == requests.codes.ok:
             return True # POST request sucessfully

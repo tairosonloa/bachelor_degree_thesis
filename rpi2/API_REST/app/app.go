@@ -13,8 +13,8 @@ import (
 
 // configValues represents config values readed from JSON on initialization
 type configValues struct {
-	APIAddress         string
-	APIPort            int
+	Rpi2APIAddress     string
+	Rpi2APIPort        int
 	APIAuthorizedToken string
 	HueBridgeAddress   string
 	HueBridgeToken     string
@@ -63,11 +63,11 @@ func (a *App) Initialize() {
 	a.loadConfig()
 	log.Println("Initializating server")
 	a.handlers = api.Initialize(a.config.APIAuthorizedToken, a.config.HueBridgeAddress, a.config.HueBridgeToken, a.config.AlarmSoundPath)
-	a.server = &http.Server{Handler: a.handlers, Addr: fmt.Sprintf("%s:%d", a.config.APIAddress, a.config.APIPort)}
+	a.server = &http.Server{Handler: a.handlers, Addr: fmt.Sprintf("%s:%d", a.config.Rpi2APIAddress, a.config.Rpi2APIPort)}
 }
 
 // Run runs the API server
 func (a *App) Run() {
-	log.Printf("Now listening on %s:%d\n", a.config.APIAddress, a.config.APIPort)
+	log.Printf("Now listening on %s:%d\n", a.config.Rpi2APIAddress, a.config.Rpi2APIPort)
 	log.Fatal(a.server.ListenAndServe())
 }
