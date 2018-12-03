@@ -44,7 +44,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	// Only method GET is allowed
 	if r.Method != http.MethodGet {
 		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
-		log.Printf("%s / from %s status%d\n", r.Method, r.RemoteAddr, http.StatusMethodNotAllowed)
+		log.Printf("%s / from %s status %d\n", r.Method, r.RemoteAddr, http.StatusMethodNotAllowed)
 		return
 	}
 	// Responds with API status
@@ -95,7 +95,7 @@ func cpdStatus(w http.ResponseWriter, r *http.Request) {
 }
 
 // cpdUpdate is the API server handler for "/cpd-update"
-// If method is POST and authenticationis susccessful, it updates CPD values and info (inner state)
+// If method is POST and authentication is susccessful, it updates CPD values and info (inner state)
 // else, it responds with a JSON containing an error message
 func cpdUpdate(w http.ResponseWriter, r *http.Request) {
 	// Only method POST is allowed
