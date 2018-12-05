@@ -15,15 +15,12 @@ type ReservationAPIM struct {
 	Classroom string `json:"classroom"`
 	Subject   string `json:"subject"`
 	Professor string `json:"professor"`
-	Day       int    `json:"day"`
-	Month     int    `json:"month"`
-	Year      int    `json:"year"`
-	Hour      int    `json:"hour"`
+	Datetime  string `json:"datetime"`
 }
 
 // TransactionInfoAPIM should be use to inform about transaction info
 // for example, when creating or updating a reservation
 type TransactionInfoAPIM struct {
-	ID     int    `json:"reservation ID"`
+	ID     string `json:"reservation ID"`
 	Status string `json:"status"`
 }

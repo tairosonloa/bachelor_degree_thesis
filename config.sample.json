@@ -3,6 +3,7 @@
 	"Rpi2APIPort" :         3002,
 	"Rpi3APIAddress" :      "localhost",
 	"Rpi3APIPort" :         3003,
+	"Rpi3DatabaseFile" :    "/path/to/database/file",
 	"APIAuthorizedToken" : "Bearer top_secret_string",
 	"HueBridgeAddress" :   "192.168.1.123",
 	"HueBridgeToken" :     "top_secret_string",

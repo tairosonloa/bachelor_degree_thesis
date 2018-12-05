@@ -1,20 +1,49 @@
 package api
 
 import (
+	// "bytes"
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+	// "strconv"
 
 	// "rpi3/API_REST/app/controllers"
 	"rpi3/API_REST/app/models"
+
+	// Blank import because we need to declare the sqlite driver
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var (
-	authorized string // Bearer token for authorized POST
+	authorized string  // Bearer token for authorized POST
+	db         *sql.DB // Database driver (scribble JSON database)
+)
+
+const (
+	datetimeLayout = "2/1/2006 15:04" // Datetime layout // TODO: Maybe not needed
 )
 
 // Initialize initializes the API server handlers and inner state
-func Initialize(apiAuthorizedToken string) *http.ServeMux {
+func Initialize(apiAuthorizedToken string, databaseFile string) *http.ServeMux {
+	var err error
+	authorized = apiAuthorizedToken
+
+	// Database
+	log.Printf("Initializeing database on %s\n", databaseFile)
+	db, err = sql.Open("sqlite3", databaseFile)
+	if err != nil {
+		log.Printf("Error on initialize the database: %v\n", err.Error())
+		os.Exit(1)
+	}
+	_, err = db.Exec("CREATE TABLE IF NOT EXISTS reservation (id INTEGER PRIMARY KEY AUTOINCREMENT, classroom TEXT, subject TEXT, professor TEXT, datetime DATETIME)")
+	if err != nil {
+		log.Printf("Error on initialize the database: %v\n", err.Error())
+		os.Exit(1)
+	}
+
 	// Handlers
 	mux := http.NewServeMux()
 
@@ -23,9 +52,6 @@ func Initialize(apiAuthorizedToken string) *http.ServeMux {
 	mux.HandleFunc("/reservation/{[0-9]+}", reservationID)
 
 	mux.HandleFunc("/favicon.ico", func(_ http.ResponseWriter, _ *http.Request) {})
-
-	// Inner state
-	// TODO: cargar sqlite
 
 	return mux
 }
@@ -97,29 +123,81 @@ func createReservation(w http.ResponseWriter, r *http.Request) {
 	// Read JSON from body request and create reservation
 	reservation := models.Reservation{}
 	decoder := json.NewDecoder(r.Body)
-	e := decoder.Decode(&reservation)
-	if e != nil {
-		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
-		log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
-		log.Println(e.Error())
+	err := decoder.Decode(&reservation)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, http.StatusText(http.StatusBadRequest))
+		log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusBadRequest)
+		log.Println(err.Error())
 		return
 	}
+
+	// var datetimeFormated time.Time
+	// Generate ID by concatenate date and classrom
+	// generateReservationID(&reservation)
+
+	// Parse Time
+	// TODO: check if date is before today
+	// datetime := fmt.Sprintf("%d/%d/%d %d:00", reservation.Day, reservation.Month, reservation.Year, reservation.Hour)
+	// datetime := fmt.Sprintf("%d/%d/%d %d:00:00", reservation.Year, reservation.Month, reservation.Day, reservation.Hour)
+	// datetimeFormated, err = time.Parse(datetimeLayout, datetime)
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, http.StatusText(http.StatusBadRequest))
+		log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusBadRequest)
+		log.Println(err.Error())
+		return
+	}
+
+	// Insert into database
+	statement := fmt.Sprintf("INSERT INTO reservation (classroom, subject, professor, datetime) VALUES ('%s', '%s', '%s', '%s')", reservation.Classroom, reservation.Subject, reservation.Professor, reservation.Datetime)
+	_, err = db.Exec(statement)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+		log.Println(err.Error())
+		return
+	}
+
+	// Respond 201 created and return ID on a JSON
+	response := models.TransactionInfoAPIM{
+		ID:     reservation.ID,
+		Status: "Reservation created",
+	}
+	log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusCreated)
+	respondWithJSON(w, http.StatusCreated, response)
 }
 
 // getReservations responds with a JSON cantaining all reservations
 func getReservations(w http.ResponseWriter, r *http.Request) {
 	// TODO: filter by url params
-	// TODO: to do
+	// TODO: what if ddbb is empty
+	var classroom, subject, professor, date string
+	var reservation models.Reservation
+	var payload []models.Reservation
+	rows, err := db.Query("SELECT classroom, subject, professor, datetime FROM reservation")
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+		log.Println(err.Error())
+		return
+	}
+	for rows.Next() {
+		rows.Scan(&classroom, &subject, &professor, &date)
+		reservation = models.Reservation{"", classroom, subject, professor, date}
+		payload = append(payload, reservation)
+	}
+	respondWithJSON(w, http.StatusOK, payload)
 }
 
 // getReservationByID responds with a JSON cantaining a reservation info
 func getReservationByID(w http.ResponseWriter, r *http.Request) {
 	// TODO: to do
+	respondWithError(w, http.StatusNotImplemented, "Not implemented")
 }
 
 // updateReservationByID updates a existing reservation from a JSON PUT request
 func updateReservationByID(w http.ResponseWriter, r *http.Request) {
 	// TODO: to do
+	respondWithError(w, http.StatusNotImplemented, "Not implemented")
 }
 
 // validateToken checks if the request is authenticated (bearer token) and authorized
@@ -127,6 +205,8 @@ func validateToken(w http.ResponseWriter, r *http.Request) bool {
 	token := r.Header.Get("Authorization")
 	if token != authorized {
 		var err string
+		log.Println(token)
+		log.Println(authorized)
 		if token == "" {
 			err = "Authorization header not provided or empty"
 		} else {
@@ -137,6 +217,21 @@ func validateToken(w http.ResponseWriter, r *http.Request) bool {
 	}
 	return true
 }
+
+// generateReservationID generates a reservation ID and saves it on the reservation struct
+// func generateReservationID(reservation *models.Reservation) {
+// 	var id bytes.Buffer
+// 	id.WriteString(strconv.Itoa(reservation.Year))
+// 	id.WriteString(".")
+// 	id.WriteString(strconv.Itoa(reservation.Month))
+// 	id.WriteString(".")
+// 	id.WriteString(strconv.Itoa(reservation.Day))
+// 	id.WriteString(".")
+// 	id.WriteString(strconv.Itoa(reservation.Hour))
+// 	id.WriteString("h.")
+// 	id.WriteString(reservation.Classroom)
+// 	reservation.ID = id.String()
+// }
 
 // respondWithError responds to a request with a http code and a JSON containing an error message
 func respondWithError(w http.ResponseWriter, code int, message string) {
