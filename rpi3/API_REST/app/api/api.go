@@ -8,12 +8,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 	// "strconv"
 
 	// "rpi3/API_REST/app/controllers"
 	"rpi3/API_REST/app/models"
 
-	// Blank import because we need to declare the sqlite driver
+	// Blank import because we need the sqlite driver
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -23,7 +24,8 @@ var (
 )
 
 const (
-	datetimeLayout = "2/1/2006 15:04" // Datetime layout // TODO: Maybe not needed
+	jsonDatetimeLayout   = "2-1-2006 15:04"   // Datetime layout to/from JSON
+	sqliteDatetimeLayout = "2006-01-02 15:04" // Datetime layout to insert into sqlite
 )
 
 // Initialize initializes the API server handlers and inner state
@@ -125,30 +127,34 @@ func createReservation(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&reservation)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, http.StatusText(http.StatusBadRequest))
+		respondWithError(w, http.StatusBadRequest, err.Error())
 		log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusBadRequest)
 		log.Println(err.Error())
 		return
 	}
 
-	// var datetimeFormated time.Time
 	// Generate ID by concatenate date and classrom
 	// generateReservationID(&reservation)
 
 	// Parse Time
-	// TODO: check if date is before today
-	// datetime := fmt.Sprintf("%d/%d/%d %d:00", reservation.Day, reservation.Month, reservation.Year, reservation.Hour)
-	// datetime := fmt.Sprintf("%d/%d/%d %d:00:00", reservation.Year, reservation.Month, reservation.Day, reservation.Hour)
-	// datetimeFormated, err = time.Parse(datetimeLayout, datetime)
+	var datetime time.Time
+	datetime, err = time.Parse(jsonDatetimeLayout, reservation.Datetime)
 	if err != nil {
-		respondWithError(w, http.StatusBadRequest, http.StatusText(http.StatusBadRequest))
+		respondWithError(w, http.StatusBadRequest, err.Error())
 		log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusBadRequest)
 		log.Println(err.Error())
 		return
 	}
+	// Check if datetime is before today
+	if datetime.Unix() < time.Now().Unix() {
+		respondWithError(w, http.StatusBadRequest, "Reservation datetime is before today")
+		log.Printf("%s /reservation %s status %d: Reservation datetime is before today\n", r.Method, r.RemoteAddr, http.StatusBadRequest)
+		return
+	}
 
 	// Insert into database
-	statement := fmt.Sprintf("INSERT INTO reservation (classroom, subject, professor, datetime) VALUES ('%s', '%s', '%s', '%s')", reservation.Classroom, reservation.Subject, reservation.Professor, reservation.Datetime)
+	statement := fmt.Sprintf("INSERT INTO reservation (classroom, subject, professor, datetime) VALUES ('%s', '%s', '%s', '%s')",
+		reservation.Classroom, reservation.Subject, reservation.Professor, datetime.Format(sqliteDatetimeLayout))
 	_, err = db.Exec(statement)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
@@ -169,11 +175,12 @@ func createReservation(w http.ResponseWriter, r *http.Request) {
 // getReservations responds with a JSON cantaining all reservations
 func getReservations(w http.ResponseWriter, r *http.Request) {
 	// TODO: filter by url params
-	// TODO: what if ddbb is empty
-	var classroom, subject, professor, date string
+	var classroom, subject, professor string
+	var datetime time.Time
 	var reservation models.Reservation
-	var payload []models.Reservation
+	payload := []models.Reservation{}
 	rows, err := db.Query("SELECT classroom, subject, professor, datetime FROM reservation")
+	defer rows.Close()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
@@ -181,10 +188,17 @@ func getReservations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for rows.Next() {
-		rows.Scan(&classroom, &subject, &professor, &date)
-		reservation = models.Reservation{"", classroom, subject, professor, date}
+		err = rows.Scan(&classroom, &subject, &professor, &datetime)
+		if err != nil {
+			respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+			log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+			log.Println(err.Error())
+			return
+		}
+		reservation = models.Reservation{"", classroom, subject, professor, datetime.Format(jsonDatetimeLayout)}
 		payload = append(payload, reservation)
 	}
+	log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusOK)
 	respondWithJSON(w, http.StatusOK, payload)
 }
 
