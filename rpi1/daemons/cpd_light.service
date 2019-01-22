@@ -1,0 +1,15 @@
+[Unit]
+Description=Checks if the light in the datacenter is turned on/off
+
+[Service]
+User=lab
+Group=lab
+Type=simple
+Restart=on-failure
+RestartSec=2
+WorkingDirectory=/home/lab/monitorizacion_cpd/rpi1/scripts
+ExecStart=/usr/bin/python3 /home/lab/monitorizacion_cpd/rpi1/scripts/light_watcher.py
+PIDFile=/tmp/phlips_hue.pid
+
+[Install]
+WantedBy=multi-user.target
