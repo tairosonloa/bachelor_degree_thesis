@@ -15,7 +15,7 @@ def update_values_api(values_dict):
     config = load_config()
 
     # Set authorization header needed for authorized POST requests
-    headers = { "Authorization" : config["APIAuthorizedToken"] }
+    headers = { "Authorization" : config["Rpi2APIAuthorizedToken"] }
 
     # Prepare body JSON
     payload = {}
