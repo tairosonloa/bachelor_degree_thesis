@@ -3,7 +3,6 @@
 
 from controllers.api_manager import update_values_api
 
-from phue import Bridge
 import numpy as np
 import picamera, picamera.array
 import time, os, math, json

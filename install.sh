@@ -58,7 +58,7 @@ function install_rpi1 {
         read -p "Indicate rpi 2 IP address (XXX.XXX.XXX.XXX): " addr
         read -p "Indicate rpi 2 API port (XXXX): " port
         read -p "Indicate rpi 2 API POST Bearer token (XXXXXXXXXXXX): " token
-        conf="{\n\t'Rpi2APIAddress' : '$addr',\n\t'Rpi2APIPort' : '$port',\n\t'Rpi2APIAuthorizedToken' : 'Bearer $token'\n}"
+        conf='{\n\t"Rpi2APIAddress" : "$addr",\n\t"Rpi2APIPort" : "$port",\n\t"Rpi2APIAuthorizedToken" : "Bearer $token"\n}'
         echo "config.json generated:"
         echo -e $conf
         read -p "Is that correct? (Y/n): " answ
