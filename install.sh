@@ -19,7 +19,8 @@ function set_iptables {
 }
 
 function install_rpi1 {
-    echo "##### Updating hostname and localtime..."
+    echo "##### Updating hostname, localtime and bashrc..."
+    cp install/.bashrc /root/.bashrc
     echo "rpi1" > /etc/hostname
     hostname -F /etc/hostname
     sed -i "s/raspberrypi/rpi1/g" /etc/hosts
@@ -44,7 +45,7 @@ function install_rpi1 {
     
     echo "##### Preparing daemons and start on boot..."
     # Copy daemons and enable them
-    cp rpi1/daemons/* /etc/systemd/system
+    cp install/rpi1/daemons/* /etc/systemd/system
     cd /etc/systemd/system
     for s in `ls cpd_*`; do
         systemctl enable $s
@@ -84,7 +85,7 @@ function install_rpi1 {
         read -p "Is that correct? (Y/n): " answ
         answ=${answ:-Y}
     done
-    echo -e $conf > /home/lab/monitorizacion_cpd/config.json
+    echo -e $conf > config.json
 }
 
 function install_rpi2 {
