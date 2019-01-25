@@ -7,8 +7,8 @@ Group=lab
 Type=simple
 Restart=on-failure
 RestartSec=2
-WorkingDirectory=/home/lab/monitorizacion_cpd/rpi1/scripts
-ExecStart=/usr/bin/python3 /home/lab/monitorizacion_cpd/rpi1/scripts/hygrometer.py
+WorkingDirectory=/usr/local/bin/rpi1_cpd
+ExecStart=/usr/bin/python3 /usr/local/bin/rpi1_cpd/hygrometer.py
 PIDFile=/tmp/cpd_humidity.pid
 
 [Install]
