@@ -5,7 +5,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [[ $# -ne 2 ]]; then
+if [[ $# -ne 1 ]]; then
     echo "This script must be called with the user who will run the software as argument."
     echo -e "\tExample: $0 lab"
     exit 1
@@ -81,21 +81,21 @@ function install_rpi1 {
     sed -i '/# UserParameter=/a UserParameter=cpd.hum, /bin/cat /tmp/last_hum.txt' /etc/zabbix/zabbix_agentd.conf
     sed -i '/# UserParameter=/a UserParameter=cpd.temp, /bin/cat /tmp/last_temp.txt' /etc/zabbix/zabbix_agentd.conf
     
-    echo -e "\n\t##### Generating /etc/cpd_rpi1_conf.json...\n"
+    echo -e "\n\t##### Generating /etc/rpi1_conf.json...\n"
     answ="n"
     while [ $answ != "y" ] && [ $answ != "Y" ]; do
         read -p "Indicate rpi 2 IP address (XXX.XXX.XXX.XXX): " addr
         read -p "Indicate rpi 2 API port (XXXX): " port
         read -p "Indicate rpi 2 API POST Bearer token (XXXXXXXXXXXX): " token
-        conf='{\n\t"Rpi2APIAddress" : "'$addr'",\n\t"Rpi2APIPort" : "'$port'",\n\t"Rpi2APIAuthorizedToken" : "Bearer '$token'"\n}'
-        echo "/etc/cpd_rpi1_conf.json generated:"
+        conf='{\n\t"Rpi2APIAddress" : "'$addr'",\n\t"Rpi2APIPort" : '$port',\n\t"Rpi2APIAuthorizedToken" : "Bearer '$token'"\n}'
+        echo "/etc/rpi1_conf.json generated:"
         echo -e $conf
         read -p "Is that correct? (Y/n): " answ
         answ=${answ:-Y}
     done
-    echo -e $conf > /etc/cpd_rpi1_conf.json
-    chown 600 /etc/cpd_rpi1_conf.json
-    chown $INSTALL_USER:$INSTALL_USER /etc/cpd_rpi1_conf.json
+    echo -e $conf > /etc/rpi1_conf.json
+    chown 600 /etc/rpi1_conf.json
+    chown $INSTALL_USER:$INSTALL_USER /etc/rpi1_conf.json
 
     echo -e "\n\t##### Setting and saving iptables..."
     set_iptables
@@ -115,18 +115,21 @@ function install_rpi2 {
     ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime
 
     echo -e "\t##### Installing dependences with apt-get...\n"
-    # Install openbox and chromium to display grafana dashboard
+    # Install openbox and chromium to display grafana dashboard, lightdm to autologin on GUI, omxplayer to play alarm sound
     apt-get -y update && apt-get -y upgrade
     echo iptables-persistent iptables-persistent/autosave_v4 boolean false | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean false | debconf-set-selections
-    apt-get -y install iptables-persistent openbox chromium
+    apt-get -y install iptables-persistent openbox chromium-browser lightdm omxplayer
     # TODO: check if we have sound. If not, maybe we need to install python-gst-1.0 gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tools
     # TODO: also, a raspi-config setting may be needed
 
     echo -e "\n\t##### Installing binary in /usr/local/bin/ and resources in /usr/local/share/..."
     cp install/rpi2/rpi2_api_arm /usr/local/bin/rpi2_api_arm # Rpi2 API binary
-    chmod 744 /usr/local/bin/rpi2_api_arm
+    chmod 755 /usr/local/bin/rpi2_api_arm
     cp install/rpi2/alarm.mp3 /usr/local/share/alarm.mp3     # Rpi2 API alarm sound file
+
+    echo -e "\t##### Configuring permissions..."
+    usermod -aG video $INSTALL_USER # To use audio jack
 
     echo -e "\t##### Preparing daemons and start on boot...\n"
     # Copy daemons and enable them
@@ -161,7 +164,7 @@ function install_rpi2 {
         read -p "Indicate Philips Hue bridge IP address (XXX.XXX.XXX.XXX): " hue
         read -p "Indicate Philips Hue bridge secret string (XXXXXXXXXXXX): " secret
         echo "Adding the alarm sound file path to the config file..."
-        conf='{\n\t"Rpi2APIAddress" : "'$addr'",\n\t"Rpi2APIPort" : "'$port'",\n\t"Rpi2APIAuthorizedToken" : "Bearer '$token'",\n\t"HueBridgeAddress" : "'$hue'",\n\t"HueBridgeToken" : "'$secret'",\n\t"AlarmSoundPath" : "/usr/local/share/alarm.mp3"\n}'
+        conf='{\n\t"Rpi2APIAddress" : "'$addr'",\n\t"Rpi2APIPort" : '$port',\n\t"Rpi2APIAuthorizedToken" : "Bearer '$token'",\n\t"HueBridgeAddress" : "'$hue'",\n\t"HueBridgeToken" : "'$secret'",\n\t"AlarmSoundPath" : "/usr/local/share/alarm.mp3"\n}'
         echo "/etc/rpi2_conf.json generated:"
         echo -e $conf
         read -p "Is that correct? (Y/n): " answ
@@ -178,7 +181,8 @@ function install_rpi2 {
     # Save rules so they persist after reboot
     iptables-save > /etc/iptables/rules.v4
 
-    read -p "\t##### WARNING: Please, press the Philips Hue bridge button before continue. Press enter when pressed."
+    echo -e "\t##### WARNING: Please, press the Philips Hue bridge button before continue. Press enter when pressed."
+    read
     echo -e "\t##### Launching api to pair Philips Hue bridge..."
     systemctl start rpi2_api.service
     echo -e "\t      Waiting 10 seconds"

@@ -9,7 +9,7 @@ Type=simple
 Restart=on-failure
 RestartSec=2
 WorkingDirectory=/usr/local/bin/
-ExecStart=/usr/local/bin/rpi2_api_arm -conf /etc/rpi2_api_conf.json
+ExecStart=/usr/local/bin/rpi2_api_arm -conf /etc/rpi2_conf.json
 
 [Install]
 WantedBy=multi-user.target
