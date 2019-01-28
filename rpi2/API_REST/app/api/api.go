@@ -33,6 +33,7 @@ func Initialize(apiAuthorizedToken string, hueBridgeAddress string, hueBridgeTok
 
 	// Connect to philips hue bridge
 	controllers.InitializeHue(hueBridgeAddress, hueBridgeToken)
+	controllers.LightOff() // Reset light
 
 	return mux
 }
@@ -152,13 +153,17 @@ func validateToken(w http.ResponseWriter, r *http.Request) bool {
 
 // checkLightStatusChanged checks if light inside CPD has changed and sets proper visual identifier
 func checkLightStatusChanged(oldLightStatus bool) {
-	if cpd.Light != oldLightStatus && !cpd.IsWarning() {
+	if !cpd.IsWarning() {
 		if cpd.Light {
 			controllers.LightON()
-			log.Println("INFO: light on")
+			if cpd.Light != oldLightStatus {
+				log.Println("INFO: light on")
+			}
 		} else {
 			controllers.LightOff()
-			log.Println("INFO: light off")
+			if cpd.Light != oldLightStatus {
+				log.Println("INFO: light off")
+			}
 		}
 	}
 }
