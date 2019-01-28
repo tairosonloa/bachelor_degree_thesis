@@ -3,7 +3,7 @@
 import json
 
 
-CONFIG_FILE = "/etc/cpd_rpi1_conf.json" # File with API IP, API port, Bearer token and more
+CONFIG_FILE = "/etc/rpi1_conf.json" # File with API IP, API port, Bearer token and more
 
 
 def load_config():
