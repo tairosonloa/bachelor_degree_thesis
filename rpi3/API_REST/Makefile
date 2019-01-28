@@ -4,8 +4,8 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
-BINARY_x64=reservas_api_amd64
-BINARY_RPI=reservas_api_arm
+BINARY_x64=rpi3_api_amd64
+BINARY_RPI=rpi3_api_arm
 
 all: build
 build:
