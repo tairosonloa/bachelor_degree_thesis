@@ -145,6 +145,7 @@ function install_rpi2 {
     cp install/rpi2/autostart /etc/xdg/openbox/autostart
     chmod +x /etc/xdg/openbox/autostart
     raspi-config nonint do_boot_behaviour B4 # Auto login with GUI
+    sed -i "s/#xserver-command=X/xserver-command=X -nocursor/g" /etc/lightdm/lightdm.conf # Disable mouse on screen
 
     echo -e "\t##### Preparing monitor auto on/off on working hours..."
     cp install/rpi2/raspi-monitor /usr/local/sbin/raspi-monitor
