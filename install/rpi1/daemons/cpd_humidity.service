@@ -1,0 +1,15 @@
+[Unit]
+Description=Checks humidty in the datacenter
+
+[Service]
+User=lab
+Group=lab
+Type=simple
+Restart=on-failure
+RestartSec=2
+WorkingDirectory=/usr/local/bin/rpi1_cpd
+ExecStart=/usr/bin/python3 /usr/local/bin/rpi1_cpd/hygrometer.py
+PIDFile=/tmp/cpd_humidity.pid
+
+[Install]
+WantedBy=multi-user.target

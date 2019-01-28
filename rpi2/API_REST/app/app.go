@@ -13,12 +13,12 @@ import (
 
 // configValues represents config values readed from JSON on initialization
 type configValues struct {
-	Rpi2APIAddress     string
-	Rpi2APIPort        int
-	APIAuthorizedToken string
-	HueBridgeAddress   string
-	HueBridgeToken     string
-	AlarmSoundPath     string
+	Rpi2APIAddress         string
+	Rpi2APIPort            int
+	Rpi2APIAuthorizedToken string
+	HueBridgeAddress       string
+	HueBridgeToken         string
+	AlarmSoundPath         string
 }
 
 // App represents the core of the application (server and API)
@@ -54,7 +54,7 @@ func (a *App) loadConfig() {
 			log.Printf("ERROR app/loadConfig(): %v\n", err.Error())
 		}
 	}
-	log.Println(a.config)
+	log.Printf("Loaded config: %v\n", a.config)
 }
 
 // Initialize initializes the API server address, port and hadlers
@@ -62,7 +62,7 @@ func (a *App) Initialize() {
 	a.readCmd()
 	a.loadConfig()
 	log.Println("Initializating server")
-	a.handlers = api.Initialize(a.config.APIAuthorizedToken, a.config.HueBridgeAddress, a.config.HueBridgeToken, a.config.AlarmSoundPath)
+	a.handlers = api.Initialize(a.config.Rpi2APIAuthorizedToken, a.config.HueBridgeAddress, a.config.HueBridgeToken, a.config.AlarmSoundPath)
 	a.server = &http.Server{Handler: a.handlers, Addr: fmt.Sprintf("%s:%d", a.config.Rpi2APIAddress, a.config.Rpi2APIPort)}
 }
 

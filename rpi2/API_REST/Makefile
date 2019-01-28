@@ -4,8 +4,8 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
-BINARY_x64=cpd_api_amd64
-BINARY_RPI=cpd_api_arm
+BINARY_x64=rpi2_api_amd64
+BINARY_RPI=rpi2_api_arm
 
 all: build
 build:

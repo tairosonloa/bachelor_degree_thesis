@@ -1,0 +1,15 @@
+[Unit]
+Description=Prints datacenter temperature on LED panel
+
+[Service]
+User=lab
+Group=lab
+Type=simple
+Restart=on-failure
+RestartSec=2
+WorkingDirectory=/usr/local/bin/rpi1_cpd
+ExecStart=/usr/bin/python3 /usr/local/bin/rpi1_cpd/led_display_temp.py
+PIDFile=/tmp/cpd_temp.pid
+
+[Install]
+WantedBy=multi-user.target

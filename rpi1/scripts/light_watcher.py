@@ -2,9 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from controllers.api_manager import update_values_api
-from controllers.config_loader import load_config
 
-from phue import Bridge
 import numpy as np
 import picamera, picamera.array
 import time, os, math, json
@@ -36,11 +34,6 @@ def is_cpd_light_on():
 
 def main():
     """Checks light status every 10 seconds and updates API"""
-    # Read config (philips hue bridge) from file
-    config = load_config()
-    # Connect to philips hue bridge
-    b = Bridge(config["HueBridgeAddress"])
-    b.connect()
     # Check light status every 10s and update API
     while True:
         if is_cpd_light_on():
