@@ -44,24 +44,18 @@ func getReservations(body io.ReadCloser) [][]string {
 	reservations := [][]string{}
 
 	// While have not hit the </html> tag
-	counter := -2
 	var text string
 	for tokenizer.Token().Data != "html" {
 		tagToken := tokenizer.Next()
-		if tagToken == html.StartTagToken {
-			token := tokenizer.Token()
-
-			if token.Data == "tr" { // row
-				counter++
-
-			} else if token.Data == "td" && counter%8 == 0 { // colum
-				inner := tokenizer.Next()
-				if inner == html.TextToken {
-					// Inside table cell
-					reservation := []string{}
-					// Step one: Get subject name
-					text = (string)(tokenizer.Text())
-					subject := strings.TrimSpace(text)
+		if tagToken == html.StartTagToken && tokenizer.Token().Data == "td" {
+			inner := tokenizer.Next()
+			if inner == html.TextToken {
+				// Inside table cell
+				reservation := []string{}
+				// Step one: Get subject name
+				text = (string)(tokenizer.Text())
+				subject := strings.TrimSpace(text)
+				if subject != "" {
 					// Step two: Get study (degree master) name
 					// Ignore html tags
 					inner = tokenizer.Next()
@@ -83,13 +77,24 @@ func getReservations(body io.ReadCloser) [][]string {
 }
 
 func main() {
-	reservations := getReservations(fecthURL(reservationsWebPage))
+	body := fecthURL(reservationsWebPage)
+	if body == nil {
+		// TODO: better error handling
+		log.Println("ERROR: cannot fecth reservations URL. Body is nil.")
+		return
+	}
+	reservations := getReservations(body)
 
-	for i1, e1 := range hours {
-		for i2, e2 := range classrooms {
-			if reservations[i1+i2][0] != "" {
-				fmt.Printf("Clase de %s del %s en el aula %s a las %s\n", reservations[i1+i2][0], reservations[i1+i2][1], e2, e1)
-			}
+	fmt.Printf("\n")
+	for i := range reservations {
+		fmt.Printf("Reservation %v from %v\n", reservations[i][0], reservations[i][1])
+	}
+	fmt.Printf("\n")
+
+	index := 0
+	for _, e1 := range hours {
+		for _, e2 := range classrooms {
+			fmt.Printf("Clase de %s del %s en el aula %s a las %s\n", reservations[index][0], reservations[index][1], e2, e1)
 		}
 	}
 }
