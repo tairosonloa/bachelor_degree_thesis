@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"../models"
 )
 
 const (
@@ -33,7 +35,7 @@ func fecthURL(url string) io.ReadCloser {
 	return resp.Body
 }
 
-func getReservations(body io.ReadCloser) [][]string {
+func getReservations(body io.ReadCloser) []models.Reservation {
 	if body == nil { // TODO: update error message
 		fmt.Println("Body is nil")
 		return nil
@@ -41,34 +43,49 @@ func getReservations(body io.ReadCloser) [][]string {
 	defer body.Close() // Don't forget to close the Reader
 
 	tokenizer := html.NewTokenizer(body)
-	reservations := [][]string{}
+	reservations := []models.Reservation{}
 
-	// While have not hit the </html> tag
 	var text string
+	var colum int
+	row := -1
+	// While have not hit the </html> tag
 	for tokenizer.Token().Data != "html" {
 		tagToken := tokenizer.Next()
-		if tagToken == html.StartTagToken && tokenizer.Token().Data == "td" {
-			inner := tokenizer.Next()
-			if inner == html.TextToken {
-				// Inside table cell
-				reservation := []string{}
-				// Step one: Get subject name
-				text = (string)(tokenizer.Text())
-				subject := strings.TrimSpace(text)
-				if subject != "" {
-					// Step two: Get study (degree master) name
-					// Ignore html tags
-					inner = tokenizer.Next()
-					for inner != html.TextToken {
-						inner = tokenizer.Next()
-					}
-					// Get study name
+		if tagToken == html.StartTagToken {
+			token := tokenizer.Token().Data
+			if token == "tr" { // row
+				row++
+				colum = -1
+			}
+			if token == "td" { // colum
+				inner := tokenizer.Next()
+				if inner == html.TextToken {
+					colum++
+					// Inside table cell
+					// Step one: Get subject name
 					text = (string)(tokenizer.Text())
-					study := strings.TrimSpace(text)
-					// Append to the reservations slice
-					reservation = append(reservation, subject)
-					reservation = append(reservation, study)
-					reservations = append(reservations, reservation)
+					subject := strings.TrimSpace(text)
+					if subject != "" { // Ignore empty cells
+						// Step two: Get study (degree master) name
+						// Ignore html tags
+						inner = tokenizer.Next()
+						for inner != html.TextToken {
+							inner = tokenizer.Next()
+						}
+						// Get study name
+						text = (string)(tokenizer.Text())
+						study := strings.TrimSpace(text)
+
+						// Create and append reservation object
+						reservation := models.Reservation{
+							Subject:   subject,
+							Study:     study,
+							Classroom: classrooms[colum],
+							Time:      hours[row/8],
+							Professor: "",
+						}
+						reservations = append(reservations, reservation)
+					}
 				}
 			}
 		}
@@ -87,14 +104,7 @@ func main() {
 
 	fmt.Printf("\n")
 	for i := range reservations {
-		fmt.Printf("Reservation %v from %v\n", reservations[i][0], reservations[i][1])
+		fmt.Printf("%+v\n", reservations[i])
 	}
 	fmt.Printf("\n")
-
-	index := 0
-	for _, e1 := range hours {
-		for _, e2 := range classrooms {
-			fmt.Printf("Clase de %s del %s en el aula %s a las %s\n", reservations[index][0], reservations[index][1], e2, e1)
-		}
-	}
 }
