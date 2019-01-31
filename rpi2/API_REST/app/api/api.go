@@ -153,17 +153,13 @@ func validateToken(w http.ResponseWriter, r *http.Request) bool {
 
 // checkLightStatusChanged checks if light inside CPD has changed and sets proper visual identifier
 func checkLightStatusChanged(oldLightStatus bool) {
-	if !cpd.IsWarning() {
+	if cpd.Light != oldLightStatus && !cpd.IsWarning() {
 		if cpd.Light {
 			controllers.LightON()
-			if cpd.Light != oldLightStatus {
-				log.Println("INFO: light on")
-			}
+			log.Println("INFO: light on")
 		} else {
 			controllers.LightOff()
-			if cpd.Light != oldLightStatus {
-				log.Println("INFO: light off")
-			}
+			log.Println("INFO: light off")
 		}
 	}
 }
