@@ -1,14 +1,13 @@
-package main
+package controllers
 
 import (
-	"fmt"
 	"golang.org/x/net/html"
 	"io"
 	"log"
 	"net/http"
 	"strings"
 
-	"../models"
+	"rpi3/API_REST/app/models"
 )
 
 const (
@@ -52,7 +51,7 @@ func fecthURL(url string) io.ReadCloser {
 // getReservations returns an slice with all the reservations for today (structs)
 func getReservations(body io.ReadCloser) []*models.Reservation {
 	if body == nil { // TODO: update error message
-		fmt.Println("Body is nil")
+		log.Println("Body is nil")
 		return nil
 	}
 	defer body.Close() // Don't forget to close the Reader
@@ -169,18 +168,13 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 	return reservations
 }
 
-func main() {
+// GetTodayReservations returns a slice of pointers to models.Reservation struct with today reservations
+func GetTodayReservations() []*models.Reservation {
 	body := fecthURL(reservationsWebPage)
 	if body == nil {
 		// TODO: better error handling
 		log.Println("ERROR: cannot fecth reservations URL. Body is nil.")
-		return
+		return nil
 	}
-	reservations := getReservations(body)
-
-	fmt.Printf("\n")
-	for i := range reservations {
-		fmt.Printf("%+v\n", reservations[i])
-	}
-	fmt.Printf("\n")
+	return getReservations(body)
 }
