@@ -13,12 +13,22 @@ import (
 
 const (
 	reservationsWebPage = "http://www.lab.inf.uc3m.es/informacion/ocupacion-de-las-aulas/ocupacion-diaria/"
+	tableSize           = 48
 )
 
 var ( // TODO: remove from global vars (?), Anyway, they are inmutable by nature
 	classrooms = [...]string{"4.0.F16", "4.0.F18", "2.2.C05", "2.2.C06"}
-	hours      = [...]string{"9:00", "11:00", "13:00", "15:00", "17:00", "20:00"}
+	hours      = [...]string{"9:00", "11:00", "13:00", "15:00", "17:00", "19:00"}
 )
+
+// join concats strings
+func join(strs ...string) string {
+	var sb strings.Builder
+	for _, str := range strs {
+		sb.WriteString(str)
+	}
+	return sb.String()
+}
 
 // fecthURL gets the web page body and returns it
 func fecthURL(url string) io.ReadCloser {
@@ -44,10 +54,13 @@ func getReservations(body io.ReadCloser) []models.Reservation {
 
 	tokenizer := html.NewTokenizer(body)
 	reservations := []models.Reservation{}
+	oneTimeReservations := []*models.Reservation{}
+	oneTimeReservation := false
 
 	var text string
 	var colum int
 	row := -1
+
 	// While have not hit the </html> tag
 	for tokenizer.Token().Data != "html" {
 		tagToken := tokenizer.Next()
@@ -66,6 +79,17 @@ func getReservations(body io.ReadCloser) []models.Reservation {
 					text = (string)(tokenizer.Text())
 					subject := strings.TrimSpace(text)
 					if subject != "" { // Ignore empty cells
+						if subject == "Reserva Puntual:" {
+							// Ignore html tags
+							inner = tokenizer.Next()
+							for inner != html.TextToken {
+								inner = tokenizer.Next()
+							}
+							text = (string)(tokenizer.Text())
+							text = strings.TrimSpace(text)
+							subject = join(subject, " ", text)
+							oneTimeReservation = true
+						}
 						// Step two: Get study (degree master) name
 						// Ignore html tags
 						inner = tokenizer.Next()
@@ -85,6 +109,53 @@ func getReservations(body io.ReadCloser) []models.Reservation {
 							Professor: "",
 						}
 						reservations = append(reservations, reservation)
+
+						if oneTimeReservation {
+							// Check if one time reservation, to get professor later
+							fmt.Printf("reservation: %p\n", &reservation)
+							fmt.Printf("reservation on slice: %p\n", &reservations[len(reservations)-1])
+							oneTimeReservations = append(oneTimeReservations, &reservations[len(reservations)-1])
+							fmt.Printf("reservation on onetime slice: %p\n", &oneTimeReservations[len(oneTimeReservations)-1])
+							oneTimeReservation = false
+						}
+					}
+				}
+			}
+		}
+		if row > tableSize {
+			break
+		}
+	}
+	// If we have one time reservations, get professor
+	if len(oneTimeReservations) > 0 {
+		// While have not hit the </html> tag
+		for tokenizer.Token().Data != "html" {
+			tagToken := tokenizer.Next()
+			if tagToken == html.StartTagToken {
+				token := tokenizer.Token().Data
+				if token == "td" { // colum
+					inner := tokenizer.Next()
+					if inner == html.TextToken {
+						// Inside table cell
+						text = (string)(tokenizer.Text())
+						subject := strings.TrimSpace(text)
+						fmt.Println(subject)
+						for i := range oneTimeReservations {
+							fmt.Println("Probando")
+							if strings.Contains(oneTimeReservations[i].Subject, subject) {
+								fmt.Println("True")
+								// Ignore html tags
+								inner = tokenizer.Next()
+								for inner != html.TextToken {
+									inner = tokenizer.Next()
+								}
+								text = (string)(tokenizer.Text())
+								fmt.Printf("El profesor es %v\n", text)
+								fmt.Printf("Reservation to update: %p\n", oneTimeReservations[i])
+								oneTimeReservations[i].Professor = strings.TrimSpace(text)
+								break
+							}
+						}
 					}
 				}
 			}
