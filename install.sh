@@ -120,8 +120,6 @@ function install_rpi2 {
     echo iptables-persistent iptables-persistent/autosave_v4 boolean false | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean false | debconf-set-selections
     apt-get -y install iptables-persistent openbox chromium-browser lightdm omxplayer
-    # TODO: check if we have sound. If not, maybe we need to install python-gst-1.0 gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly gstreamer1.0-tools
-    # TODO: also, a raspi-config setting may be needed
 
     echo -e "\n\t##### Installing binary in /usr/local/bin/ and resources in /usr/local/share/..."
     cp install/rpi2/rpi2_api_arm /usr/local/bin/rpi2_api_arm # Rpi2 API binary
@@ -141,7 +139,6 @@ function install_rpi2 {
     cd -
 
     echo -e "\n\t##### Enabling auto-login and auto start chromium"
-    # TODO:
     cp install/rpi2/autostart /etc/xdg/openbox/autostart
     chmod +x /etc/xdg/openbox/autostart
     raspi-config nonint do_boot_behaviour B4 # Auto login with GUI
@@ -198,8 +195,54 @@ function install_rpi2 {
 }
 
 function install_rpi3 {
-    echo "Error: No implemented yet."
-    exit 1
+    echo -e "\t##### Updating hostname, localtime and bashrc..."
+    cp install/.bashrc /root/.bashrc
+    echo "rpi3" > /etc/hostname
+    hostname -F /etc/hostname
+    sed -i "s/raspberrypi/rpi3/g" /etc/hosts
+    ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+
+    echo -e "\t##### Installing dependences with apt-get...\n"
+    # Install openbox and chromium to display grafana dashboard, lightdm to autologin on GUI, omxplayer to play alarm sound
+    apt-get -y update && apt-get -y upgrade
+    echo iptables-persistent iptables-persistent/autosave_v4 boolean false | debconf-set-selections
+    echo iptables-persistent iptables-persistent/autosave_v6 boolean false | debconf-set-selections
+    apt-get -y install iptables-persistent
+
+    echo -e "\n\t##### Installing binary in /usr/local/bin/ and resources in /usr/local/share/..."
+    cp install/rpi3/rpi3_api_arm /usr/local/bin/rpi3_api_arm # Rpi3 API binary
+    chmod 755 /usr/local/bin/rpi2_api_arm
+
+    echo -e "\t##### Preparing daemons and start on boot...\n"
+    # Copy daemons and enable them
+    cp install/rpi3/daemons/* /etc/systemd/system
+    cd install/rpi3/daemons/
+    for s in `ls .`; do
+        systemctl enable $s
+    done
+    cd -
+
+    echo -e "\t##### Generating /etc/rpi3_conf.json...\n"
+    answ="n"
+    while [ $answ != "y" ] && [ $answ != "Y" ]; do
+        read -p "Indicate rpi 3 IP address (XXX.XXX.XXX.XXX): " addr
+        read -p "Indicate rpi 3 API port (XXXX): " port
+        conf='{\n\t"Rpi3APIAddress" : "'$addr'",\n\t"Rpi3APIPort" : '$port'\n}'
+        echo "/etc/rpi3_conf.json generated:"
+        echo -e $conf
+        read -p "Is that correct? (Y/n): " answ
+        answ=${answ:-Y}
+    done
+    echo -e $conf > /etc/rpi3_conf.json
+    chown 600 /etc/rpi3_conf.json
+    chown $INSTALL_USER:$INSTALL_USER /etc/rpi3_conf.json
+
+    echo -e "\n\t##### Setting and enabling iptables..."
+    set_iptables
+    # Allow API requests only on the university network
+    iptables -A INPUT -p tcp --dport $port -s 163.117.0.0/16 -j ACCEPT
+    # Save rules so they persist after reboot
+    iptables-save > /etc/iptables/rules.v4
 }
 
 echo -e "What rpi are you trying to install?\n"
@@ -225,4 +268,4 @@ esac
 
 echo "Done. If you see this message, everything should work after reboot."
 echo "Rebooting now..."
-#reboot # TODO: enable
+reboot
