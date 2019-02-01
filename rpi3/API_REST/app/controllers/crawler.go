@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"fmt"
 	"golang.org/x/net/html"
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"rpi3/API_REST/app/models"
@@ -70,62 +72,80 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 	for tokenizer.Token().Data != "html" {
 		tagToken := tokenizer.Next()
 		if tagToken == html.StartTagToken {
-			token := tokenizer.Token().Data
-			if token == "tr" { // row
+			token := tokenizer.Token()
+			if token.Data == "tr" { // row
 				row++
 				colum = -1
-			}
-			if token == "td" { // colum
-				inner := tokenizer.Next()
-				if inner == html.TextToken {
-					colum++
-					// Inside table cell
-					// Step one: Get subject name
-					text = (string)(tokenizer.Text())
-					subject := strings.TrimSpace(text)
-					if subject != "" { // Ignore empty cells
-						if subject == "Reserva Puntual:" {
-							// We detected a one-time reservation
+			} else if token.Data == "td" { // colum
+				// Check rowspan attr to calculate endtime
+				rowspan := -1
+				for _, attr := range token.Attr {
+					if (string)(attr.Key) == "rowspan" {
+						rowspan, _ = strconv.Atoi(attr.Val)
+						break
+					}
+				}
+				if rowspan >= 0 { // If rowspan < 0 then there is not reservation for this hour
+					inner := tokenizer.Next()
+					if inner == html.TextToken {
+						colum++
+						// Inside table cell
+						// Step one: Get subject name
+						text = (string)(tokenizer.Text())
+						subject := strings.TrimSpace(text)
+						if subject != "" { // Ignore empty cells
+							if subject == "Reserva Puntual:" {
+								// We detected a one-time reservation
 
-							// Get subject for the one-time reservation and concat the two strings
+								// Get subject for the one-time reservation and concat the two strings
+								// Ignore html tags
+								inner = tokenizer.Next()
+								for inner != html.TextToken {
+									inner = tokenizer.Next()
+								}
+								// Get subject
+								text = (string)(tokenizer.Text())
+								text = strings.TrimSpace(text)
+								subject = join(subject, " ", text)
+
+								// Get count of every one-time reservation to check professor later
+								oneTimeReservation = true
+								toCheck++
+							}
+							// Step two: Get study (degree master) name
 							// Ignore html tags
 							inner = tokenizer.Next()
 							for inner != html.TextToken {
 								inner = tokenizer.Next()
 							}
-							// Get subject
+							// Get study name
 							text = (string)(tokenizer.Text())
-							text = strings.TrimSpace(text)
-							subject = join(subject, " ", text)
+							study := strings.TrimSpace(text)
 
-							// Get count of every one-time reservation to check professor later
-							oneTimeReservation = true
-							toCheck++
-						}
-						// Step two: Get study (degree master) name
-						// Ignore html tags
-						inner = tokenizer.Next()
-						for inner != html.TextToken {
-							inner = tokenizer.Next()
-						}
-						// Get study name
-						text = (string)(tokenizer.Text())
-						study := strings.TrimSpace(text)
+							// Step thre: calculate end time
+							startTimeStr := hours[row/8]
+							hourMinutes := strings.Split(startTimeStr, ":")
+							hour, _ := strconv.Atoi(hourMinutes[0])
+							endTimeH := hour + (int)(rowspan/4) // end hour
+							endTimeM := 15 * (rowspan % 4)      // end minutes
+							endTimeStr := fmt.Sprintf("%d:%02d", endTimeH, endTimeM)
 
-						// Step three: Create and append reservation object
-						reservation := models.Reservation{
-							Subject:   subject,
-							Study:     study,
-							Classroom: classrooms[colum],
-							Time:      hours[row/8],
-							Professor: "",
-						}
-						reservations = append(reservations, &reservation)
+							// Step four: Create and append reservation object
+							reservation := models.Reservation{
+								Subject:   subject,
+								Study:     study,
+								Classroom: classrooms[colum],
+								StartTime: startTimeStr,
+								EndTime:   endTimeStr,
+								Professor: "",
+							}
+							reservations = append(reservations, &reservation)
 
-						if oneTimeReservation {
-							// Check if one-time reservation, to check professor later
-							oneTimeReservations = append(oneTimeReservations, reservations[len(reservations)-1])
-							oneTimeReservation = false
+							if oneTimeReservation {
+								// Check if one-time reservation, to check professor later
+								oneTimeReservations = append(oneTimeReservations, reservations[len(reservations)-1])
+								oneTimeReservation = false
+							}
 						}
 					}
 				}
