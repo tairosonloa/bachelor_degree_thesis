@@ -13,10 +13,8 @@ import (
 
 // configValues represents config values readed from JSON on initialization
 type configValues struct {
-	Rpi3APIAddress     string
-	Rpi3APIPort        int
-	Rpi3DatabaseFile   string
-	APIAuthorizedToken string
+	Rpi3APIAddress string
+	Rpi3APIPort    int
 }
 
 // App represents the core of the application (server and API)
@@ -60,7 +58,7 @@ func (a *App) Initialize() {
 	a.readCmd()
 	a.loadConfig()
 	log.Println("Initializating server")
-	a.handlers = api.Initialize(a.config.APIAuthorizedToken, a.config.Rpi3DatabaseFile)
+	a.handlers = api.Initialize()
 	a.server = &http.Server{Handler: a.handlers, Addr: fmt.Sprintf("%s:%d", a.config.Rpi3APIAddress, a.config.Rpi3APIPort)}
 }
 
