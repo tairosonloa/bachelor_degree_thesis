@@ -5,6 +5,7 @@ type Reservation struct {
 	Subject   string
 	Study     string
 	Classroom string
-	Time      string
+	StartTime string
+	EndTime   string
 	Professor string
 }
