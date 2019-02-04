@@ -1,0 +1,32 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.wrapper {
+    height: 100vh;
+}
+
+.header {
+    background-color: greenyellow;
+    height: 10%;
+}
+
+.article {
+    background-color: lightblue;
+    height: 80%;
+    width: 75%;
+    display: inline-block;
+}
+
+.aside {
+    background-color: yellow;
+    height: 80%;
+    width: 25%;
+    display: inline-block;
+}
+
+.footer {
+    background-color: orange;
+    height: 10%;
+}
