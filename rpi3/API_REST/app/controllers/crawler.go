@@ -77,6 +77,7 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 				row++
 				colum = -1
 			} else if token.Data == "td" { // colum
+				colum++
 				// Check rowspan attr to calculate endtime
 				rowspan := -1
 				for _, attr := range token.Attr {
@@ -88,7 +89,6 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 				if rowspan >= 0 { // If rowspan < 0 then there is not reservation for this hour
 					inner := tokenizer.Next()
 					if inner == html.TextToken {
-						colum++
 						// Inside table cell
 						// Step one: Get subject name
 						text = (string)(tokenizer.Text())
