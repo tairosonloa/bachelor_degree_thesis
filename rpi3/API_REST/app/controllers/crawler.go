@@ -94,6 +94,7 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 						text = (string)(tokenizer.Text())
 						subject := strings.TrimSpace(text)
 						if subject != "" { // Ignore empty cells
+							study := ""
 							if subject == "Reserva Puntual:" {
 								// We detected a one-time reservation
 
@@ -111,18 +112,19 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 								// Get count of every one-time reservation to check professor later
 								oneTimeReservation = true
 								toCheck++
-							}
-							// Step two: Get study (degree master) name
-							// Ignore html tags
-							inner = tokenizer.Next()
-							for inner != html.TextToken {
+							} else {
+								// Step two: Get study (degree master) name
+								// Ignore html tags
 								inner = tokenizer.Next()
+								for inner != html.TextToken {
+									inner = tokenizer.Next()
+								}
+								// Get study name
+								text = (string)(tokenizer.Text())
+								study = strings.TrimSpace(text)
 							}
-							// Get study name
-							text = (string)(tokenizer.Text())
-							study := strings.TrimSpace(text)
 
-							// Step thre: calculate end time
+							// Step three: calculate end time
 							startTimeStr := hours[row/8]
 							hourMinutes := strings.Split(startTimeStr, ":")
 							hour, _ := strconv.Atoi(hourMinutes[0])
