@@ -1,7 +1,7 @@
 {
-  "name": "gatsby-starter-hello-world",
+  "name": "repi3-gui",
   "private": true,
-  "description": "A simplified bare-bones starter for Gatsby",
+  "description": "LDI information on Rpi3 Display",
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
@@ -15,12 +15,5 @@
     "gatsby": "^2.0.112",
     "react": "^16.7.0",
     "react-dom": "^16.7.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-hello-world"
-  },
-  "bugs": {
-    "url": "https://github.com/gatsbyjs/gatsby/issues"
   }
 }
