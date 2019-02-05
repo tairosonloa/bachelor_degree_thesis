@@ -1,5 +1,7 @@
 import React from "react"
 
+import Clock from "../components/clock.js"
+
 export default () => (
   <div className="wrapper">
     <header className="header">
@@ -8,8 +10,7 @@ export default () => (
         Laboratorio de Departamento de Informática
       </div>
       <div className="datetime">
-        {/* <Clock/>
-        <Date/> */}
+        <Clock/>
       </div>
     </header>
     <article className="article">
