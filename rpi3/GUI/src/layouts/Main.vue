@@ -1,7 +1,12 @@
 <template>
   <div class="wrapper">
     <header class="header">
-      Laboratorio de Departamento de Informática
+        <div class="title">
+            <!-- TODO: add logo -->
+            Laboratorio de Departamento de Informática
+            <Clock />
+        </div>
+        
     </header>
     <article class="article">
         <slot />
@@ -14,3 +19,12 @@
     </footer>
   </div>
 </template>
+
+<script>
+import Clock from "~/components/Clock.vue"
+export default {
+    components: {
+        Clock
+    }
+}
+</script>
