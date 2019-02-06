@@ -1,13 +1,11 @@
 import React from "react"
 
-let counter;
-
 class Clock extends React.Component {
   constructor(props) {
     super(props);
-    this.state ={
-      "time" : this.getCurrentTime(),
-      "date": this.getCurrentDate()
+    this.state = {
+      time : this.getCurrentTime(),
+      date : this.getCurrentDate()
     }
   }
   getCurrentDate = () => {
@@ -21,14 +19,12 @@ class Clock extends React.Component {
     return time;
   }
   componentDidMount() {
-    counter = setInterval(() => {
-      this.setState({time:this.getCurrentTime()});
+    this.timer = setInterval(() => {
+      this.setState({time : this.getCurrentTime()});
     }, 10000);
   }
   componentWillUnmount() {
-    if (counter) {
-      clearInterval(counter);
-    }
+    clearInterval(this.timer);
   }
   render() {
     return (

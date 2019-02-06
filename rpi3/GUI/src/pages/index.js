@@ -1,6 +1,7 @@
 import React from "react"
 
 import Clock from "../components/clock.js"
+import Reservations from "../components/reservations.js"
 
 export default () => (
   <div className="wrapper">
@@ -17,7 +18,7 @@ export default () => (
 
     </article>
     <aside className="aside">
-    
+      {/* <Reservations/> */}
     </aside>
     <footer className="footer">
 
