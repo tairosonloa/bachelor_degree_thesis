@@ -211,7 +211,7 @@ function install_rpi3 {
 
     echo -e "\n\t##### Installing binary in /usr/local/bin/ and resources in /usr/local/share/..."
     cp install/rpi3/rpi3_api_arm /usr/local/bin/rpi3_api_arm # Rpi3 API binary
-    chmod 755 /usr/local/bin/rpi2_api_arm
+    chmod 755 /usr/local/bin/rpi3_api_arm
 
     echo -e "\t##### Preparing daemons and start on boot...\n"
     # Copy daemons and enable them

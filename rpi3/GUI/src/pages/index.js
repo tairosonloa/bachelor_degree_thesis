@@ -14,11 +14,11 @@ export default () => (
         <Clock/>
       </div>
     </header>
-    <article className="article">
+    <main className="main">
 
-    </article>
+    </main>
     <aside className="aside">
-      {/* <Reservations/> */}
+      <Reservations/>
     </aside>
     <footer className="footer">
 

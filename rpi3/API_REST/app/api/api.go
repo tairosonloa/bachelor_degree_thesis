@@ -45,6 +45,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 // If method is GET, it responds with a JSON containing all reservations info
 // else, it responds with a JSON containing an error message
 func reservations(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	// Check http method
 	if r.Method == http.MethodGet {
 		// Get all reservations
