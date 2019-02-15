@@ -29,7 +29,7 @@ class Reservations extends React.Component {
    * @param {int}               i index to set as react key of the div
    */
   getCard = (r, i) => {
-    return <div key={i}><div>Asignatura: {r["Subject"]}</div><div>{(r["Study"] === "" ? "" : r["Study"])}</div><div>Aula: {r["Classroom"]} de {r["StartTime"]} a {r["EndTime"]}</div><div>{(r["Professor"] === "" ? "" : r["Professor"])}</div><br/></div>
+    return <div key={i}><div>Asignatura: {r["Subject"]}</div><div>{r["Study"]}</div><div>Aula: {r["Classroom"]} de {r["StartTime"]} a {r["EndTime"]}</div><div>{r["Professor"]}</div><br/></div>
   }
 
   /**
