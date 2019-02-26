@@ -27,6 +27,7 @@
   display: inline-block;
   height: 80%;
   width: 75%;
+  vertical-align: top;
 }
 
 .aside {
@@ -34,10 +35,11 @@
   display: inline-block;
   height: 80%;
   width: 25%;
+  vertical-align: top;
 }
 
 .footer {
   background-color: orange;
   height: 10%;
-  margin-top: -0.5vh; /* TODO: Shouldn't be needed */
+  vertical-align: top;
 }
