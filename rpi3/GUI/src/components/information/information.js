@@ -4,7 +4,6 @@ import styles from "./information.module.css"
 class Information extends React.Component {
   constructor(props) {
     super(props);
-    this.message = "Prueba"
     this.state = {
       cpdStatus : []
     }
@@ -34,11 +33,15 @@ class Information extends React.Component {
   }
   
   render() {
+    let temp = "La temperatura en el CPD es de " + this.state.cpdStatus["temperature"] + " ºC"
+    let hum = "La humedad en el CPD está al " + this.state.cpdStatus["humidity"] + " %"
+    let sai = "El estado de la batería del SAI es " + this.state.cpdStatus["ups status (LDI rack)"] + "."
+    let message = " • " + temp + " • " + hum + " • " + sai + " • "
     return (
       <div className={styles.marquee}>
-        <p>La temperatura en el CPD es de {this.state.cpdStatus["temperature"]} ºC</p>
-        <p>La humedad en el CPD está al {this.state.cpdStatus["humidity"]} %</p>
-        <p>El estado de la batería del SAI es {this.state.cpdStatus["ups status (LDI rack)"]}.</p>
+        <p>{message}</p>
+        <p>{message}</p>
+        <p>{message}</p>
       </div>
     );
   }

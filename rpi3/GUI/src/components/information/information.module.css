@@ -6,7 +6,6 @@
 
 .marquee p {
   display: inline-block;
-  padding-left: 5%;
   animation: marquee 25s linear infinite;
 }
 
