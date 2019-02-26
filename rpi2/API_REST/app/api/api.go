@@ -60,6 +60,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 // If method is GET, it responds with a JSON containing CPD values and info
 // else, it responds with a JSON containing an error message
 func cpdStatus(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	// Only method GET is allowed
 	if r.Method != http.MethodGet {
 		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))

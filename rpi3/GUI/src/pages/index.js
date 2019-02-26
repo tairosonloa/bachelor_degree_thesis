@@ -2,6 +2,7 @@ import React from "react"
 
 import Clock from "../components/clock.js"
 import Reservations from "../components/reservations.js"
+import Information from "../components/information/information.js"
 
 export default () => (
   <div className="wrapper">
@@ -21,7 +22,7 @@ export default () => (
       <Reservations/>
     </aside>
     <footer className="footer">
-
+      <Information />
     </footer>
   </div>
 )
