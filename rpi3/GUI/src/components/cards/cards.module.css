@@ -8,7 +8,6 @@
 }
 
 .card div {
-  font-size: 1.3em;
   color: #ffffff;
 }
 
@@ -16,4 +15,8 @@
   padding: 2em 3em;
   text-align: center;
   font-size: 1.3em;
+}
+
+.classroom {
+  font-size: 2em;
 }

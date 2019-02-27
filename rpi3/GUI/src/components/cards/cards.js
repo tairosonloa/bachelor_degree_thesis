@@ -44,7 +44,12 @@ class Cards extends React.Component {
   getCard = (r, i) => {
     let time = r["EndTime"].split(":")
     if (this.currentHour < time[0] || (this.currentHour == time[0] && this.currentMinutes < time[1])) {
-      return <div key={i} className={styles.card}><div className={styles.subject}>Asignatura: {r["Subject"]}</div><div>{r["Study"]}</div><div>Aula: {r["Classroom"]} de {r["StartTime"]} a {r["EndTime"]}</div><div>{r["Professor"]}</div></div>
+      return <div key={i} className={styles.card}>
+        <div className={styles.subject}>{r["Subject"]}</div>
+        <div className={styles.study}>{r["Study"]}</div>
+        <div className={styles.classroom}>{r["Classroom"]} de {r["StartTime"]} a {r["EndTime"]}</div>
+        <div className={styles.professor}>{r["Professor"]}</div>
+      </div>;
     }
     return null
   }
