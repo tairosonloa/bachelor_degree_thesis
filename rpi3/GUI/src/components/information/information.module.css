@@ -1,0 +1,17 @@
+.marquee {
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.marquee pre {
+  display: inline-block;
+  font-size: 3em;
+  animation: marquee 30s linear infinite;
+  padding: 1vh 0;
+}
+
+@keyframes marquee {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}

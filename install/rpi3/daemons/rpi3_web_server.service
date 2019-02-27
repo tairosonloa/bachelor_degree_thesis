@@ -1,0 +1,15 @@
+[Unit]
+Description=Reservations info REST API
+After=network.target
+
+[Service]
+User=lab
+Group=lab
+Type=simple
+Restart=on-failure
+RestartSec=2
+WorkingDirectory=/usr/local/bin/
+ExecStart=/usr/local/bin/web_server_arm
+
+[Install]
+WantedBy=multi-user.target

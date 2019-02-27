@@ -1,0 +1,21 @@
+{
+  "name": "repi3-gui",
+  "private": true,
+  "description": "LDI information on Rpi3 Display",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "start": "npm run develop",
+    "serve": "gatsby serve",
+    "test": "echo \"Write tests! -> https://gatsby.app/unit-testing\""
+  },
+  "dependencies": {
+    "gatsby": "^2.0.112",
+    "gatsby-plugin-react-helmet": "^3.0.7",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "react-helmet": "^5.2.0"
+  }
+}
