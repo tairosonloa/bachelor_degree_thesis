@@ -11,8 +11,8 @@
 }
 
 .header {
-  background-color: #0645ad;
-  color: #ffffff;
+  background-color: #99ccff;
+  color: #000000;
   height: 10%;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .aside {
-  background-color: #1874cd;
+  background-color: #d9d9d9;
   display: inline-block;
   height: 80%;
   width: 30%;
@@ -50,8 +50,8 @@
 }
 
 .footer {
-  background-color: #0645ad;
-  color: #ffffff;
+  background-color: #99ccff;
+  color: #000000;
   height: 10%;
   vertical-align: top;
 }
