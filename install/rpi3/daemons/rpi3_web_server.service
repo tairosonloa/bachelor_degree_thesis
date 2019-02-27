@@ -9,7 +9,7 @@ Type=simple
 Restart=on-failure
 RestartSec=2
 WorkingDirectory=/usr/local/bin/
-ExecStart=/usr/local/bin/rpi3_api_arm -conf /etc/rpi3_conf.json
+ExecStart=/usr/local/bin/web_server_arm
 
 [Install]
 WantedBy=multi-user.target

@@ -207,7 +207,7 @@ function install_rpi3 {
     apt-get -y update && apt-get -y upgrade
     echo iptables-persistent iptables-persistent/autosave_v4 boolean false | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean false | debconf-set-selections
-    apt-get -y install iptables-persistent openbox chromium-browser
+    apt-get -y install iptables-persistent openbox chromium-browser lightdm
 
     echo -e "\n\t##### Installing binary in /usr/local/bin/ and web in /srv/rpi3/..."
     cp install/rpi3/rpi3_api_arm /usr/local/bin/rpi3_api_arm # Rpi3 API binary
