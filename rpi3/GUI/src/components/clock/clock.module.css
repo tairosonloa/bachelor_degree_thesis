@@ -1,0 +1,16 @@
+.clock {
+  padding: 1em;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.date {
+  display: inline-block;
+  font-size: 1.2em;
+}
+
+.time {
+  display: inline-block;
+  margin-left: 0.5em;
+  font-size: 1.7em;
+}

@@ -1,7 +1,7 @@
 import React from "react"
 
-import Clock from "../components/clock.js"
-import Reservations from "../components/reservations.js"
+import Clock from "../components/clock/clock.js"
+import Cards from "../components/cards/cards.js"
 import Information from "../components/information/information.js"
 
 export default () => (
@@ -9,7 +9,7 @@ export default () => (
     <header className="header">
       <div className="headerTitle">
         {/* TODO: add logo */}
-        Laboratorio de Departamento de Informática
+        <h1>Laboratorio de Departamento de Informática</h1>
       </div>
       <div className="datetime">
         <Clock/>
@@ -19,7 +19,7 @@ export default () => (
 
     </main>
     <aside className="aside">
-      <Reservations/>
+      <Cards/>
     </aside>
     <footer className="footer">
       <Information />

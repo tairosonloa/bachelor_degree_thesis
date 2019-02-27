@@ -1,6 +1,8 @@
 import React from "react"
+import styles from "./cards.module.css"
 
-class Reservations extends React.Component {
+
+class Cards extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -9,7 +11,7 @@ class Reservations extends React.Component {
     try { // Load config
       this.config = require("/etc/rpi3_conf.json")
     } catch {
-      this.config = require("../../../../config.json")
+      this.config = require("../../../../../config.json")
     }
   }
 
@@ -29,7 +31,7 @@ class Reservations extends React.Component {
    * @param {int}               i index to set as react key of the div
    */
   getCard = (r, i) => {
-    return <div key={i}><div>Asignatura: {r["Subject"]}</div><div>{r["Study"]}</div><div>Aula: {r["Classroom"]} de {r["StartTime"]} a {r["EndTime"]}</div><div>{r["Professor"]}</div><br/></div>
+    return <div key={i} className={styles.card}><div className={styles.subject}>Asignatura: {r["Subject"]}</div><div>{r["Study"]}</div><div>Aula: {r["Classroom"]} de {r["StartTime"]} a {r["EndTime"]}</div><div>{r["Professor"]}</div></div>
   }
 
   /**
@@ -41,6 +43,9 @@ class Reservations extends React.Component {
     for (let r of this.state.reservations) {
       cards.push(this.getCard(r, i))
       i++
+      if (i === 4) {
+        break;
+      }
     }
     return cards
   }
@@ -62,4 +67,4 @@ class Reservations extends React.Component {
   }
 }
 
-export default Reservations;
+export default Cards;

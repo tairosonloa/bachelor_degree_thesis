@@ -1,4 +1,5 @@
 import React from "react"
+import styles from "./clock.module.css"
 
 class Clock extends React.Component {
   constructor(props) {
@@ -12,7 +13,7 @@ class Clock extends React.Component {
    * Gets current date
    */
   getCurrentDate = () => {
-    return new Date().toLocaleDateString("es-ES", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return new Date().toLocaleDateString("es-ES", { weekday: 'long', month: 'long', day: 'numeric' });
   }
 
   /**
@@ -38,9 +39,9 @@ class Clock extends React.Component {
   
   render() {
     return (
-      <div>
-        <div>{this.state.time}</div>
-        <div>{this.state.date}</div>
+      <div className={styles.clock}>
+        <div className={styles.date}>{this.state.date},</div>
+        <div className={styles.time}>{this.state.time}</div>
       </div>
     );
   }

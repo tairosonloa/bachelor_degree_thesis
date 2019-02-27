@@ -1,0 +1,12 @@
+.card {
+  background-color: #0645ad;
+  margin: 3%;
+  padding: 3%;
+  border: 2px solid #ffffff;
+  border-radius: 15px;
+}
+
+.card div {
+  font-size: 1.3em;
+  color: #ffffff;
+}

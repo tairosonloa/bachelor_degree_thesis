@@ -4,9 +4,11 @@
   box-sizing: border-box;
 }
 
-.marquee p {
+.marquee pre {
   display: inline-block;
-  animation: marquee 25s linear infinite;
+  font-size: 1.5em;
+  animation: marquee 30s linear infinite;
+  padding: 3vh 0;
 }
 
 @keyframes marquee {
