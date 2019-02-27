@@ -9,7 +9,7 @@ export default () => (
     <header className="header">
       <div className="headerTitle">
         {/* TODO: add logo */}
-        <h1>Laboratorio de Departamento de Informática</h1>
+        <h1>Laboratorio del Departamento de Informática</h1>
       </div>
       <div className="datetime">
         <Clock/>

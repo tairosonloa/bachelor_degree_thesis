@@ -1,5 +1,6 @@
-.card {
+.card, .endCard {
   background-color: #0645ad;
+  color: #ffffff;
   margin: 3%;
   padding: 3%;
   border: 2px solid #ffffff;
@@ -9,4 +10,10 @@
 .card div {
   font-size: 1.3em;
   color: #ffffff;
+}
+
+.endCard {
+  padding: 2em 3em;
+  text-align: center;
+  font-size: 1.3em;
 }

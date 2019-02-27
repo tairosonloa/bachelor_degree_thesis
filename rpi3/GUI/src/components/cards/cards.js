@@ -8,6 +8,8 @@ class Cards extends React.Component {
     this.state = {
       reservations: []
     }
+    this.currentHour = 0
+    this.currentMinutes = 0
     try { // Load config
       this.config = require("/etc/rpi3_conf.json")
     } catch {
@@ -26,28 +28,46 @@ class Cards extends React.Component {
   }
 
   /**
+   * Updates the current time, used to display only future reservations
+   */
+  updateCurrentTime = () => {
+    let date = new Date();
+    this.currentHour = date.getHours();
+    this.currentMinutes = date.getMinutes();
+  }
+
+  /**
    * Returns the html <div> object of a reservation
    * @param {reservation dict}  r dictionary with all info of a reservation
    * @param {int}               i index to set as react key of the div
    */
   getCard = (r, i) => {
-    return <div key={i} className={styles.card}><div className={styles.subject}>Asignatura: {r["Subject"]}</div><div>{r["Study"]}</div><div>Aula: {r["Classroom"]} de {r["StartTime"]} a {r["EndTime"]}</div><div>{r["Professor"]}</div></div>
+    let time = r["EndTime"].split(":")
+    if (this.currentHour < time[0] || (this.currentHour == time[0] && this.currentMinutes < time[1])) {
+      return <div key={i} className={styles.card}><div className={styles.subject}>Asignatura: {r["Subject"]}</div><div>{r["Study"]}</div><div>Aula: {r["Classroom"]} de {r["StartTime"]} a {r["EndTime"]}</div><div>{r["Professor"]}</div></div>
+    }
+    return null
   }
 
   /**
    * Returns an array of html <div>, where every <div> is a reservation card
    */
   createCards = () => {
+    this.updateCurrentTime()
     let cards = []
-    let i = 0
-    for (let r of this.state.reservations) {
-      cards.push(this.getCard(r, i))
-      i++
-      if (i === 4) {
+    for (const [i, r] of this.state.reservations.entries()) {
+      let card = this.getCard(r, i)
+      if (card != null) {
+        cards.push(this.getCard(r, i))
+      }
+      if (cards.length === 4) {
         break;
       }
     }
-    return cards
+    if (cards.length !== 0) {
+      return cards
+    }
+    return <div className={styles.endCard}>No hay reservas para el día de hoy o ya han finalizado todas las reservas</div>
   }
 
   render() {
@@ -60,7 +80,7 @@ class Cards extends React.Component {
     this.getReservations()
     this.timer = setInterval(() => {
       this.getReservations()
-    }, 1800000);
+    }, 60000);
   }
   componentWillUnmount() {
     clearInterval(this.timer);
