@@ -145,7 +145,7 @@ function install_rpi2 {
     sed -i "s/#xserver-command=X/xserver-command=X -nocursor/g" /etc/lightdm/lightdm.conf # Disable mouse on screen
 
     echo -e "\t##### Preparing monitor auto on/off on working hours..."
-    cp install/rpi2/raspi-monitor /usr/local/sbin/raspi-monitor
+    cp install/raspi-monitor /usr/local/sbin/raspi-monitor
     chmod +x /usr/local/sbin/raspi-monitor
     # Set cron jobs
     (crontab -l 2>/dev/null; echo "# Enable the monitor every weekday morning at 8:10") | crontab -
@@ -203,15 +203,19 @@ function install_rpi3 {
     ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime
 
     echo -e "\t##### Installing dependences with apt-get...\n"
-    # Install openbox and chromium to display grafana dashboard, lightdm to autologin on GUI, omxplayer to play alarm sound
+    # Install openbox and chromium to display website, lightdm to autologin on GUI
     apt-get -y update && apt-get -y upgrade
     echo iptables-persistent iptables-persistent/autosave_v4 boolean false | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean false | debconf-set-selections
-    apt-get -y install iptables-persistent
+    apt-get -y install iptables-persistent openbox chromium-browser
 
-    echo -e "\n\t##### Installing binary in /usr/local/bin/ and resources in /usr/local/share/..."
+    echo -e "\n\t##### Installing binary in /usr/local/bin/ and web in /srv/rpi3/..."
     cp install/rpi3/rpi3_api_arm /usr/local/bin/rpi3_api_arm # Rpi3 API binary
     chmod 755 /usr/local/bin/rpi3_api_arm
+    cp install/rpi3/web_server_arm /usr/local/bin/web_server_arm # Custom web server
+    chmod 755 /usr/local/bin/web_server_arm
+    cp -r install/rpi3/web /srv/rpi3 # Website files
+    chown -R $INSTALL_USER:$INSTALL_USER /srv/rpi3
 
     echo -e "\t##### Preparing daemons and start on boot...\n"
     # Copy daemons and enable them
@@ -222,12 +226,29 @@ function install_rpi3 {
     done
     cd -
 
+    echo -e "\n\t##### Enabling auto-login and auto start chromium"
+    cp install/rpi3/autostart /etc/xdg/openbox/autostart
+    chmod +x /etc/xdg/openbox/autostart
+    raspi-config nonint do_boot_behaviour B4 # Auto login with GUI
+    sed -i "s/#xserver-command=X/xserver-command=X -nocursor/g" /etc/lightdm/lightdm.conf # Disable mouse on screen
+
+    echo -e "\t##### Preparing monitor auto on/off on working hours..."
+    cp install/raspi-monitor /usr/local/sbin/raspi-monitor
+    chmod +x /usr/local/sbin/raspi-monitor
+    # Set cron jobs
+    (crontab -l 2>/dev/null; echo "# Enable the monitor every weekday morning at 8:10") | crontab -
+    (crontab -l 2>/dev/null; echo "10 8 * * 1-5 /usr/local/sbin/raspi-monitor on > /dev/null 2>&1") | crontab -
+    (crontab -l 2>/dev/null; echo "# Disable the monitor every weekday evening at 21:10") | crontab -
+    (crontab -l 2>/dev/null; echo "10 21 * * 1-5 /usr/local/sbin/raspi-monitor off > /dev/null 2>&1") | crontab -
+
     echo -e "\t##### Generating /etc/rpi3_conf.json...\n"
     answ="n"
     while [ $answ != "y" ] && [ $answ != "Y" ]; do
-        read -p "Indicate rpi 3 IP address (XXX.XXX.XXX.XXX): " addr
-        read -p "Indicate rpi 3 API port (XXXX): " port
-        conf='{\n\t"Rpi3APIAddress" : "'$addr'",\n\t"Rpi3APIPort" : '$port'\n}'
+        read -p "Indicate rpi 2 IP address (XXX.XXX.XXX.XXX): " addr2
+        read -p "Indicate rpi 2 API port (XXXX): " port2
+        read -p "Indicate rpi 3 IP address (XXX.XXX.XXX.XXX): " addr3
+        read -p "Indicate rpi 3 API port (XXXX): " port3
+        conf='{\n\t"Rpi2APIAddress" : "'$addr2'",\n\t"Rpi2APIPort" : '$port2',\n\t"Rpi3APIAddress" : "'$addr3'",\n\t"Rpi3APIPort" : '$port3'\n}'
         echo "/etc/rpi3_conf.json generated:"
         echo -e $conf
         read -p "Is that correct? (Y/n): " answ
@@ -240,7 +261,9 @@ function install_rpi3 {
     echo -e "\n\t##### Setting and enabling iptables..."
     set_iptables
     # Allow API requests only on the university network
-    iptables -A INPUT -p tcp --dport $port -s 163.117.0.0/16 -j ACCEPT
+    iptables -A INPUT -p tcp --dport $port3 -s 163.117.0.0/16 -j ACCEPT
+    # Allow web request only on our subnet
+    iptables -A INPUT -p tcp --dport 9000 -s 163.117.142.0/24 -j ACCEPT
     # Save rules so they persist after reboot
     iptables-save > /etc/iptables/rules.v4
 }
