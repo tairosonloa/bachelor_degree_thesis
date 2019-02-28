@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"golang.org/x/net/html"
 	"io"
 	"log"
@@ -19,7 +18,6 @@ const (
 
 var ( // TODO: remove from global vars (?), Anyway, they are inmutable by nature
 	classrooms = [...]string{"4.0.F16", "4.0.F18", "2.2.C05", "2.2.C06"}
-	hours      = [...]string{"9:00", "11:00", "13:00", "15:00", "17:00", "19:00"}
 )
 
 // join concats strings
@@ -125,21 +123,21 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 							}
 
 							// Step three: calculate end time
-							startTimeStr := hours[row/8]
-							hourMinutes := strings.Split(startTimeStr, ":")
-							hour, _ := strconv.Atoi(hourMinutes[0])
-							endTimeH := hour + (int)(rowspan/4) // end hour
-							endTimeM := 15 * (rowspan % 4)      // end minutes
-							endTimeStr := fmt.Sprintf("%d:%02d", endTimeH, endTimeM)
+							startTimeH := 9 + (int)(row/4)            // start hour
+							startTimeM := 15 * (row%4 - 1)            // start minutes
+							endTimeH := startTimeH + (int)(rowspan/4) // end hour
+							endTimeM := 15 * (rowspan % 4)            // end minutes
 
 							// Step four: Create and append reservation object
 							reservation := models.Reservation{
-								Subject:   subject,
-								Study:     study,
-								Classroom: classrooms[colum],
-								StartTime: startTimeStr,
-								EndTime:   endTimeStr,
-								Professor: "",
+								Subject:     subject,
+								Study:       study,
+								Classroom:   classrooms[colum],
+								StartHour:   startTimeH,
+								StartMinute: startTimeM,
+								EndHour:     endTimeH,
+								EndMinute:   endTimeM,
+								Professor:   "",
 							}
 							reservations = append(reservations, &reservation)
 

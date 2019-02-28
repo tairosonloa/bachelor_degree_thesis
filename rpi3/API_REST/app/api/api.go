@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 
 	"rpi3/API_REST/app/controllers"
 	"rpi3/API_REST/app/models"
@@ -17,6 +19,7 @@ func Initialize() *http.ServeMux {
 
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("/reservations", reservations)
+	mux.HandleFunc("/classrooms", classrooms)
 
 	mux.HandleFunc("/favicon.ico", func(_ http.ResponseWriter, _ *http.Request) {})
 
@@ -69,6 +72,89 @@ func getReservations(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusOK)
 	respondWithJSON(w, http.StatusOK, reservations)
+}
+
+// classrooms is the API server handler for "/classrooms"
+// If method is GET, it responds with a JSON containing all classrooms status
+// else, it responds with a JSON containing an error message
+// Valid status are: 0 - free, 1 - occupied, 2 - reserved within next two hours
+func classrooms(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// Check http method
+	if r.Method == http.MethodGet {
+		// Get all reservations
+		getClassroomsStatus(w, r)
+	} else {
+		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
+		log.Printf("%s /classrooms from %s status %d\n", r.Method, r.RemoteAddr, http.StatusMethodNotAllowed)
+		return
+	}
+}
+
+// getClassroomsStatus responds with a JSON containing all classrooms status
+func getClassroomsStatus(w http.ResponseWriter, r *http.Request) {
+	// TODO: filter by url params
+	reservations := controllers.GetTodayReservations()
+	if reservations == nil {
+		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+		log.Println("Reservations slice is nil.")
+		return
+	}
+	classrooms := models.Classrooms{
+		F16: 0,
+		F18: 0,
+		C05: 0,
+		C06: 0,
+	}
+	t := time.Now()
+	ch := t.Hour()
+	cm := t.Minute()
+	for _, res := range reservations {
+		if (res.StartHour < ch || (res.StartHour == ch && res.StartMinute <= cm)) && (res.EndHour > ch || (res.EndHour == ch && res.EndMinute > cm)) {
+			switch strings.ToLower(res.Classroom) {
+			case "4.0.f16":
+				classrooms.F16 = 1
+			case "4.0.f18":
+				classrooms.F18 = 1
+			case "2.2.c05":
+				classrooms.C05 = 1
+			case "2.2.c06":
+				classrooms.C06 = 1
+			default:
+				respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+				log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+				log.Println("Classrooms switch reached default tag.")
+				return
+			}
+		} else if res.StartHour >= ch && res.StartHour <= ch+2 {
+			switch strings.ToLower(res.Classroom) {
+			case "4.0.f16":
+				if classrooms.F16 != 1 {
+					classrooms.F16 = 2
+				}
+			case "4.0.f18":
+				if classrooms.F18 != 1 {
+					classrooms.F18 = 2
+				}
+			case "2.2.c05":
+				if classrooms.C05 != 1 {
+					classrooms.C05 = 2
+				}
+			case "2.2.c06":
+				if classrooms.C06 != 1 {
+					classrooms.C06 = 2
+				}
+			default:
+				respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+				log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+				log.Println("Classrooms switch reached default tag.")
+				return
+			}
+		}
+	}
+	log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusOK)
+	respondWithJSON(w, http.StatusOK, classrooms)
 }
 
 // respondWithError responds to a request with a http code and a JSON containing an error message
