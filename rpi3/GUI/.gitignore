@@ -71,3 +71,6 @@ yarn-error.log
 # Lock files
 package-lock.json
 *.lock
+
+# Custom scripts
+build.sh

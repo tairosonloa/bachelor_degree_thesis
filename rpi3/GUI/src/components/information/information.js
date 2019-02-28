@@ -36,7 +36,7 @@ class Information extends React.Component {
     let temp = "La temperatura en el CPD es de " + this.state.cpdStatus["temperature"] + " ºC"
     let hum = "La humedad en el CPD está al " + this.state.cpdStatus["humidity"] + " %"
     let sai = "El estado de la batería del SAI es " + this.state.cpdStatus["ups status (LDI rack)"] + "."
-    let message = temp + "    •    " + hum + "    •    " + sai + "        •        "
+    let message = temp + "   •   " + hum + "   •   " + sai + "      •      "
     return (
       <div className={styles.marquee}>
         <pre>{message}</pre>

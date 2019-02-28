@@ -195,12 +195,15 @@ function install_rpi2 {
 }
 
 function install_rpi3 {
-    echo -e "\t##### Updating hostname, localtime and bashrc..."
+    echo -e "\t##### Updating hostname, localtime, locale and bashrc..."
     cp install/.bashrc /root/.bashrc
     echo "rpi3" > /etc/hostname
     hostname -F /etc/hostname
     sed -i "s/raspberrypi/rpi3/g" /etc/hosts
     ln -sf /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+    sed -i "s/# es_ES.UTF-8/es_ES.UTF-8/g" /etc/locale.gen
+    locale-gen
+    sed -i "s/en_GB.UTF-8/es_ES.UTF-8/g" /etc/default/locale
 
     echo -e "\t##### Installing dependences with apt-get...\n"
     # Install openbox and chromium to display website, lightdm to autologin on GUI
@@ -266,6 +269,15 @@ function install_rpi3 {
     iptables -A INPUT -p tcp --dport 9000 -s 163.117.142.0/24 -j ACCEPT
     # Save rules so they persist after reboot
     iptables-save > /etc/iptables/rules.v4
+
+    echo -e "\n\t##### Setting monitor resolution..."
+    sed -i "s/#disable_overscan=1/disable_overscan=1/g" /boot/config.txt
+    sed -i "s/#overscan_left=16/overscan_left=0/g" /boot/config.txt
+    sed -i "s/#overscan_right=16/overscan_right=0/g" /boot/config.txt
+    sed -i "s/#overscan_top=16/overscan_top=0/g" /boot/config.txt
+    sed -i "s/#overscan_bottom=16/overscan_bottom=0/g" /boot/config.txt
+    sed -i "s/#framebuffer_width=1280/framebuffer_width=1920/g" /boot/config.txt
+    sed -i "s/#framebuffer_height=720/framebuffer_height=1080/g" /boot/config.txt
 }
 
 echo -e "What rpi are you trying to install?\n"
