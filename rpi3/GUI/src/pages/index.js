@@ -22,10 +22,9 @@ export default () => (
       </div>
     </header>
     <main className="main">
-
+      <Cards/>
     </main>
     <aside className="aside">
-      <Cards/>
     </aside>
     <footer className="footer">
       <Information />

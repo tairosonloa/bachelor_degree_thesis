@@ -8,7 +8,7 @@
   display: inline-block;
   font-size: 3em;
   animation: marquee 30s linear infinite;
-  padding: 1vh 0;
+  padding: 1.25% 0;
 }
 
 @keyframes marquee {
