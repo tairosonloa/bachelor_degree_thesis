@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet"
 
 import Clock from "../components/clock/clock.js"
 import Cards from "../components/cards/cards.js"
+import Classrooms from "../components/classrooms/classrooms.js"
 import Information from "../components/information/information.js"
 
 export default () => (
@@ -25,6 +26,7 @@ export default () => (
       <Cards/>
     </main>
     <aside className="aside">
+      <Classrooms/>
     </aside>
     <footer className="footer">
       <Information />

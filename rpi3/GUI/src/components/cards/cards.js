@@ -42,12 +42,11 @@ class Cards extends React.Component {
    * @param {int}               i index to set as react key of the div
    */
   getCard = (r, i) => {
-    let time = r["EndTime"].split(":")
-    if (this.currentHour < time[0] || (this.currentHour == time[0] && this.currentMinutes < time[1])) {
+    if (this.currentHour < r["EndHour"] || (this.currentHour == r["EndHour"] && this.currentMinutes < r["EndMinute"])) {
       return <div key={i} className={styles.card}>
         <div className={styles.subject}>{r["Subject"]}</div>
         <div className={styles.study}>{r["Study"]}</div>
-        <div className={styles.classroom}>{r["Classroom"]} de {r["StartTime"]} a {r["EndTime"]}</div>
+        <div className={styles.classroom}>{r["Classroom"]} de {r["StartHour"] + ":" + r["StartMinute"]} a {r["EndHour"] + ":" + r["EndMinute"]}</div>
         <div className={styles.professor}>{r["Professor"]}</div>
       </div>;
     }
@@ -63,7 +62,7 @@ class Cards extends React.Component {
     for (const [i, r] of this.state.reservations.entries()) {
       let card = this.getCard(r, i)
       if (card != null) {
-        cards.push(this.getCard(r, i))
+        cards.push(card)
       }
       if (cards.length === 4) {
         break;

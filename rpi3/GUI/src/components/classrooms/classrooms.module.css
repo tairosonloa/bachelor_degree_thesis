@@ -1,0 +1,20 @@
+.free, .occupied, .reserved {
+  color: #000000;
+  border: 2px solid #000000;
+  width: 99%;
+  height: 24.4%;
+  text-align: center;
+  font-size: 4em;
+}
+
+.free {
+  background-color: greenyellow;
+}
+
+.occupied {
+  background-color: red
+}
+
+.reserved {
+  background-color: yellow
+}
