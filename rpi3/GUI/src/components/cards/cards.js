@@ -46,7 +46,9 @@ class Cards extends React.Component {
       return <div key={i} className={styles.card}>
         <div className={styles.subject}>{r["Subject"]}</div>
         <div className={styles.study}>{r["Study"]}</div>
-        <div className={styles.classroom}>{r["Classroom"]} de {r["StartHour"] + ":" + r["StartMinute"]} a {r["EndHour"] + ":" + r["EndMinute"]}</div>
+        <div className={styles.classroom}>{r["Classroom"]} de {r["StartHour"] + ":" + 
+          (r["StartMinute"] === 0 ? "00" : r["StartMinute"])} a {r["EndHour"] + ":" + 
+          (r["EndMinute"] === 0 ? "00" : r["EndMinute"])}</div>
         <div className={styles.professor}>{r["Professor"]}</div>
       </div>;
     }
