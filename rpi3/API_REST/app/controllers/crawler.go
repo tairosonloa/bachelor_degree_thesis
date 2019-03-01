@@ -93,6 +93,7 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 						subject := strings.TrimSpace(text)
 						if subject != "" { // Ignore empty cells
 							study := ""
+							group := -1
 							if subject == "Reserva Puntual:" {
 								// We detected a one-time reservation
 
@@ -122,7 +123,13 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 								study = strings.TrimSpace(text)
 							}
 
-							// Step three: calculate end time
+							// Steep three, separate subject from group
+							trimmed := strings.Split(subject, "(")
+							subject = trimmed[0]
+							group, _ = strconv.Atoi(
+								strings.TrimPrefix(strings.TrimSuffix(trimmed[1], ")"), "G"))
+
+							// Step four calculate end time
 							startTimeH := 9 + (int)(row/4)            // start hour
 							startTimeM := 15 * (row%4 - 1)            // start minutes
 							endTimeH := startTimeH + (int)(rowspan/4) // end hour
@@ -132,6 +139,7 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 							reservation := models.Reservation{
 								Subject:     subject,
 								Study:       study,
+								Group:       group,
 								Classroom:   classrooms[colum],
 								StartHour:   startTimeH,
 								StartMinute: startTimeM,

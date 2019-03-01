@@ -3,6 +3,7 @@ package models
 // Reservation represents a classroom reservation
 type Reservation struct {
 	Subject     string
+	Group       int
 	Study       string
 	Classroom   string
 	StartHour   int

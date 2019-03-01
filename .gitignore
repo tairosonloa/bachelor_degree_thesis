@@ -1,5 +1,6 @@
 # Config including secret tokens
 config.json
+config_local.json
 
 #### VSCode ####
 .vscode
