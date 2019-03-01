@@ -8,9 +8,12 @@
 * {
   margin: 0;
   padding: 0;
-  font-size: 16px;
   font-family: "-apple-system","BlinkMacSystemFont","Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue","sans-serif";
   font-weight: 600;
+}
+
+body {
+  overflow: hidden;
 }
 
 .wrapper {
@@ -26,17 +29,15 @@
 .headerTitle {
   display: inline-block;
   width: 70%;
-  vertical-align: middle;
 }
 
   .headerTitle h1 {
-    padding: 0.5em 1em;
-    font-size: 3em;
+    padding: 1vh 2vw;
+    font-size: 2.5vw;
   }
 
 .datetime {
   display: inline-block;
-  vertical-align: middle;
   width: 30%;
 }
 

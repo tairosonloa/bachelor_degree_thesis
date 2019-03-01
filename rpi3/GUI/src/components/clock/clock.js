@@ -13,7 +13,7 @@ class Clock extends React.Component {
    * Gets current date
    */
   getCurrentDate = () => {
-    return new Date().toLocaleDateString("es-ES", { weekday: 'long', month: 'long', day: 'numeric' });
+    return new Date().toLocaleDateString("es-ES", { weekday: 'short', month: 'short', day: 'numeric' });
   }
 
   /**
@@ -40,7 +40,7 @@ class Clock extends React.Component {
   render() {
     return (
       <div className={styles.clock}>
-        <div className={styles.date}>{this.state.date},</div>
+        <div className={styles.date}>{this.state.date}</div>
         <div className={styles.time}>{this.state.time}</div>
       </div>
     );

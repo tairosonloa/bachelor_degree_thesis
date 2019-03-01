@@ -6,9 +6,9 @@
 
 .marquee pre {
   display: inline-block;
-  font-size: 3em;
-  animation: marquee 30s linear infinite;
-  padding: 1.25% 0;
+  font-size: 3vw;
+  animation: marquee 45s linear infinite;
+  padding: 1vh 0;
 }
 
 @keyframes marquee {
