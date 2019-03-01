@@ -1,3 +1,10 @@
+:root {
+  --primary-color: #22313f;
+  --secondary-color: #34495e;
+  --primary-text-color: #ffffff;
+  --secondary-text-color: #262626;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -11,9 +18,9 @@
 }
 
 .header {
-  background-color: #99ccff;
-  color: #000000;
-  height: 10%;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+  height: 10vh;
 }
 
 .headerTitle {
@@ -25,18 +32,18 @@
   .headerTitle h1 {
     padding: 0.5em 1em;
     font-size: 3em;
-    margin-bottom: 1em
   }
 
 .datetime {
   display: inline-block;
+  vertical-align: middle;
   width: 30%;
 }
 
 .main {
-  background-color: #ffffff;
+  background-color: var(--secondary-color);
   display: inline-block;
-  height: 80%;
+  height: 80vh;
   width: 70%;
   vertical-align: top;
   overflow: hidden;
@@ -44,15 +51,15 @@
 
 .aside {
   display: inline-block;
-  height: 80%;
+  height: 80vh;
   width: 30%;
   vertical-align: top;
   overflow: hidden;
 }
 
 .footer {
-  background-color: #99ccff;
-  color: #000000;
-  height: 10%;
+  background-color: var(--primary-color);
+  color: var(--primary-text-color);
+  height: 10vh;
   vertical-align: top;
 }

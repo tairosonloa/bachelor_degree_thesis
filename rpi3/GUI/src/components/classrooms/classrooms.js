@@ -33,8 +33,6 @@ class Classrooms extends React.Component {
     let divs = []
     let key = 0
     for (let c in this.state.classrooms) {
-      console.log(c)
-      console.log(this.state.classrooms[c])
       if (this.state.classrooms[c] === 0 ) {
         divs.push(<div key={key} className={styles.free}>{c}</div>)
       } else if (this.state.classrooms[c] === 1 ) {

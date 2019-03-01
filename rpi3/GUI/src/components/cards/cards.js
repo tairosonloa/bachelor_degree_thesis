@@ -42,7 +42,7 @@ class Cards extends React.Component {
    * @param {int}               i index to set as react key of the div
    */
   getCard = (r, i) => {
-    if (this.currentHour < r["EndHour"] || (this.currentHour == r["EndHour"] && this.currentMinutes < r["EndMinute"])) {
+    if (this.currentHour < r["EndHour"] || (this.currentHour === r["EndHour"] && this.currentMinutes < r["EndMinute"])) {
       return <div key={i} className={styles.card}>
         <div className={styles.subject}>{r["Subject"]}</div>
         <div className={styles.study}>{r["Study"]}</div>

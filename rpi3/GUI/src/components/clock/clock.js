@@ -21,7 +21,7 @@ class Clock extends React.Component {
    */
   getCurrentTime = () => {
     let time = new Date().toLocaleTimeString("es-ES", {hour: "2-digit", minute:"2-digit"});
-    if (time === "00:00") {
+    if (time === "0:00") {
       this.setState({date : this.getCurrentDate()})
     }
     return time;
