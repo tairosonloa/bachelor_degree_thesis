@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
-	"time"
 
 	"rpi3/API_REST/app/controllers"
 	"rpi3/API_REST/app/models"
@@ -101,57 +99,12 @@ func getClassroomsStatus(w http.ResponseWriter, r *http.Request) {
 		log.Println("Reservations slice is nil.")
 		return
 	}
-	classrooms := models.Classrooms{
-		F16: 0,
-		F18: 0,
-		C05: 0,
-		C06: 0,
-	}
-	t := time.Now()
-	ch := t.Hour()
-	cm := t.Minute()
-	for _, res := range reservations {
-		if (res.StartHour < ch || (res.StartHour == ch && res.StartMinute <= cm)) && (res.EndHour > ch || (res.EndHour == ch && res.EndMinute > cm)) {
-			switch strings.ToLower(res.Classroom) {
-			case "4.0.f16":
-				classrooms.F16 = 1
-			case "4.0.f18":
-				classrooms.F18 = 1
-			case "2.2.c05":
-				classrooms.C05 = 1
-			case "2.2.c06":
-				classrooms.C06 = 1
-			default:
-				respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
-				log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
-				log.Println("Classrooms switch reached default tag.")
-				return
-			}
-		} else if res.StartHour >= ch && res.StartHour <= ch+2 {
-			switch strings.ToLower(res.Classroom) {
-			case "4.0.f16":
-				if classrooms.F16 != 1 {
-					classrooms.F16 = 2
-				}
-			case "4.0.f18":
-				if classrooms.F18 != 1 {
-					classrooms.F18 = 2
-				}
-			case "2.2.c05":
-				if classrooms.C05 != 1 {
-					classrooms.C05 = 2
-				}
-			case "2.2.c06":
-				if classrooms.C06 != 1 {
-					classrooms.C06 = 2
-				}
-			default:
-				respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
-				log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
-				log.Println("Classrooms switch reached default tag.")
-				return
-			}
-		}
+	classrooms := controllers.GetClassroomsStatus(reservations)
+	if classrooms == nil {
+		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+		log.Println("Classrooms switch reached default tag.")
+		return
 	}
 	log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusOK)
 	respondWithJSON(w, http.StatusOK, classrooms)
