@@ -37,8 +37,10 @@ class Classrooms extends React.Component {
         divs.push(<div key={key} className={styles.free}>{c}</div>)
       } else if (this.state.classrooms[c] === 1 ) {
         divs.push(<div key={key} className={styles.occupied}>{c}</div>)
-      } else {
+      } else if (this.state.classrooms[c] === 2 ) {
         divs.push(<div key={key} className={styles.reserved}>{c}</div>)
+      } else {
+        divs.push(<div key={key} className={styles.futureOccupied}>{c}</div>)
       }
       key++
     }
