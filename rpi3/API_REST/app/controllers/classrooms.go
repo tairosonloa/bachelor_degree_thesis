@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"math"
 	"strings"
 	"time"
 
@@ -39,11 +38,11 @@ func GetClassroomsStatus(reservations []*models.Reservation) *models.Classrooms 
 				return nil
 			}
 			// Check for classrooms that will be occupied in the next 30 minutes
-		} else if (res.StartHour == ch && res.StartMinute <= cm+30) || (res.StartHour == ch+1 && math.Abs((float64)(res.StartHour-cm)) <= 30) {
+		} else if (res.StartHour == ch && res.StartMinute <= cm+30) || (res.StartHour == ch+1 && 60-cm+res.StartMinute <= 30) {
 			switch strings.ToLower(res.Classroom) {
 			case "4.0.f16":
 				if classrooms.F16 != 1 {
-					if math.Abs((float64)(res.StartHour-cm)) <= 10 { // Check if classroom will be occupied in the next 10 minutes
+					if 60-cm+res.StartMinute <= 10 { // Check if classroom will be occupied in the next 10 minutes
 						classrooms.F16 = 3
 					} else {
 						classrooms.F16 = 2
@@ -51,7 +50,7 @@ func GetClassroomsStatus(reservations []*models.Reservation) *models.Classrooms 
 				}
 			case "4.0.f18":
 				if classrooms.F18 != 1 {
-					if math.Abs((float64)(res.StartHour-cm)) <= 10 {
+					if 60-cm+res.StartMinute <= 10 {
 						classrooms.F18 = 3
 					} else {
 						classrooms.F18 = 2
@@ -59,7 +58,7 @@ func GetClassroomsStatus(reservations []*models.Reservation) *models.Classrooms 
 				}
 			case "2.2.c05":
 				if classrooms.C05 != 1 {
-					if math.Abs((float64)(res.StartHour-cm)) <= 10 {
+					if 60-cm+res.StartMinute <= 10 {
 						classrooms.C05 = 3
 					} else {
 						classrooms.C05 = 2
@@ -67,7 +66,7 @@ func GetClassroomsStatus(reservations []*models.Reservation) *models.Classrooms 
 				}
 			case "2.2.c06":
 				if classrooms.C06 != 1 {
-					if math.Abs((float64)(res.StartHour-cm)) <= 10 {
+					if 60-cm+res.StartMinute <= 10 {
 						classrooms.C06 = 3
 					} else {
 						classrooms.C06 = 2
