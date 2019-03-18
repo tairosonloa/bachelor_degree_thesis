@@ -1,6 +1,10 @@
 @import "../../styles/global.css" root;
 
-.free, .occupied, .reserved {
+@keyframes blink {
+  to { background-color: #ff0040; }
+}
+
+.free, .occupied, .reserved, .futureOccupied {
   color: var(--secondary-text-color);
   border-bottom: 2px solid var(--secondary-color);
   border-top: none;
@@ -21,4 +25,9 @@
 
 .reserved {
   background-color: #ffff2c;
+}
+
+.futureOccupied {
+  background-color: #ffff2c;
+  animation: blink 1s steps(2, start) infinite
 }
