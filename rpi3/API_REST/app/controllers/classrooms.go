@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"bufio"
+	"bytes"
 	"strings"
 	"time"
 
@@ -78,4 +80,48 @@ func GetClassroomsStatus(reservations []*models.Reservation) *models.Classrooms 
 		}
 	}
 	return &classrooms
+}
+
+// GetClassroomsOccupation returns a struct with classrooms occupations statistics
+func GetClassroomsOccupation(server, command string) *models.Occupation {
+	classrooms := [...]string{"f16", "f18", "c05", "c06"}
+	occupation := models.Occupation{}
+	for _, c := range classrooms {
+		// Ask control server for classroom occupation
+		output := AskOccupation(server, command+" "+c)
+		if output != nil {
+			scanner := bufio.NewScanner(bytes.NewReader(*output))
+			stats := models.OccupationStats{}
+			for scanner.Scan() {
+				// Check stats
+				if strings.Contains(strings.ToLower(scanner.Text()), "(apagado)") {
+					stats.Shutdown++
+				} else if strings.Contains(strings.ToLower(scanner.Text()), "(debian)") {
+					stats.Linux++
+				} else if strings.Contains(strings.ToLower(scanner.Text()), "(windows)") {
+					stats.Windows++
+				} else if strings.Contains(strings.ToLower(scanner.Text()), "timeout") {
+					stats.TimeOut++
+				} else if strings.Contains(strings.ToLower(scanner.Text()), "pid comentario") {
+					stats.StudentsLinux++
+				} else if strings.Contains(strings.ToLower(scanner.Text()), "id. estado") {
+					stats.StudentsWindows++
+				}
+			}
+			// Check classroom
+			switch strings.ToLower(c) {
+			case "f16":
+				occupation.F16 = stats
+			case "f18":
+				occupation.F18 = stats
+			case "c05":
+				occupation.C05 = stats
+			case "c06":
+				occupation.C06 = stats
+			}
+		} else {
+			return nil
+		}
+	}
+	return &occupation
 }

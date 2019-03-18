@@ -251,7 +251,8 @@ function install_rpi3 {
         read -p "Indicate rpi 2 API port (XXXX): " port2
         read -p "Indicate rpi 3 IP address (XXX.XXX.XXX.XXX): " addr3
         read -p "Indicate rpi 3 API port (XXXX): " port3
-        conf='{\n\t"Rpi2APIAddress" : "'$addr2'",\n\t"Rpi2APIPort" : '$port2',\n\t"Rpi3APIAddress" : "'$addr3'",\n\t"Rpi3APIPort" : '$port3'\n}'
+        read -p "Indicate classrooms control server domain name (host.domain.name): " server
+        conf='{\n\t"Rpi2APIAddress" : "'$addr2'",\n\t"Rpi2APIPort" : '$port2',\n\t"Rpi3APIAddress" : "'$addr3'",\n\t"Rpi3APIPort" : '$port3',\n\t"ControlServer" : "'$server'",\n\t"OccupationCmd" : "comprobar_ocupacion.py --au"\n}'
         echo "/etc/rpi3_conf.json generated:"
         echo -e $conf
         read -p "Is that correct? (Y/n): " answ
@@ -290,17 +291,21 @@ case "$opt" in
 "1")
     # Install rpi1
     install_rpi1
+    echo "Done. If you see this message, everything should work after reboot."
+    echo "Rebooting now..."
+    reboot
     ;;
 "2")
     # Install rpi2
     install_rpi2
+    echo "Done. If you see this message, everything should work after reboot."
+    echo "Rebooting now..."
+    reboot
     ;;
 "3")
     # Install rpi2
     install_rpi3
+    echo "Done. If you see this message, everything should work after reboot."
+    echo "Please. Generate an ssh key to rpi3 and copy pub key into <classrooms control server>/.ssh/authorized_keys"
     ;;
 esac
-
-echo "Done. If you see this message, everything should work after reboot."
-echo "Rebooting now..."
-reboot

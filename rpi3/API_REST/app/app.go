@@ -15,6 +15,8 @@ import (
 type configValues struct {
 	Rpi3APIAddress string
 	Rpi3APIPort    int
+	ControlServer  string
+	OccupationCmd  string
 }
 
 // App represents the core of the application (server and API)
@@ -58,7 +60,7 @@ func (a *App) Initialize() {
 	a.readCmd()
 	a.loadConfig()
 	log.Println("Initializating server")
-	a.handlers = api.Initialize()
+	a.handlers = api.Initialize(a.config.ControlServer, a.config.OccupationCmd)
 	a.server = &http.Server{Handler: a.handlers, Addr: fmt.Sprintf("%s:%d", a.config.Rpi3APIAddress, a.config.Rpi3APIPort)}
 }
 

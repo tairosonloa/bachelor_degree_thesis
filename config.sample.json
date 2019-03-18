@@ -6,5 +6,7 @@
 	"Rpi2APIAuthorizedToken" : "Bearer top_secret_string",
 	"HueBridgeAddress" :       "192.168.1.123",
 	"HueBridgeToken" :         "top_secret_string",
-	"AlarmSoundPath" :         "/path/to/file/mp3"
+	"AlarmSoundPath" :         "/path/to/file/mp3",
+	"ControlServer" :          "domain.name:port",
+	"OccupationCmd" :          "comprobar_ocupacion.py --au"
 }

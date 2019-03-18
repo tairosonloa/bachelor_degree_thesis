@@ -16,10 +16,6 @@ const (
 	tableSize           = 48
 )
 
-var ( // TODO: remove from global vars (?), Anyway, they are inmutable by nature
-	classrooms = [...]string{"4.0.F16", "4.0.F18", "2.2.C05", "2.2.C06"}
-)
-
 // join concats strings
 func join(strs ...string) string {
 	var sb strings.Builder
@@ -60,6 +56,7 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 	reservations := []*models.Reservation{}
 	oneTimeReservations := []*models.Reservation{}
 	oneTimeReservation := false
+	classrooms := [...]string{"4.0.F16", "4.0.F18", "2.2.C05", "2.2.C06"}
 
 	var text string
 	var colum int

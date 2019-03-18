@@ -9,8 +9,13 @@ import (
 	"rpi3/API_REST/app/models"
 )
 
+var (
+	controlServer string
+	occupationCmd string
+)
+
 // Initialize initializes the API server handlers and inner state
-func Initialize() *http.ServeMux {
+func Initialize(server, cmd string) *http.ServeMux {
 
 	// Handlers
 	mux := http.NewServeMux()
@@ -18,8 +23,13 @@ func Initialize() *http.ServeMux {
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("/reservations", reservations)
 	mux.HandleFunc("/classrooms", classrooms)
+	mux.HandleFunc("/occupation", occupation)
 
 	mux.HandleFunc("/favicon.ico", func(_ http.ResponseWriter, _ *http.Request) {})
+
+	// Inner state
+	controlServer = server
+	occupationCmd = cmd
 
 	return mux
 }
@@ -49,7 +59,6 @@ func reservations(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	// Check http method
 	if r.Method == http.MethodGet {
-		// Get all reservations
 		getReservations(w, r)
 	} else {
 		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
@@ -80,7 +89,6 @@ func classrooms(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	// Check http method
 	if r.Method == http.MethodGet {
-		// Get all reservations
 		getClassroomsStatus(w, r)
 	} else {
 		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
@@ -95,19 +103,47 @@ func getClassroomsStatus(w http.ResponseWriter, r *http.Request) {
 	reservations := controllers.GetTodayReservations()
 	if reservations == nil {
 		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
-		log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+		log.Printf("%s /classrooms %s status %d: ", r.Method, r.RemoteAddr, http.StatusInternalServerError)
 		log.Println("Reservations slice is nil.")
 		return
 	}
 	classrooms := controllers.GetClassroomsStatus(reservations)
 	if classrooms == nil {
 		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
-		log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+		log.Printf("%s /classrooms %s status %d: ", r.Method, r.RemoteAddr, http.StatusInternalServerError)
 		log.Println("Classrooms switch reached default tag.")
 		return
 	}
 	log.Printf("%s /classrooms %s status %d\n", r.Method, r.RemoteAddr, http.StatusOK)
 	respondWithJSON(w, http.StatusOK, classrooms)
+}
+
+// occupation is the API server handler for "/occupation"
+// If method is GET, it responds with a JSON containing all classrooms occupation
+// else, it responds with a JSON containing an error message
+func occupation(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	// Check http method
+	if r.Method == http.MethodGet {
+		getClassroomsOccupation(w, r)
+	} else {
+		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
+		log.Printf("%s /occupation from %s status %d\n", r.Method, r.RemoteAddr, http.StatusMethodNotAllowed)
+		return
+	}
+}
+
+func getClassroomsOccupation(w http.ResponseWriter, r *http.Request) {
+	// TODO: filter by url params
+	occupations := controllers.GetClassroomsOccupation(controlServer, occupationCmd)
+	if occupations == nil {
+		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
+		log.Printf("%s /occupation %s status %d: ", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+		log.Println("Command execution via ssh failed.")
+		return
+	}
+	log.Printf("%s /occupation %s status %d\n", r.Method, r.RemoteAddr, http.StatusOK)
+	respondWithJSON(w, http.StatusOK, occupations)
 }
 
 // respondWithError responds to a request with a http code and a JSON containing an error message
