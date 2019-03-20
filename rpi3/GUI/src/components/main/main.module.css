@@ -30,3 +30,40 @@
   margin: 5% auto;
   padding: 0.1em;
 }
+
+.title {
+  color: var(--primary-text-color);
+  font-size: 2.12vw;
+  margin: 1.5%;
+}
+
+.shutdown, .linux, .windows, .linuxUser, .windowsUser, .timeout {
+  width: 18%;
+  height: 15%;
+  margin: 0.9%;
+  display: inline-block;
+}
+
+.shutdown {
+  background-color: red;
+}
+
+.linux {
+  background-color: green;
+}
+
+.windows {
+  background-color: blue;
+}
+
+.linuxUser {
+  background-color: yellow;
+}
+
+.windowsUser {
+  background-color: aqua;
+}
+
+.timeout {
+  background-color: blueviolet;
+}

@@ -86,26 +86,41 @@ func GetClassroomsStatus(reservations []*models.Reservation) *models.Classrooms 
 func GetClassroomsOccupation(server, command string) *models.Occupation {
 	classrooms := [...]string{"f16", "f18", "c05", "c06"}
 	occupation := models.Occupation{}
-	for _, c := range classrooms {
+	for i, c := range classrooms {
 		// Ask control server for classroom occupation
 		output := AskOccupation(server, command+" "+c)
 		if output != nil {
 			scanner := bufio.NewScanner(bytes.NewReader(*output))
 			stats := models.OccupationStats{}
+			if i < 2 {
+				stats.Computers = make([]int, 20)
+			} else {
+				stats.Computers = make([]int, 21)
+			}
+			j := 0
 			for scanner.Scan() {
 				// Check stats
 				if strings.Contains(strings.ToLower(scanner.Text()), "(apagado)") {
+					stats.Computers[j] = 0
 					stats.Shutdown++
+					j++
 				} else if strings.Contains(strings.ToLower(scanner.Text()), "(debian)") {
+					stats.Computers[j] = 1
 					stats.Linux++
+					j++
 				} else if strings.Contains(strings.ToLower(scanner.Text()), "(windows)") {
+					stats.Computers[j] = 2
 					stats.Windows++
-				} else if strings.Contains(strings.ToLower(scanner.Text()), "timeout") {
-					stats.TimeOut++
+					j++
 				} else if strings.Contains(strings.ToLower(scanner.Text()), "pid comentario") {
+					stats.Computers[j-1] = 3
 					stats.StudentsLinux++
 				} else if strings.Contains(strings.ToLower(scanner.Text()), "id. estado") {
+					stats.Computers[j-1] = 4
 					stats.StudentsWindows++
+				} else if strings.Contains(strings.ToLower(scanner.Text()), "timeout") {
+					stats.Computers[j-1] = 5
+					stats.TimeOut++
 				}
 			}
 			// Check classroom

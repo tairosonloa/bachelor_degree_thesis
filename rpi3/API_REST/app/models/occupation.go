@@ -8,6 +8,7 @@ type OccupationStats struct {
 	TimeOut         int
 	StudentsLinux   int
 	StudentsWindows int
+	Computers       []int
 }
 
 // Occupation represents classrooms occupation
