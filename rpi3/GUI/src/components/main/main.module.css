@@ -3,22 +3,30 @@
 .card, .endCard {
   background-color: var(--primary-color);
   color: var(--primary-text-color);
-  margin: 1.5%;
-  padding: 1.5%;
   /* border: 2px solid var(--primary-text-color); */
+}
+
+.card {
   border-radius: 15px;
   display: inline-block;
   width: 43%;
   height: 40%;
   vertical-align: top;
+  margin: 1.5%;
+  padding: 1.5%;
 }
 
 .card div {
   color: var(--primary-text-color);
   font-size: 2.12vw;
+  margin: 5px;
 }
 
 .endCard {
   text-align: center;
-  font-size: 2.1vw;
+  font-size: 6vw;
+  width: 80%;
+  height: 80%;
+  margin: 5% auto;
+  padding: 0.1em;
 }

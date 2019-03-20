@@ -1,7 +1,7 @@
 import React from "react"
-import styles from "./information.module.css"
+import styles from "./footer.module.css"
 
-class Information extends React.Component {
+class Footer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -47,4 +47,4 @@ class Information extends React.Component {
   }
 }
 
-export default Information;
+export default Footer;

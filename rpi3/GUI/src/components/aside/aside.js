@@ -1,8 +1,8 @@
 import React from "react"
-import styles from "./classrooms.module.css"
+import styles from "./aside.module.css"
 
 
-class Classrooms extends React.Component {
+class Aside extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -64,4 +64,4 @@ class Classrooms extends React.Component {
   }
 }
 
-export default Classrooms;
+export default Aside;

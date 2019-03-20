@@ -2,9 +2,9 @@ import React from "react"
 import { Helmet } from "react-helmet"
 
 import Clock from "../components/clock/clock.js"
-import Cards from "../components/cards/cards.js"
-import Classrooms from "../components/classrooms/classrooms.js"
-import Information from "../components/information/information.js"
+import Main from "../components/main/main.js"
+import Aside from "../components/aside/aside.js"
+import Footer from "../components/footer/footer.js"
 
 export default () => (
   <div className="wrapper">
@@ -23,13 +23,13 @@ export default () => (
       </div>
     </header>
     <main className="main">
-      <Cards/>
+      <Main/>
     </main>
     <aside className="aside">
-      <Classrooms/>
+      <Aside/>
     </aside>
     <footer className="footer">
-      <Information />
+      <Footer/>
     </footer>
   </div>
 )
