@@ -38,32 +38,62 @@
 }
 
 .shutdown, .linux, .windows, .linuxUser, .windowsUser, .timeout {
-  width: 18%;
-  height: 15%;
+  width: 17%;
+  height: 14%;
   margin: 0.9%;
   display: inline-block;
+  font-weight: 900;
+  text-align: right;
+  font-size: 2.12vw;
+  padding: 5px;
 }
 
 .shutdown {
-  background-color: red;
+  background-color: #ff0040;
+  background-image: url("./shutdown.png");
+  background-size: 10vh;
+  background-repeat: no-repeat;
+  background-position: left center;
 }
 
 .linux {
-  background-color: green;
+  background-color: #2cff2c;
+  background-image: url("./tux.png");
+  background-size: 10vh;
+  background-repeat: no-repeat;
+  background-position: left center;
 }
 
 .windows {
-  background-color: blue;
+  background-color: #007bd7;
+  color: var(--primary-text-color);
+  background-image: url("./windows.png");
+  background-size: 10vh;
+  background-repeat: no-repeat;
+  background-position: left center;
 }
 
 .linuxUser {
-  background-color: yellow;
+  background-color: #2cff2c;
+  background-image: url("./tux.png"), url("./user.png");
+  background-size: 10vh, 7vh;
+  background-repeat: no-repeat;
+  background-position: left center, right bottom;
 }
 
 .windowsUser {
-  background-color: aqua;
+  background-color: #007bd7;
+  color: var(--primary-text-color);
+  background-image: url("./windows.png"), url("./user.png");
+  background-size: 10vh, 7vh;
+  background-repeat: no-repeat;
+  background-position: left center, right bottom;
 }
 
 .timeout {
   background-color: blueviolet;
+  background-image: url("./timeout.png");
+  background-size: 10vh;
+  background-repeat: no-repeat;
+  background-position: left center;
 }
