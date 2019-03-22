@@ -2,8 +2,8 @@ import React from "react"
 import { Helmet } from "react-helmet"
 
 import Clock from "../components/clock/clock.js"
+import Main from "../components/main/main.js"
 import Footer from "../components/footer/footer.js"
-import Classrooms from "../components/classrooms/classrooms.js";
 
 export default () => (
   <div className="wrapper">
@@ -21,7 +21,7 @@ export default () => (
         <Clock/>
       </div>
     </header>
-    <Classrooms/>
+    <Main/>
     <footer className="footer">
       <Footer/>
     </footer>

@@ -1,8 +1,8 @@
 import React from "react"
-import styles from "./classrooms.module.css"
+import styles from "./main.module.css"
 
 
-class Classrooms extends React.Component {
+class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,6 +23,8 @@ class Classrooms extends React.Component {
     }
   }
 
+  /********** RPI3 API FUNCTIONS **********/
+
   /**
    * Makes HTTP GET request to rpi3 API to get JSON including today reservations
    */
@@ -34,7 +36,7 @@ class Classrooms extends React.Component {
   }
 
   /**
-   * Makes HTTP GET request to rpi3 API to get JSON classrooms status
+   * Makes HTTP GET request to rpi3 API to get JSON including classrooms status
    */
   getClassrooms = () => {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/classrooms")
@@ -42,6 +44,27 @@ class Classrooms extends React.Component {
       .then(json => this.setState({classrooms: json}))
       .catch(error => console.log('Request failed', error))
   }
+
+  /**
+   * Makes HTTP GET request to rpi3 API to get JSON including occupation statistics
+   */
+  getOccupation = () => {
+    fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/occupation")
+      .then(response => response.json())
+      .then(json => {
+        var classrooms = ["caca"]
+        console.log(classrooms)
+        classrooms[0] = json["F16"].Computers
+        classrooms[1] = json["F18"].Computers
+        classrooms[2] = json["C05"].Computers
+        classrooms[3] = json["C06"].Computers
+        console.log(classrooms)
+        this.setState({occupation: classrooms})
+      })
+      .catch(error => console.log('Request failed', error))
+  }
+
+  /********** AUXILIARY FUNCTIONS **********/
 
   /**
    * Updates the current time, used to display only future reservations
@@ -54,8 +77,8 @@ class Classrooms extends React.Component {
 
   /**
    * Returns the html <div> object of a reservation
-   * @param {reservation dict}  r dictionary with all info of a reservation
-   * @param {int}               i index to set as react key of the div
+   * @param {object} r info of a reservation
+   * @param {int}    i index to set as react key of the div
    */
   getCard = (r, i) => {
     if (this.rotated && i < 4 && this.reservationsNum > 4) {
@@ -74,32 +97,40 @@ class Classrooms extends React.Component {
     return null
   }
 
-    /**
-   * Returns an array of html <div>, where every <div> is a classroom
+  /**
+   * Returns the html <div> object of a computer
+   * @param {object} c info of a computer
+   * @param {int}    i index to set as react key of the div
+   * @param {string} name classroom name
    */
-  createClassrooms = () => {
-    let divs = []
-    let key = 0
-    for (let c in this.state.classrooms) {
-      if (this.state.classrooms[c] === 0 ) {
-        divs.push(<div key={key} className={styles.free}>{c}</div>)
-      } else if (this.state.classrooms[c] === 1 ) {
-        divs.push(<div key={key} className={styles.occupied}>{c}</div>)
-      } else if (this.state.classrooms[c] === 2 ) {
-        divs.push(<div key={key} className={styles.reserved}>{c}</div>)
-      } else {
-        divs.push(<div key={key} className={styles.futureOccupied}>{c}</div>)
-      }
-      key++
+  getComputer = (c, i, name) => {
+    let ip = i + 1
+    if (name.includes("C")) {
+      ip += 50
+      // TODO: CAMBIAR Y USAR COMO KEY LA IP ENTERA (3 DIGITOS)
     }
-    return divs
+    switch (c) {
+      case 0:
+        return <div key={i} className={styles.shutdown}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+      case 1:
+        return <div key={i} className={styles.linux}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+      case 2:
+        return <div key={i} className={styles.windows}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+      case 3:
+        return <div key={i} className={styles.linuxUser}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+      case 4:
+        return <div key={i} className={styles.windowsUser}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+      case 5:
+        return <div key={i} className={styles.timeout}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+      default:
+        return <div key={i}></div>
+    }
   }
-
 
   /**
    * Returns an array of html <div>, where every <div> is a reservation card
    */
-  createCards = () => {
+  getCardsArray = () => {
     this.updateCurrentTime()
     let cards = [];
     // Get reservations to show
@@ -123,46 +154,10 @@ class Classrooms extends React.Component {
     return <div className={styles.endCard}>No hay reservas para el día de hoy o ya han finalizado todas las reservas</div>
   }
 
-  getOccupation = () => {
-    fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/occupation")
-      .then(response => response.json())
-      .then(json => {
-        var classrooms = ["caca"]
-        console.log(classrooms)
-        classrooms[0] = json["F16"].Computers
-        classrooms[1] = json["F18"].Computers
-        classrooms[2] = json["C05"].Computers
-        classrooms[3] = json["C06"].Computers
-        console.log(classrooms)
-        this.setState({occupation: classrooms})
-      })
-      .catch(error => console.log('Request failed', error))
-  }
-
-  getComputer = (r, i, name) => {
-    let ip = i + 1
-    if (name.includes("C")) {
-      ip += 50
-    }
-    switch (r) {
-      case 0:
-        return <div key={i} className={styles.shutdown}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
-      case 1:
-        return <div key={i} className={styles.linux}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
-      case 2:
-        return <div key={i} className={styles.windows}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
-      case 3:
-        return <div key={i} className={styles.linuxUser}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
-      case 4:
-        return <div key={i} className={styles.windowsUser}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
-      case 5:
-        return <div key={i} className={styles.timeout}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
-      default:
-        return <div key={i}></div>
-    }
-  }
-
-  printClassrooms = () => {
+  /**
+   * Returns an array of html <div>, where every <div> is a computers of the same classroom
+   */
+  getComputersArray = () => {
     let computers = ["F1", "F2", "C", "C1"]
     let classroom = ["4.0.F16", "4.0.F18", "2.2.C05", "2.2.C06"]
     let classroomMap = [<h2 className={styles.title}>Aula {classroom[this.classroomToShow]}</h2>]
@@ -180,23 +175,48 @@ class Classrooms extends React.Component {
     return classroomMap
   }
 
-  magic = () => {
+  /********** RENDER FUNCTIONS **********/
+
+  /**
+   * Article (left) component. Returns element to show on <article> tab.
+   */
+  article = () => {
     if (this.globalState < 2) {
-      return <main><article className={styles.article}>{this.createCards()}</article><aside className={styles.aside}>{this.createClassrooms()}</aside></main>
+      return <article className={styles.article}>{this.getCardsArray()}</article>
+    } else if (this.state.occupation.length !== 0) {
+      return <article className={styles.article}>{this.getComputersArray()}</article>
     } else {
-      if (this.state.occupation.length !== 0) {
-        return <main><article className={styles.article}>{this.printClassrooms()}</article><aside className={styles.aside}>{this.createClassrooms()}</aside></main>
-      }
-      else {
-        this.globalState = 0
-        return <main><article className={styles.article}>{this.createCards()}</article><aside className={styles.aside}>{this.createClassrooms()}</aside></main>
-      }
+      this.globalState = 0
+      return <article className={styles.article}>{this.getCardsArray()}</article>
     }
   }
 
+  /**
+   * Aside (right) component. Returns element to show on <aside> tab.
+   */
+  aside = () => {
+    let divs = []
+    let key = 0
+    for (let c in this.state.classrooms) {
+      if (this.state.classrooms[c] === 0 ) {
+        divs.push(<div key={key} className={styles.free}>{c}</div>)
+      } else if (this.state.classrooms[c] === 1 ) {
+        divs.push(<div key={key} className={styles.occupied}>{c}</div>)
+      } else if (this.state.classrooms[c] === 2 ) {
+        divs.push(<div key={key} className={styles.reserved}>{c}</div>)
+      } else {
+        divs.push(<div key={key} className={styles.futureOccupied}>{c}</div>)
+      }
+      key++
+    }
+    return <aside className={styles.aside}>{divs}</aside>
+  }
+
+  /********** REACT FUNCTIONS **********/
+
   render() {
-    return ( // TODO: maybe <tag>{function()}</tag>
-      this.magic()
+    return (
+      <main>{this.article()}{this.aside()}</main>
     );
   }
 
@@ -211,15 +231,11 @@ class Classrooms extends React.Component {
       this.getOccupation()
       this.getClassrooms()
     }, 60000);
-    // this.timer3 = setInterval(() => {
-    //   this.getOccupation()
-    // }, 300000)
   }
   componentWillUnmount() {
     clearInterval(this.timer1);
     clearInterval(this.timer2);
-    // clearInterval(this.timer3);
   }
 }
 
-export default Classrooms;
+export default Main;
