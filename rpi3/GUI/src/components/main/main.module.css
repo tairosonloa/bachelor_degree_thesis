@@ -58,10 +58,10 @@
   padding: 0.1em;
 }
 
-.title {
-  color: var(--primary-text-color);
-  font-size: 2.12vw;
-  margin: 1.5%;
+.classroom {
+  margin-top: 2rem;
+  width: 100%;
+  height: 100%;
 }
 
 .shutdown, .linux, .windows, .linuxUser, .windowsUser, .timeout {

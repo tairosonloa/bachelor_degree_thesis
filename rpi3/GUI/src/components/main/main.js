@@ -1,21 +1,22 @@
 import React from "react"
 import styles from "./main.module.css"
+import { string } from "prop-types";
 
 
 class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      reservations: [],
-      occupation : [],
-      classrooms: []
+      globalState: -1
     }
-    this.rotated = false
+    this.reservations = []
+    this.occupation = []
+    this.classrooms = []
     this.reservationsNum = 0
     this.currentHour = 0
     this.currentMinutes = 0
-    this.globalState = 0
     this.classroomToShow = 0
+    this.lastShow = 0
     try { // Load config
       this.config = require("/etc/rpi3_conf.json")
     } catch {
@@ -31,7 +32,7 @@ class Main extends React.Component {
   getReservations = () => {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/reservations")
       .then(response => response.json())
-      .then(json => this.setState({reservations: json}))
+      .then(json => this.reservations = json)
       .catch(error => console.log('Request HTTP GET /reservations failed', error))
   }
 
@@ -41,7 +42,7 @@ class Main extends React.Component {
   getClassrooms = () => {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/classrooms")
       .then(response => response.json())
-      .then(json => this.setState({classrooms: json}))
+      .then(json => this.classrooms = json)
       .catch(error => console.log('Request HTTP GET /classrooms failed', error))
   }
 
@@ -51,7 +52,7 @@ class Main extends React.Component {
   getOccupation = () => {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/occupation")
       .then(response => response.json())
-      .then(json => this.setState({occupation: json}))
+      .then(json => this.occupation = json)
       .catch(error => console.log('Request HTTP GET /occupation failed', error))
   }
 
@@ -72,7 +73,7 @@ class Main extends React.Component {
    * @param {int}    i index to use to calculate react key of the div
    */
   getCardDiv = (r, i) => {
-    if (this.rotated && i < 4 && this.reservationsNum > 4) {
+    if (this.state.globalState === 1 && i <= this.lastShow && this.reservationsNum > 4) {
       // if rotating, show next reservations (i >= 4)
       return null
     }
@@ -134,18 +135,19 @@ class Main extends React.Component {
    * @param {string} c classroom
    */
   getClassroomDiv = (i, c) => {
-    switch (this.state.classrooms[c]) {
+    let arrow = false
+    if (this.state.globalState-2 === i && this.state.globalState > 1) {
+      arrow = true
+    }
+    switch (this.classrooms[c]) {
       case 0:
-        console.log("holi")
-        console.log(this.classroomToShow)
-        console.log(c)
-        return <div key={i} className={(this.classroomToShow === i)? [styles.free, styles.arrow].join(" "): styles.free}>{c}</div>
+        return <div key={i} className={(arrow)? [styles.free, styles.arrow].join(" "): styles.free}>{c}</div>
       case 1:
-        return <div key={i} className={(this.classroomToShow === i)? [styles.occupied, styles.arrow].join(" "): styles.occupied}>{c}</div>
+        return <div key={i} className={(arrow)? [styles.occupied, styles.arrow].join(" "): styles.occupied}>{c}</div>
       case 2:
-        return <div key={i} className={(this.classroomToShow === i)? [styles.reserved, styles.arrow].join(" "): styles.reserved}>{c}</div>
+        return <div key={i} className={(arrow)? [styles.reserved, styles.arrow].join(" "): styles.reserved}>{c}</div>
       default:
-        return <div key={i} className={(this.classroomToShow === i)? [styles.futureOccupied, styles.arrow].join(" "): styles.futureOccupied}>{c}</div>
+        return <div key={i} className={(arrow)? [styles.futureOccupied, styles.arrow].join(" "): styles.futureOccupied}>{c}</div>
     }
   }
 
@@ -156,21 +158,19 @@ class Main extends React.Component {
     this.updateCurrentTime()
     let cards = [];
     // Get reservations to show
-    for (const [i, r] of this.state.reservations.entries()) {
+    for (const [i, r] of this.reservations.entries()) {
       let card = this.getCardDiv(r, i)
       if (card != null) {
         cards.push(card)
       }
       if (cards.length === 4) {
+        this.lastShow = i
         break;
       }
     }
-    // Change between rotation states and update global state
-    (this.rotated) ? this.rotated = false : this.rotated = true
-    this.globalState = (this.globalState + 1) % 6
     // Return cards if any
     if (cards.length !== 0) {
-      this.reservationsNum = this.state.reservations.length
+      this.reservationsNum = this.reservations.length
       return cards
     }
     return <div className={styles.endCard}>No hay reservas para el día de hoy o ya han finalizado todas las reservas</div>
@@ -181,16 +181,15 @@ class Main extends React.Component {
    */
   getComputersArray = () => {
     let classroom = ["F16", "F18", "C05", "C06"]
-    let classroomMap = [<h2 key={0} className={styles.title}>Aula {classroom[this.classroomToShow]}</h2>]
+    let classroomMap = []
     // Get computer status of the classroom
-    for (const [i, r] of this.state.occupation[classroom[this.classroomToShow]].Computers.entries()) {
+    for (const [i, r] of this.occupation[classroom[this.classroomToShow]].Computers.entries()) {
       classroomMap.push(this.getComputerDiv(r, i, classroom[this.classroomToShow]))
     }
     // Change between classrooms and update global state
     this.classroomToShow = (this.classroomToShow + 1) % 4
-    this.globalState = (this.globalState + 1) % 6
 
-    return classroomMap
+    return <div className={styles.classroom}>{classroomMap}</div>
   }
 
   /********** RENDER FUNCTIONS **********/
@@ -199,12 +198,11 @@ class Main extends React.Component {
    * Article (left) component. Returns element to show on <article> tab.
    */
   article = () => {
-    if (this.globalState < 2) {
+    if (this.state.globalState < 2) {
       return <article className={styles.article}>{this.getCardsArray()}</article>
-    } else if (this.state.occupation.length !== 0) {
+    } else if (this.occupation.length !== 0) {
       return <article className={styles.article}>{this.getComputersArray()}</article>
     } else {
-      this.globalState = 0
       return <article className={styles.article}>{this.getCardsArray()}</article>
     }
   }
@@ -215,7 +213,7 @@ class Main extends React.Component {
   aside = () => {
     let divs = []
     let i = 0
-    for (let c in this.state.classrooms) {
+    for (let c in this.classrooms) {
       divs.push(this.getClassroomDiv(i, c))
       i++
     }
@@ -232,19 +230,25 @@ class Main extends React.Component {
 
   componentDidMount() {
     this.getReservations()
-    this.getOccupation()
     this.getClassrooms()
+    this.getOccupation()
+    console.log(this.state.globalState)
     this.timer1 = setInterval(() => {
+      this.setState({globalState: (this.state.globalState + 1) % 6})
+      console.log(this.state.globalState)
+    }, 10000);
+    this.timer2 = setInterval(() => {
       this.getReservations()
       this.getClassrooms()
     }, 10000);
-    this.timer2 = setInterval(() => {
+    this.timer3 = setInterval(() => {
       this.getOccupation()
     }, 60000);
   }
   componentWillUnmount() {
     clearInterval(this.timer1);
     clearInterval(this.timer2);
+    clearInterval(this.timer3);
   }
 }
 
