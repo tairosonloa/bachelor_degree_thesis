@@ -67,11 +67,11 @@ class Main extends React.Component {
   }
 
   /**
-   * Returns the html <div> object of a reservation
+   * Returns the html <div> object of a reservation needed by <article>
    * @param {object} r info of a reservation
-   * @param {int}    i index to set as react key of the div
+   * @param {int}    i index to use to calculate react key of the div
    */
-  getCard = (r, i) => {
+  getCardDiv = (r, i) => {
     if (this.rotated && i < 4 && this.reservationsNum > 4) {
       // if rotating, show next reservations (i >= 4)
       return null
@@ -89,12 +89,12 @@ class Main extends React.Component {
   }
 
   /**
-   * Returns the html <div> object of a computer
+   * Returns the html <div> object of a computer needed by <article>
    * @param {object} c info of a computer
-   * @param {int}    i index to set as react key of the div
+   * @param {int}    i index to use to calculate react key of the div
    * @param {string} classroom classroom name
    */
-  getComputer = (c, i, classroom) => {
+  getComputerDiv = (c, i, classroom) => {
     let ip = i
     switch (classroom) {
       case "F16":
@@ -128,6 +128,27 @@ class Main extends React.Component {
     }
   }
 
+    /**
+   * Returns the html <div> object of a classroom needed by <aside>
+   * @param {int}    i index to use to calculate react key of the div
+   * @param {string} c classroom
+   */
+  getClassroomDiv = (i, c) => {
+    switch (this.state.classrooms[c]) {
+      case 0:
+        console.log("holi")
+        console.log(this.classroomToShow)
+        console.log(c)
+        return <div key={i} className={(this.classroomToShow === i)? [styles.free, styles.arrow].join(" "): styles.free}>{c}</div>
+      case 1:
+        return <div key={i} className={(this.classroomToShow === i)? [styles.occupied, styles.arrow].join(" "): styles.occupied}>{c}</div>
+      case 2:
+        return <div key={i} className={(this.classroomToShow === i)? [styles.reserved, styles.arrow].join(" "): styles.reserved}>{c}</div>
+      default:
+        return <div key={i} className={(this.classroomToShow === i)? [styles.futureOccupied, styles.arrow].join(" "): styles.futureOccupied}>{c}</div>
+    }
+  }
+
   /**
    * Returns an array of html <div>, where every <div> is a reservation card
    */
@@ -136,7 +157,7 @@ class Main extends React.Component {
     let cards = [];
     // Get reservations to show
     for (const [i, r] of this.state.reservations.entries()) {
-      let card = this.getCard(r, i)
+      let card = this.getCardDiv(r, i)
       if (card != null) {
         cards.push(card)
       }
@@ -163,7 +184,7 @@ class Main extends React.Component {
     let classroomMap = [<h2 key={0} className={styles.title}>Aula {classroom[this.classroomToShow]}</h2>]
     // Get computer status of the classroom
     for (const [i, r] of this.state.occupation[classroom[this.classroomToShow]].Computers.entries()) {
-      classroomMap.push(this.getComputer(r, i, classroom[this.classroomToShow]))
+      classroomMap.push(this.getComputerDiv(r, i, classroom[this.classroomToShow]))
     }
     // Change between classrooms and update global state
     this.classroomToShow = (this.classroomToShow + 1) % 4
@@ -193,18 +214,10 @@ class Main extends React.Component {
    */
   aside = () => {
     let divs = []
-    let key = 0
+    let i = 0
     for (let c in this.state.classrooms) {
-      if (this.state.classrooms[c] === 0 ) {
-        divs.push(<div key={key} className={styles.free}>{c}</div>)
-      } else if (this.state.classrooms[c] === 1 ) {
-        divs.push(<div key={key} className={styles.occupied}>{c}</div>)
-      } else if (this.state.classrooms[c] === 2 ) {
-        divs.push(<div key={key} className={styles.reserved}>{c}</div>)
-      } else {
-        divs.push(<div key={key} className={styles.futureOccupied}>{c}</div>)
-      }
-      key++
+      divs.push(this.getClassroomDiv(i, c))
+      i++
     }
     return <aside className={styles.aside}>{divs}</aside>
   }
@@ -223,10 +236,10 @@ class Main extends React.Component {
     this.getClassrooms()
     this.timer1 = setInterval(() => {
       this.getReservations()
+      this.getClassrooms()
     }, 10000);
     this.timer2 = setInterval(() => {
       this.getOccupation()
-      this.getClassrooms()
     }, 60000);
   }
   componentWillUnmount() {
