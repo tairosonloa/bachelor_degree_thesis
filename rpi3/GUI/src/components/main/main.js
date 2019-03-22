@@ -32,7 +32,7 @@ class Main extends React.Component {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/reservations")
       .then(response => response.json())
       .then(json => this.setState({reservations: json}))
-      .catch(error => console.log('Request failed', error))
+      .catch(error => console.log('Request HTTP GET /reservations failed', error))
   }
 
   /**
@@ -42,7 +42,7 @@ class Main extends React.Component {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/classrooms")
       .then(response => response.json())
       .then(json => this.setState({classrooms: json}))
-      .catch(error => console.log('Request failed', error))
+      .catch(error => console.log('Request HTTP GET /classrooms failed', error))
   }
 
   /**
@@ -51,17 +51,8 @@ class Main extends React.Component {
   getOccupation = () => {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/occupation")
       .then(response => response.json())
-      .then(json => {
-        var classrooms = ["caca"]
-        console.log(classrooms)
-        classrooms[0] = json["F16"].Computers
-        classrooms[1] = json["F18"].Computers
-        classrooms[2] = json["C05"].Computers
-        classrooms[3] = json["C06"].Computers
-        console.log(classrooms)
-        this.setState({occupation: classrooms})
-      })
-      .catch(error => console.log('Request failed', error))
+      .then(json => this.setState({occupation: json}))
+      .catch(error => console.log('Request HTTP GET /occupation failed', error))
   }
 
   /********** AUXILIARY FUNCTIONS **********/
@@ -86,7 +77,7 @@ class Main extends React.Component {
       return null
     }
     if (this.currentHour < r["EndHour"] || (this.currentHour === r["EndHour"] && this.currentMinutes < r["EndMinute"])) {
-      return <div key={i} className={styles.card}>
+      return <div key={256+i} className={styles.card}>
         <div className={styles.subject}>{r["Subject"]}</div>
         <div className={styles.study}>{r["Study"]}</div>
         <div className={styles.classroom}>{r["Classroom"]} de {r["StartHour"] + ":" + 
@@ -101,29 +92,39 @@ class Main extends React.Component {
    * Returns the html <div> object of a computer
    * @param {object} c info of a computer
    * @param {int}    i index to set as react key of the div
-   * @param {string} name classroom name
+   * @param {string} classroom classroom name
    */
-  getComputer = (c, i, name) => {
-    let ip = i + 1
-    if (name.includes("C")) {
-      ip += 50
-      // TODO: CAMBIAR Y USAR COMO KEY LA IP ENTERA (3 DIGITOS)
+  getComputer = (c, i, classroom) => {
+    let ip = i
+    switch (classroom) {
+      case "F16":
+        ip += 101
+        break;
+      case "F18":
+        ip += 201
+        break;
+      case "C05":
+        ip += 51
+        break;
+      case "C06":
+        ip += 151
+        break;
     }
     switch (c) {
       case 0:
-        return <div key={i} className={styles.shutdown}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+        return <div key={ip} className={styles.shutdown}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
       case 1:
-        return <div key={i} className={styles.linux}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+        return <div key={ip} className={styles.linux}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
       case 2:
-        return <div key={i} className={styles.windows}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+        return <div key={ip} className={styles.windows}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
       case 3:
-        return <div key={i} className={styles.linuxUser}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+        return <div key={ip} className={styles.linuxUser}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
       case 4:
-        return <div key={i} className={styles.windowsUser}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+        return <div key={ip} className={styles.windowsUser}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
       case 5:
-        return <div key={i} className={styles.timeout}>{(ip < 10)? name + "0"+ ip.toString() : name + ip.toString()}</div>
+        return <div key={ip} className={styles.timeout}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
       default:
-        return <div key={i}></div>
+        return <div key={ip}></div>
     }
   }
 
@@ -158,15 +159,11 @@ class Main extends React.Component {
    * Returns an array of html <div>, where every <div> is a computers of the same classroom
    */
   getComputersArray = () => {
-    let computers = ["F1", "F2", "C", "C1"]
-    let classroom = ["4.0.F16", "4.0.F18", "2.2.C05", "2.2.C06"]
-    let classroomMap = [<h2 className={styles.title}>Aula {classroom[this.classroomToShow]}</h2>]
+    let classroom = ["F16", "F18", "C05", "C06"]
+    let classroomMap = [<h2 key={0} className={styles.title}>Aula {classroom[this.classroomToShow]}</h2>]
     // Get computer status of the classroom
-    console.log(this.classroomToShow)
-    console.log(this.state.occupation)
-    console.log(this.state.occupation[this.classroomToShow])
-    for (const [i, r] of this.state.occupation[this.classroomToShow].entries()) {
-      classroomMap.push(this.getComputer(r, i, computers[this.classroomToShow]))
+    for (const [i, r] of this.state.occupation[classroom[this.classroomToShow]].Computers.entries()) {
+      classroomMap.push(this.getComputer(r, i, classroom[this.classroomToShow]))
     }
     // Change between classrooms and update global state
     this.classroomToShow = (this.classroomToShow + 1) % 4
