@@ -1,13 +1,14 @@
 import React from "react"
-import styles from "./main.module.css"
+import styles from "./classrooms.module.css"
 
 
-class Main extends React.Component {
+class Classrooms extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       reservations: [],
-      occupation : []
+      occupation : [],
+      classrooms: []
     }
     this.rotated = false
     this.reservationsNum = 0
@@ -29,6 +30,16 @@ class Main extends React.Component {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/reservations")
       .then(response => response.json())
       .then(json => this.setState({reservations: json}))
+      .catch(error => console.log('Request failed', error))
+  }
+
+  /**
+   * Makes HTTP GET request to rpi3 API to get JSON classrooms status
+   */
+  getClassrooms = () => {
+    fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/classrooms")
+      .then(response => response.json())
+      .then(json => this.setState({classrooms: json}))
       .catch(error => console.log('Request failed', error))
   }
 
@@ -62,6 +73,28 @@ class Main extends React.Component {
     }
     return null
   }
+
+    /**
+   * Returns an array of html <div>, where every <div> is a classroom
+   */
+  createClassrooms = () => {
+    let divs = []
+    let key = 0
+    for (let c in this.state.classrooms) {
+      if (this.state.classrooms[c] === 0 ) {
+        divs.push(<div key={key} className={styles.free}>{c}</div>)
+      } else if (this.state.classrooms[c] === 1 ) {
+        divs.push(<div key={key} className={styles.occupied}>{c}</div>)
+      } else if (this.state.classrooms[c] === 2 ) {
+        divs.push(<div key={key} className={styles.reserved}>{c}</div>)
+      } else {
+        divs.push(<div key={key} className={styles.futureOccupied}>{c}</div>)
+      }
+      key++
+    }
+    return divs
+  }
+
 
   /**
    * Returns an array of html <div>, where every <div> is a reservation card
@@ -149,14 +182,14 @@ class Main extends React.Component {
 
   magic = () => {
     if (this.globalState < 2) {
-      return this.createCards()
+      return <main><article className={styles.article}>{this.createCards()}</article><aside className={styles.aside}>{this.createClassrooms()}</aside></main>
     } else {
       if (this.state.occupation.length !== 0) {
-        return this.printClassrooms()
+        return <main><article className={styles.article}>{this.printClassrooms()}</article><aside className={styles.aside}>{this.createClassrooms()}</aside></main>
       }
       else {
         this.globalState = 0
-        return this.createCards()
+        return <main><article className={styles.article}>{this.createCards()}</article><aside className={styles.aside}>{this.createClassrooms()}</aside></main>
       }
     }
   }
@@ -170,17 +203,23 @@ class Main extends React.Component {
   componentDidMount() {
     this.getReservations()
     this.getOccupation()
+    this.getClassrooms()
     this.timer1 = setInterval(() => {
       this.getReservations()
     }, 10000);
     this.timer2 = setInterval(() => {
       this.getOccupation()
-    }, 300000)
+      this.getClassrooms()
+    }, 60000);
+    // this.timer3 = setInterval(() => {
+    //   this.getOccupation()
+    // }, 300000)
   }
   componentWillUnmount() {
     clearInterval(this.timer1);
     clearInterval(this.timer2);
+    // clearInterval(this.timer3);
   }
 }
 
-export default Main;
+export default Classrooms;

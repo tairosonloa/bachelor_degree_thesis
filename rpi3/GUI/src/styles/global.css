@@ -41,23 +41,6 @@ body {
   width: 30%;
 }
 
-.main {
-  background-color: var(--secondary-color);
-  display: inline-block;
-  height: 80vh;
-  width: 70%;
-  vertical-align: top;
-  overflow: hidden;
-}
-
-.aside {
-  display: inline-block;
-  height: 80vh;
-  width: 30%;
-  vertical-align: top;
-  overflow: hidden;
-}
-
 .footer {
   background-color: var(--primary-color);
   color: var(--primary-text-color);

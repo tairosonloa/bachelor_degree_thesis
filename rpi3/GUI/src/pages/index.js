@@ -2,9 +2,8 @@ import React from "react"
 import { Helmet } from "react-helmet"
 
 import Clock from "../components/clock/clock.js"
-import Main from "../components/main/main.js"
-import Aside from "../components/aside/aside.js"
 import Footer from "../components/footer/footer.js"
+import Classrooms from "../components/classrooms/classrooms.js";
 
 export default () => (
   <div className="wrapper">
@@ -22,12 +21,7 @@ export default () => (
         <Clock/>
       </div>
     </header>
-    <main className="main">
-      <Main/>
-    </main>
-    <aside className="aside">
-      <Aside/>
-    </aside>
+    <Classrooms/>
     <footer className="footer">
       <Footer/>
     </footer>
