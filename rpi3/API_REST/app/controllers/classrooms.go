@@ -114,10 +114,10 @@ func GetClassroomsOccupation(server, command string) *models.Occupation {
 					j++
 				} else if strings.Contains(strings.ToLower(scanner.Text()), "pid comentario") {
 					stats.Computers[j-1] = 3
-					stats.StudentsLinux++
+					stats.LoginsLinux++
 				} else if strings.Contains(strings.ToLower(scanner.Text()), "id. estado") {
 					stats.Computers[j-1] = 4
-					stats.StudentsWindows++
+					stats.LoginsWindows++
 				} else if strings.Contains(strings.ToLower(scanner.Text()), "timeout") {
 					stats.Computers[j-1] = 5
 					stats.TimeOut++

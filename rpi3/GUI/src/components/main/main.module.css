@@ -19,6 +19,7 @@
 }
 
 .aside {
+  background-color: var(--secondary-color);
   display: inline-block;
   height: 80vh;
   width: 30%;
@@ -130,15 +131,26 @@
   to { background-color: #ff0040; }
 }
 
-.free, .occupied, .reserved, .futureOccupied {
+.free, .occupied, .reserved, .futureOccupied, .indicators, .bar {
   color: black;
+  display: inline-block;
   border-bottom: 2px solid var(--secondary-color);
   border-top: none;
-  width: 100%;
-  height: 25%;
   text-align: center;
-  font-size: 4vw;
   line-height: 20vh;
+  vertical-align: top;
+}
+
+.free, .occupied, .reserved, .futureOccupied {
+  font-size: 4vw;
+  width: 60%;
+  height: 25%;
+}
+
+.indicators, .bar {
+  width: 20%;
+  height: 25%;
+  line-height: 30vh;
 }
 
 .arrow{

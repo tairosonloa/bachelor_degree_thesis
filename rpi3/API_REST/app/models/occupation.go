@@ -2,13 +2,13 @@ package models
 
 // OccupationStats represents classrooms occupation statistics
 type OccupationStats struct {
-	Linux           int
-	Windows         int
-	Shutdown        int
-	TimeOut         int
-	StudentsLinux   int
-	StudentsWindows int
-	Computers       []int
+	Linux         int
+	Windows       int
+	Shutdown      int
+	TimeOut       int
+	LoginsLinux   int
+	LoginsWindows int
+	Computers     []int
 }
 
 // Occupation represents classrooms occupation

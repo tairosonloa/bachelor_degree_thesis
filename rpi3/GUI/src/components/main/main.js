@@ -1,6 +1,5 @@
 import React from "react"
 import styles from "./main.module.css"
-import { string } from "prop-types";
 
 
 class Main extends React.Component {
@@ -139,15 +138,66 @@ class Main extends React.Component {
     if (this.state.globalState-2 === i && this.state.globalState > 1) {
       arrow = true
     }
+    let classroom = ""
+    switch (i) {
+      case 0:
+        classroom = "F16"
+        break;
+      case 1:
+        classroom = "F18"
+        break;
+      case 2:
+        classroom = "C05"
+        break;
+      case 3:
+        classroom = "C06"
+        break;
+    }
+    let logins = 0
+    if (this.occupation.length !== 0 && this.occupation !== undefined) {
+      logins = this.occupation[classroom].LoginsLinux + this.occupation[classroom].LoginsWindows
+    }
     switch (this.classrooms[c]) {
       case 0:
-        return <div key={i} className={(arrow)? [styles.free, styles.arrow].join(" "): styles.free}>{c}</div>
+        return <span>
+            <div key={i+400} className={(arrow)?
+              [styles.free, styles.arrow, styles.indicators].join(" "):
+              [styles.free, styles.indicators].join(" ")}>
+                {logins}
+            </div>
+            <div key={i} className={styles.free}>{c}</div>
+            <div key={i+405} className={[styles.free, styles.bar].join(" ")}></div>
+          </span>
       case 1:
-        return <div key={i} className={(arrow)? [styles.occupied, styles.arrow].join(" "): styles.occupied}>{c}</div>
+        return <span>
+            <div key={i+400} className={(arrow)?
+              [styles.occupied, styles.arrow, styles.indicators].join(" "):
+              [styles.occupied, styles.indicators].join(" ")}>
+                {logins}
+              </div>
+            <div key={i} className={styles.occupied}>{c}</div>
+            <div key={i+405} className={[styles.occupied, styles.bar].join(" ")}></div>
+          </span>
       case 2:
-        return <div key={i} className={(arrow)? [styles.reserved, styles.arrow].join(" "): styles.reserved}>{c}</div>
-      default:
-        return <div key={i} className={(arrow)? [styles.futureOccupied, styles.arrow].join(" "): styles.futureOccupied}>{c}</div>
+        return <span>
+            <div key={i+400} className={(arrow)?
+              [styles.reserved, styles.arrow, styles.indicators].join(" "):
+              [styles.reserved, styles.indicators].join(" ")}>
+                {logins}
+              </div>
+            <div key={i} className={styles.reserved}>{c}</div>
+            <div key={i+405} className={[styles.reserved, styles.bar].join(" ")}></div>
+          </span>
+      case 3:
+        return <span>
+            <div key={i+400} className={(arrow)?
+              [styles.futureOccupied, styles.arrow, styles.indicators].join(" "):
+              [styles.futureOccupied, styles.indicators].join(" ")}>
+                {logins}
+              </div>
+            <div key={i} className={styles.futureOccupied}>{c}</div>
+            <div key={i+405} className={[styles.futureOccupied, styles.bar].join(" ")}></div>
+          </span>
     }
   }
 
