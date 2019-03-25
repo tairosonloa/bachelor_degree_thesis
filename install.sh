@@ -210,14 +210,18 @@ function install_rpi3 {
     apt-get -y update && apt-get -y upgrade
     echo iptables-persistent iptables-persistent/autosave_v4 boolean false | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean false | debconf-set-selections
-    apt-get -y install iptables-persistent openbox chromium-browser lightdm
+    apt-get -y install iptables-persistent openbox chromium-browser lightdm npm
 
     echo -e "\n\t##### Installing binary in /usr/local/bin/ and web in /srv/rpi3/..."
     cp install/rpi3/rpi3_api_arm /usr/local/bin/rpi3_api_arm # Rpi3 API binary
     chmod 755 /usr/local/bin/rpi3_api_arm
     cp install/rpi3/web_server_arm /usr/local/bin/web_server_arm # Custom web server
     chmod 755 /usr/local/bin/web_server_arm
-    cp -r install/rpi3/web /srv/rpi3 # Website files
+    cd rpi3/GUI/
+    npm install
+    npm run build
+    mv public/ /srv/rpi3 # Website files
+    cd -
     chown -R $INSTALL_USER:$INSTALL_USER /srv/rpi3
 
     echo -e "\t##### Preparing daemons and start on boot...\n"
