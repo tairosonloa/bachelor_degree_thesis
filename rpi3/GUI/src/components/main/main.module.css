@@ -136,28 +136,35 @@
   display: inline-block;
   border-bottom: 2px solid var(--secondary-color);
   border-top: none;
-  text-align: center;
   line-height: 20vh;
   vertical-align: top;
 }
 
 .free, .occupied, .reserved, .futureOccupied {
   font-size: 4vw;
-  width: 60%;
+  text-align: center;
+  width: 68%;
   height: 25%;
 }
 
-.indicators, .bar {
-  width: 20%;
+.indicators {
+  width: 32%;
   height: 25%;
+  text-align: right;
   line-height: 30vh;
+  background-image: url("./img/user.png");
+  background-size: 8vh;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-position-y: 85%;
 }
 
 .arrow{
-  background-image: url("./img/arrow.png");
-  background-size: 10vh;
-  background-repeat: no-repeat;
-  background-position: left top;
+  background-image: url("./img/arrow.png"), url("./img/user.png");
+  background-size: 10vh, 8vh;
+  background-repeat: no-repeat, no-repeat;
+  background-position: left top, left bottom;
+  background-position-y: 0, 85%;
 }
 
 .free {
@@ -175,4 +182,10 @@
 .futureOccupied {
   background-color: #ffff2c;
   animation: blink 1s steps(2, start) infinite
+}
+
+.bar {
+  width: 10%;
+  height: 25%;
+  line-height: 30vh; 
 }

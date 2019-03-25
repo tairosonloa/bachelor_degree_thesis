@@ -154,7 +154,7 @@ class Main extends React.Component {
         break;
     }
     let logins = 0
-    if (this.occupation.length !== 0 && this.occupation !== undefined) {
+    if (this.occupation !== undefined && this.occupation.length !== 0) {
       logins = this.occupation[classroom].LoginsLinux + this.occupation[classroom].LoginsWindows
     }
     switch (this.classrooms[c]) {
@@ -166,7 +166,7 @@ class Main extends React.Component {
                 {logins}
             </div>
             <div key={i} className={styles.free}>{c}</div>
-            <div key={i+405} className={[styles.free, styles.bar].join(" ")}></div>
+            {/* <div key={i+405} className={[styles.free, styles.bar].join(" ")}></div> */}
           </span>
       case 1:
         return <span>
@@ -176,7 +176,7 @@ class Main extends React.Component {
                 {logins}
               </div>
             <div key={i} className={styles.occupied}>{c}</div>
-            <div key={i+405} className={[styles.occupied, styles.bar].join(" ")}></div>
+            {/* <div key={i+405} className={[styles.occupied, styles.bar].join(" ")}></div> */}
           </span>
       case 2:
         return <span>
@@ -186,7 +186,7 @@ class Main extends React.Component {
                 {logins}
               </div>
             <div key={i} className={styles.reserved}>{c}</div>
-            <div key={i+405} className={[styles.reserved, styles.bar].join(" ")}></div>
+            {/* <div key={i+405} className={[styles.reserved, styles.bar].join(" ")}></div> */}
           </span>
       case 3:
         return <span>
@@ -196,7 +196,7 @@ class Main extends React.Component {
                 {logins}
               </div>
             <div key={i} className={styles.futureOccupied}>{c}</div>
-            <div key={i+405} className={[styles.futureOccupied, styles.bar].join(" ")}></div>
+            {/* <div key={i+405} className={[styles.futureOccupied, styles.bar].join(" ")}></div> */}
           </span>
     }
   }
