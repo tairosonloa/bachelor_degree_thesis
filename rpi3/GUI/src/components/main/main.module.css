@@ -112,7 +112,7 @@
 .windowsUser {
   background-color: #007bd7;
   color: var(--primary-text-color);
-  background-image: url("./img/windows.png"), url("./img/user.png");
+  background-image: url("./img/windows.png"), url("./img/user_white.png");
   background-size: 10vh, 7vh;
   background-repeat: no-repeat;
   background-position: left center, right bottom;
