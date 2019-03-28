@@ -11,7 +11,6 @@ class Main extends React.Component {
     this.reservations = []
     this.occupation = []
     this.classrooms = []
-    this.reservationsNum = 0
     this.currentHour = 0
     this.currentMinutes = 0
     this.classroomToShow = 0
@@ -72,7 +71,7 @@ class Main extends React.Component {
    * @param {int}    i index to use to calculate react key of the div
    */
   getCardDiv = (r, i) => {
-    if (this.state.globalState === 1 && i <= this.lastShow && this.reservationsNum > 4) {
+    if (this.state.globalState === 1 && i <= this.lastShow && this.reservations.length > 4 && this.lastShow !== this.reservations.length - 1) {
       // if rotating, show next reservations (i >= 4)
       return null
     }
@@ -220,7 +219,6 @@ class Main extends React.Component {
     }
     // Return cards if any
     if (cards.length !== 0) {
-      this.reservationsNum = this.reservations.length
       return cards
     }
     return <div className={styles.endCard}>No hay reservas para el día de hoy o ya han finalizado todas las reservas</div>
