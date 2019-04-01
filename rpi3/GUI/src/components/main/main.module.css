@@ -159,75 +159,10 @@
   background-position-y: 85%;
 }
 
-.arrowFree {
-  background-image: url("./img/arrow.png"), url("./img/user.png"),
-    linear-gradient(
-      90deg,
-    #2cff2c 0%,
-    #2cff2c 25%,
-    #2c992c 25%,
-    #2c992c 50%,
-    #2cff2c 50%,
-    #2cff2c 75%,
-    #2c992c 75%,
-    #2c992c 100%
-    );
-  background-size: 10vh, 8vh, 1.75vw;
-  background-repeat: no-repeat, no-repeat, repeat;
-  background-position: left top, left bottom;
-  background-position-y: 0, 85%;
-}
-
-.arrowOccupied {
-  background-image: url("./img/arrow.png"), url("./img/user.png"),
-    linear-gradient(
-      90deg,
-    #ff0040 25%,
-    #990040 25%,
-    #990040 50%,
-    #ff0040 50%,
-    #ff0040 75%,
-    #990040 75%,
-    #990040 100%
-    );
-  background-size: 10vh, 8vh, 1.75vw;
-  background-repeat: no-repeat, no-repeat, repeat;
-  background-position: left top, left bottom;
-  background-position-y: 0, 85%;
-}
-
-.arrowReserved {
-  background-image: url("./img/arrow.png"), url("./img/user.png"),
-    linear-gradient(
-      90deg,
-    #ffff2c 25%,
-    #99992c 25%,
-    #99992c 50%,
-    #ffff2c 50%,
-    #ffff2c 75%,
-    #99992c 75%,
-    #99992c 100%
-    );
-  background-size: 10vh, 8vh, 1.75vw;
-  background-repeat: no-repeat, no-repeat, repeat;
-  background-position: left top, left bottom;
-  background-position-y: 0, 85%;
-}
-
-.arrowFutureOccupied {
-  background-image: url("./img/arrow.png"), url("./img/user.png"),
-    linear-gradient(
-      90deg,
-    #ffff2c 25%,
-    #99992c 25%,
-    #99992c 50%,
-    #ffff2c 50%,
-    #ffff2c 75%,
-    #99992c 75%,
-    #99992c 100%
-    );
-  background-size: 10vh, 8vh, 1.75vw;
-  background-repeat: no-repeat, no-repeat, repeat;
+.arrow {
+  background-image: url("./img/arrow.png"), url("./img/user.png");
+  background-size: 10vh, 8vh;
+  background-repeat: no-repeat, no-repeat;
   background-position: left top, left bottom;
   background-position-y: 0, 85%;
 }
@@ -249,65 +184,135 @@
   animation: blink 1s steps(2, start) infinite
 }
 
-.selectedFree {
+.unselectedFree {
   background-image: linear-gradient(
     90deg,
-    #2cff2c 25%,
-    #2c992c 25%,
-    #2c992c 50%,
-    #2cff2c 50%,
-    #2cff2c 75%,
-    #2c992c 75%,
-    #2c992c 100%
+  #2cff2c 25%,
+  #2c992c 25%,
+  #2c992c 50%,
+  #2cff2c 50%,
+  #2cff2c 75%,
+  #2c992c 75%,
+  #2c992c 100%
   );
   background-size: 1.75vw;
   background-repeat: repeat;
 }
 
-.selectedOccupied {
+.unselectedOccupied {
   background-image: linear-gradient(
     90deg,
-    #ff0040 25%,
-    #990040 25%,
-    #990040 50%,
-    #ff0040 50%,
-    #ff0040 75%,
-    #990040 75%,
-    #990040 100%
+  #ff0040 25%,
+  #990040 25%,
+  #990040 50%,
+  #ff0040 50%,
+  #ff0040 75%,
+  #990040 75%,
+  #990040 100%
     
   );
   background-size: 1.75vw;
   background-repeat: repeat;
 }
 
-.selectedReserved {
+.unselectedReserved {
   background-image: linear-gradient(
     90deg,
-    #ffff2c 25%,
-    #99992c 25%,
-    #99992c 50%,
-    #ffff2c 50%,
-    #ffff2c 75%,
-    #99992c 75%,
-    #99992c 100%
+  #ffff2c 25%,
+  #99992c 25%,
+  #99992c 50%,
+  #ffff2c 50%,
+  #ffff2c 75%,
+  #99992c 75%,
+  #99992c 100%
   );
   background-size: 1.75vw;
   background-repeat: repeat;
 }
 
-.selectedFutureOccupied {
+.unselectedFutureOccupied {
   background-image: linear-gradient(
     90deg,
-    #ffff2c 25%,
-    #99992c 25%,
-    #99992c 50%,
-    #ffff2c 50%,
-    #ffff2c 75%,
-    #99992c 75%,
-    #99992c 100%
+  #ffff2c 25%,
+  #99992c 25%,
+  #99992c 50%,
+  #ffff2c 50%,
+  #ffff2c 75%,
+  #99992c 75%,
+  #99992c 100%
   );
   background-size: 1.75vw;
   background-repeat: repeat;
+  animation: blink 1s steps(2, start) infinite
+}
+
+.unselectedFreeIndicators {
+  background-image: url("./img/user.png"), linear-gradient(
+    90deg,
+  #2cff2c 25%,
+  #2c992c 25%,
+  #2c992c 50%,
+  #2cff2c 50%,
+  #2cff2c 75%,
+  #2c992c 75%,
+  #2c992c 100%
+  );
+  background-size: 8vh, 1.75vw;
+  background-repeat: no-repeat, repeat;
+  background-position: left bottom, auto;
+  background-position-y: 85%, auto;
+}
+
+.unselectedOccupiedIndicators {
+  background-image: url("./img/user.png"), linear-gradient(
+    90deg,
+  #ff0040 25%,
+  #990040 25%,
+  #990040 50%,
+  #ff0040 50%,
+  #ff0040 75%,
+  #990040 75%,
+  #990040 100%
+    
+  );
+  background-size: 8vh, 1.75vw;
+  background-repeat: no-repeat, repeat;
+  background-position: left bottom, auto;
+  background-position-y: 85%, auto;
+}
+
+.unselectedReservedIndicators {
+  background-image: url("./img/user.png"), linear-gradient(
+    90deg,
+  #ffff2c 25%,
+  #99992c 25%,
+  #99992c 50%,
+  #ffff2c 50%,
+  #ffff2c 75%,
+  #99992c 75%,
+  #99992c 100%
+  );
+  background-size: 8vh, 1.75vw;
+  background-repeat: no-repeat, repeat;
+  background-position: left bottom, auto;
+  background-position-y: 85%, auto;
+}
+
+.unselectedFutureOccupiedIndicators {
+  background-image: url("./img/user.png"), linear-gradient(
+    90deg,
+  #ffff2c 25%,
+  #99992c 25%,
+  #99992c 50%,
+  #ffff2c 50%,
+  #ffff2c 75%,
+  #99992c 75%,
+  #99992c 100%
+  );
+  background-size: 8vh, 1.75vw;
+  background-repeat: no-repeat, repeat;
+  background-position: left bottom, auto;
+  background-position-y: 85%, auto;
   animation: blink 1s steps(2, start) infinite
 }
 

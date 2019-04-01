@@ -160,41 +160,49 @@ class Main extends React.Component {
       case 0:
         return <span>
             <div key={i+400} className={(arrow)?
-              [styles.free, styles.arrowFree, styles.indicators].join(" "):
+              [styles.free, styles.arrow, styles.indicators].join(" "):
+              (this.state.globalState >= 2)?
+              [styles.free, styles.indicators, styles.unselectedFreeIndicators].join(" "):
               [styles.free, styles.indicators].join(" ")}>
                 {logins}
             </div>
-            <div key={i} className={(arrow)? [styles.free, styles.selectedFree].join(" ") : styles.free}>{c}</div>
+            <div key={i} className={(arrow || this.state.globalState < 2)? styles.free : [styles.free, styles.unselectedFree].join(" ")}>{c}</div>
             {/* <div key={i+405} className={[styles.free, styles.bar].join(" ")}></div> */}
           </span>
       case 1:
         return <span>
             <div key={i+400} className={(arrow)?
-              [styles.occupied, styles.arrowOccupied, styles.indicators].join(" "):
+              [styles.occupied, styles.arrow, styles.indicators].join(" "):
+              (this.state.globalState >= 2)?
+              [styles.occupied, styles.indicators, styles.unselectedOccupiedIndicators].join(" "):
               [styles.occupied, styles.indicators].join(" ")}>
                 {logins}
               </div>
-              <div key={i} className={(arrow)? [styles.occupied, styles.selectedOccupied].join(" ") : styles.occupied}>{c}</div>
+              <div key={i} className={(arrow || this.state.globalState < 2)? styles.occupied : [styles.occupied, styles.unselectedOccupied].join(" ")}>{c}</div>
             {/* <div key={i+405} className={[styles.occupied, styles.bar].join(" ")}></div> */}
           </span>
       case 2:
         return <span>
             <div key={i+400} className={(arrow)?
-              [styles.reserved, styles.arrowReserved, styles.indicators].join(" "):
+              [styles.reserved, styles.arrow, styles.indicators].join(" "):
+              (this.state.globalState >= 2)?
+              [styles.reserved, styles.indicators, styles.unselectedReservedIndicators].join(" "):
               [styles.reserved, styles.indicators].join(" ")}>
                 {logins}
               </div>
-              <div key={i} className={(arrow)? [styles.reserved, styles.selectedReserved].join(" ") : styles.reserved}>{c}</div>
+              <div key={i} className={(arrow || this.state.globalState < 2)? styles.reserved : [styles.reserved, styles.unselectedReserved].join(" ")}>{c}</div>
             {/* <div key={i+405} className={[styles.reserved, styles.bar].join(" ")}></div> */}
           </span>
       case 3:
         return <span>
             <div key={i+400} className={(arrow)?
               [styles.futureOccupied, styles.arrowFutureOccupied, styles.indicators].join(" "):
+              (this.state.globalState >= 2)?
+              [styles.futureOccupied, styles.indicators, styles.unselectedFutureOccupiedIndicators].join(" "):
               [styles.futureOccupied, styles.indicators].join(" ")}>
                 {logins}
               </div>
-              <div key={i} className={(arrow)? [styles.futureOccupied, styles.selectedFutureOccupied].join(" ") : styles.futureOccupied}>{c}</div>
+              <div key={i} className={(arrow || this.state.globalState < 2)? styles.futureOccupied : [styles.futureOccupied, styles.unselectedFutureOccupied].join(" ")}>{c}</div>
             {/* <div key={i+405} className={[styles.futureOccupied, styles.bar].join(" ")}></div> */}
           </span>
     }
