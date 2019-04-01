@@ -160,41 +160,41 @@ class Main extends React.Component {
       case 0:
         return <span>
             <div key={i+400} className={(arrow)?
-              [styles.free, styles.arrow, styles.indicators].join(" "):
+              [styles.free, styles.arrowFree, styles.indicators].join(" "):
               [styles.free, styles.indicators].join(" ")}>
                 {logins}
             </div>
-            <div key={i} className={styles.free}>{c}</div>
+            <div key={i} className={(arrow)? [styles.free, styles.selectedFree].join(" ") : styles.free}>{c}</div>
             {/* <div key={i+405} className={[styles.free, styles.bar].join(" ")}></div> */}
           </span>
       case 1:
         return <span>
             <div key={i+400} className={(arrow)?
-              [styles.occupied, styles.arrow, styles.indicators].join(" "):
+              [styles.occupied, styles.arrowOccupied, styles.indicators].join(" "):
               [styles.occupied, styles.indicators].join(" ")}>
                 {logins}
               </div>
-            <div key={i} className={styles.occupied}>{c}</div>
+              <div key={i} className={(arrow)? [styles.occupied, styles.selectedOccupied].join(" ") : styles.occupied}>{c}</div>
             {/* <div key={i+405} className={[styles.occupied, styles.bar].join(" ")}></div> */}
           </span>
       case 2:
         return <span>
             <div key={i+400} className={(arrow)?
-              [styles.reserved, styles.arrow, styles.indicators].join(" "):
+              [styles.reserved, styles.arrowReserved, styles.indicators].join(" "):
               [styles.reserved, styles.indicators].join(" ")}>
                 {logins}
               </div>
-            <div key={i} className={styles.reserved}>{c}</div>
+              <div key={i} className={(arrow)? [styles.reserved, styles.selectedReserved].join(" ") : styles.reserved}>{c}</div>
             {/* <div key={i+405} className={[styles.reserved, styles.bar].join(" ")}></div> */}
           </span>
       case 3:
         return <span>
             <div key={i+400} className={(arrow)?
-              [styles.futureOccupied, styles.arrow, styles.indicators].join(" "):
+              [styles.futureOccupied, styles.arrowFutureOccupied, styles.indicators].join(" "):
               [styles.futureOccupied, styles.indicators].join(" ")}>
                 {logins}
               </div>
-            <div key={i} className={styles.futureOccupied}>{c}</div>
+              <div key={i} className={(arrow)? [styles.futureOccupied, styles.selectedFutureOccupied].join(" ") : styles.futureOccupied}>{c}</div>
             {/* <div key={i+405} className={[styles.futureOccupied, styles.bar].join(" ")}></div> */}
           </span>
     }
