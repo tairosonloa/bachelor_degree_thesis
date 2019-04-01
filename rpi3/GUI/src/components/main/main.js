@@ -229,7 +229,10 @@ class Main extends React.Component {
     if (cards.length !== 0) {
       return cards
     }
-    return <div className={styles.endCard}>No hay reservas para el día de hoy o ya han finalizado todas las reservas</div>
+    if (this.state.globalState >= 0) {
+      return <div className={styles.endCard}>No hay reservas para el día de hoy o ya han finalizado todas las reservas</div>
+    }
+    return <div className={styles.endCard}>Solicitando los recursos a las API's<br/>Por favor, espere</div>
   }
 
   /**
