@@ -77,7 +77,7 @@
 }
 
 .shutdown {
-  background-color: #ff0040;
+  background-color: #d3d3d3;
   background-image: url("./img/shutdown.png");
   background-size: 10vh;
   background-repeat: no-repeat;
@@ -159,7 +159,7 @@
   background-position-y: 85%;
 }
 
-.arrow{
+.arrow {
   background-image: url("./img/arrow.png"), url("./img/user.png");
   background-size: 10vh, 8vh;
   background-repeat: no-repeat, no-repeat;
