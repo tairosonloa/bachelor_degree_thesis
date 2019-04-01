@@ -1,5 +1,18 @@
 @import "../../styles/global.css" root;
 
+:root {
+  --free-primary-color: #2cff2c;
+  --free-secondary-color: #2c992c;
+  --reserved-primary-color: #ffff2c;
+  --reserved-secondary-color: #99992c;
+  --occupied-primary-color: #ff0040;
+  --occupied-secondary-color: #990040;
+  --shutdown-color: #d3d3d3;
+  --linux-color: #50c878;
+  --windows-color: #007bd7;
+  --timeout-color: #ce83d8;
+}
+
 .main {
   background-color: var(--secondary-color);
   display: inline-block;
@@ -77,7 +90,7 @@
 }
 
 .shutdown {
-  background-color: #d3d3d3;
+  background-color: var(--shutdown-color);
   background-image: url("./img/shutdown.png");
   background-size: 10vh;
   background-repeat: no-repeat;
@@ -85,7 +98,8 @@
 }
 
 .linux {
-  background-color: #50c878;
+  background-color: var(--linux-color);
+  color: var(--primary-text-color);
   background-image: url("./img/tux.png");
   background-size: 10vh;
   background-repeat: no-repeat;
@@ -93,7 +107,7 @@
 }
 
 .windows {
-  background-color: #007bd7;
+  background-color: var(--windows-color);
   color: var(--primary-text-color);
   background-image: url("./img/windows.png");
   background-size: 10vh;
@@ -102,15 +116,16 @@
 }
 
 .linuxUser {
-  background-color: #50c878;
-  background-image: url("./img/tux.png"), url("./img/user.png");
+  background-color: var(--linux-color);
+  color: var(--primary-text-color);
+  background-image: url("./img/tux.png"), url("./img/user_white.png");
   background-size: 10vh, 7vh;
   background-repeat: no-repeat;
   background-position: left center, right bottom;
 }
 
 .windowsUser {
-  background-color: #007bd7;
+  background-color: var(--windows-color);
   color: var(--primary-text-color);
   background-image: url("./img/windows.png"), url("./img/user_white.png");
   background-size: 10vh, 7vh;
@@ -119,7 +134,7 @@
 }
 
 .timeout {
-  background-color: blueviolet;
+  background-color: var(--timeout-color);
   background-image: url("./img/timeout.png");
   background-size: 10vh;
   background-repeat: no-repeat;
@@ -128,7 +143,7 @@
 
 /********** ASIDE OCCUPATION **********/
 @keyframes blink {
-  to { background-color: #ff0040; }
+  to { background-color: var(--occupied-primary-color); }
 }
 
 .free, .occupied, .reserved, .futureOccupied, .indicators, .bar {
@@ -168,32 +183,32 @@
 }
 
 .free {
-  background-color: #2cff2c;
+  background-color: var(--free-primary-color);
 }
 
 .occupied {
-  background-color: #ff0040;
+  background-color: var(--occupied-primary-color);
 }
 
 .reserved {
-  background-color: #ffff2c;
+  background-color: var(--reserved-primary-color);
 }
 
 .futureOccupied {
-  background-color: #ffff2c;
+  background-color: var(--reserved-primary-color);
   animation: blink 1s steps(2, start) infinite
 }
 
 .unselectedFree {
   background-image: linear-gradient(
     90deg,
-  #2cff2c 25%,
-  #2c992c 25%,
-  #2c992c 50%,
-  #2cff2c 50%,
-  #2cff2c 75%,
-  #2c992c 75%,
-  #2c992c 100%
+  var(--free-primary-color) 25%,
+  var(--free-secondary-color) 25%,
+  var(--free-secondary-color) 50%,
+  var(--free-primary-color) 50%,
+  var(--free-primary-color) 75%,
+  var(--free-secondary-color) 75%,
+  var(--free-secondary-color) 100%
   );
   background-size: 1.75vw;
   background-repeat: repeat;
@@ -202,13 +217,13 @@
 .unselectedOccupied {
   background-image: linear-gradient(
     90deg,
-  #ff0040 25%,
-  #990040 25%,
-  #990040 50%,
-  #ff0040 50%,
-  #ff0040 75%,
-  #990040 75%,
-  #990040 100%
+  var(--occupied-primary-color) 25%,
+  var(--occupied-secondary-color) 25%,
+  var(--occupied-secondary-color) 50%,
+  var(--occupied-primary-color) 50%,
+  var(--occupied-primary-color) 75%,
+  var(--occupied-secondary-color) 75%,
+  var(--occupied-secondary-color) 100%
     
   );
   background-size: 1.75vw;
@@ -218,13 +233,13 @@
 .unselectedReserved {
   background-image: linear-gradient(
     90deg,
-  #ffff2c 25%,
-  #99992c 25%,
-  #99992c 50%,
-  #ffff2c 50%,
-  #ffff2c 75%,
-  #99992c 75%,
-  #99992c 100%
+  var(--reserved-primary-color) 25%,
+  var(--reserved-secondary-color) 25%,
+  var(--reserved-secondary-color) 50%,
+  var(--reserved-primary-color) 50%,
+  var(--reserved-primary-color) 75%,
+  var(--reserved-secondary-color) 75%,
+  var(--reserved-secondary-color) 100%
   );
   background-size: 1.75vw;
   background-repeat: repeat;
@@ -233,13 +248,13 @@
 .unselectedFutureOccupied {
   background-image: linear-gradient(
     90deg,
-  #ffff2c 25%,
-  #99992c 25%,
-  #99992c 50%,
-  #ffff2c 50%,
-  #ffff2c 75%,
-  #99992c 75%,
-  #99992c 100%
+  var(--reserved-primary-color) 25%,
+  var(--reserved-secondary-color) 25%,
+  var(--reserved-secondary-color) 50%,
+  var(--reserved-primary-color) 50%,
+  var(--reserved-primary-color) 75%,
+  var(--reserved-secondary-color) 75%,
+  var(--reserved-secondary-color) 100%
   );
   background-size: 1.75vw;
   background-repeat: repeat;
@@ -249,13 +264,13 @@
 .unselectedFreeIndicators {
   background-image: url("./img/user.png"), linear-gradient(
     90deg,
-  #2cff2c 25%,
-  #2c992c 25%,
-  #2c992c 50%,
-  #2cff2c 50%,
-  #2cff2c 75%,
-  #2c992c 75%,
-  #2c992c 100%
+  var(--free-primary-color) 25%,
+  var(--free-secondary-color) 25%,
+  var(--free-secondary-color) 50%,
+  var(--free-primary-color) 50%,
+  var(--free-primary-color) 75%,
+  var(--free-secondary-color) 75%,
+  var(--free-secondary-color) 100%
   );
   background-size: 8vh, 1.75vw;
   background-repeat: no-repeat, repeat;
@@ -266,13 +281,13 @@
 .unselectedOccupiedIndicators {
   background-image: url("./img/user.png"), linear-gradient(
     90deg,
-  #ff0040 25%,
-  #990040 25%,
-  #990040 50%,
-  #ff0040 50%,
-  #ff0040 75%,
-  #990040 75%,
-  #990040 100%
+  var(--occupied-primary-color) 25%,
+  var(--occupied-secondary-color) 25%,
+  var(--occupied-secondary-color) 50%,
+  var(--occupied-primary-color) 50%,
+  var(--occupied-primary-color) 75%,
+  var(--occupied-secondary-color) 75%,
+  var(--occupied-secondary-color) 100%
     
   );
   background-size: 8vh, 1.75vw;
@@ -284,13 +299,13 @@
 .unselectedReservedIndicators {
   background-image: url("./img/user.png"), linear-gradient(
     90deg,
-  #ffff2c 25%,
-  #99992c 25%,
-  #99992c 50%,
-  #ffff2c 50%,
-  #ffff2c 75%,
-  #99992c 75%,
-  #99992c 100%
+  var(--reserved-primary-color) 25%,
+  var(--reserved-secondary-color) 25%,
+  var(--reserved-secondary-color) 50%,
+  var(--reserved-primary-color) 50%,
+  var(--reserved-primary-color) 75%,
+  var(--reserved-secondary-color) 75%,
+  var(--reserved-secondary-color) 100%
   );
   background-size: 8vh, 1.75vw;
   background-repeat: no-repeat, repeat;
@@ -301,13 +316,13 @@
 .unselectedFutureOccupiedIndicators {
   background-image: url("./img/user.png"), linear-gradient(
     90deg,
-  #ffff2c 25%,
-  #99992c 25%,
-  #99992c 50%,
-  #ffff2c 50%,
-  #ffff2c 75%,
-  #99992c 75%,
-  #99992c 100%
+  var(--reserved-primary-color) 25%,
+  var(--reserved-secondary-color) 25%,
+  var(--reserved-secondary-color) 50%,
+  var(--reserved-primary-color) 50%,
+  var(--reserved-primary-color) 75%,
+  var(--reserved-secondary-color) 75%,
+  var(--reserved-secondary-color) 100%
   );
   background-size: 8vh, 1.75vw;
   background-repeat: no-repeat, repeat;
