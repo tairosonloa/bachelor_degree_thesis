@@ -85,7 +85,7 @@
 }
 
 .linux {
-  background-color: #2cff2c;
+  background-color: #50c878;
   background-image: url("./img/tux.png");
   background-size: 10vh;
   background-repeat: no-repeat;
@@ -102,7 +102,7 @@
 }
 
 .linuxUser {
-  background-color: #2cff2c;
+  background-color: #50c878;
   background-image: url("./img/tux.png"), url("./img/user.png");
   background-size: 10vh, 7vh;
   background-repeat: no-repeat;
