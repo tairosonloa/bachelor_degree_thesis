@@ -89,6 +89,23 @@
   padding: 5px;
 }
 
+.classroomF, .fakeComputer {
+  margin: 0.9%;
+  display: inline-block;
+  font-weight: 900;
+  text-align: right;
+  font-size: 2.15vw;
+  padding: 5px;
+  width: 11%;
+  max-width: 11%;
+  height: 27%;
+  vertical-align: top;
+}
+
+.fakeComputer {
+  display: inline-block;
+}
+
 .shutdown {
   background-color: var(--shutdown-color);
   background-image: url("./img/shutdown.png");

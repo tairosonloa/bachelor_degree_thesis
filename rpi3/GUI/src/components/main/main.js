@@ -94,36 +94,57 @@ class Main extends React.Component {
    * @param {string} classroom classroom name
    */
   getComputerDiv = (c, i, classroom) => {
-    let ip = i
+    const f = [5, 8, 11, 14, 17, 20, 2, 4, 7, 10, 13, 16, 19, 1, 3, 6, 9, 12, 15, 18]
+    let ip = 0
     switch (classroom) {
       case "F16":
-        ip += 101
+        ip = 100
         break;
       case "F18":
-        ip += 201
+        ip = 200
         break;
       case "C05":
-        ip += 51
+        ip = 51 + i
         break;
       case "C06":
-        ip += 151
+        ip = 151 + i
         break;
     }
-    switch (c) {
-      case 0:
-        return <div key={ip} className={styles.shutdown}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
-      case 1:
-        return <div key={ip} className={styles.linux}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
-      case 2:
-        return <div key={ip} className={styles.windows}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
-      case 3:
-        return <div key={ip} className={styles.linuxUser}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
-      case 4:
-        return <div key={ip} className={styles.windowsUser}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
-      case 5:
-        return <div key={ip} className={styles.timeout}>{(classroom.includes("F"))? "F" + ip.toString() : "C" + ip.toString()}</div>
-      default:
-        return <div key={ip}></div>
+    console.log(i+", "+ip+", "+f[i])
+    if (classroom.includes("F")) {
+      switch (c) {
+        case 0:
+          return <div key={ip+f[i]} className={[styles.shutdown, styles.classroomF].join(" ")}>{"F" + (ip + f[i]).toString()}</div>
+        case 1:
+          return <div key={ip+f[i]} className={[styles.linux, styles.classroomF].join(" ")}>{"F" + (ip + f[i]).toString()}</div>
+        case 2:
+          return <div key={ip+f[i]} className={[styles.windows, styles.classroomF].join(" ")}>{"F" + (ip + f[i]).toString()}</div>
+        case 3:
+          return <div key={ip+f[i]} className={[styles.linuxUser, styles.classroomF].join(" ")}>{"F" + (ip + f[i]).toString()}</div>
+        case 4:
+          return <div key={ip+f[i]} className={[styles.windowsUser, styles.classroomF].join(" ")}>{"F" + (ip + f[i]).toString()}</div>
+        case 5:
+          return <div key={ip+f[i]} className={[styles.timeout, styles.classroomF].join(" ")}>{"F" + (ip + f[i]).toString()}</div>
+        default:
+          return <div key={ip+f[i]}></div>
+      }
+    } else {
+      switch (c) {
+        case 0:
+          return <div key={ip} className={styles.shutdown}>{"C" + ip.toString()}</div>
+        case 1:
+          return <div key={ip} className={styles.linux}>{"C" + ip.toString()}</div>
+        case 2:
+          return <div key={ip} className={styles.windows}>{"C" + ip.toString()}</div>
+        case 3:
+          return <div key={ip} className={styles.linuxUser}>{"C" + ip.toString()}</div>
+        case 4:
+          return <div key={ip} className={styles.windowsUser}>{"C" + ip.toString()}</div>
+        case 5:
+          return <div key={ip} className={styles.timeout}>{"C" + ip.toString()}</div>
+        default:
+          return <div key={ip}></div>
+      }
     }
   }
 
@@ -158,7 +179,7 @@ class Main extends React.Component {
     }
     switch (this.classrooms[c]) {
       case 0:
-        return <span>
+        return <span key={-2}>
             <div key={i+400} className={(arrow)?
               [styles.free, styles.arrow, styles.indicators].join(" "):
               (this.state.globalState >= 2)?
@@ -170,7 +191,7 @@ class Main extends React.Component {
             {/* <div key={i+405} className={[styles.free, styles.bar].join(" ")}></div> */}
           </span>
       case 1:
-        return <span>
+        return <span key={-3}>
             <div key={i+400} className={(arrow)?
               [styles.occupied, styles.arrow, styles.indicators].join(" "):
               (this.state.globalState >= 2)?
@@ -182,7 +203,7 @@ class Main extends React.Component {
             {/* <div key={i+405} className={[styles.occupied, styles.bar].join(" ")}></div> */}
           </span>
       case 2:
-        return <span>
+        return <span key={-4}>
             <div key={i+400} className={(arrow)?
               [styles.reserved, styles.arrow, styles.indicators].join(" "):
               (this.state.globalState >= 2)?
@@ -194,7 +215,7 @@ class Main extends React.Component {
             {/* <div key={i+405} className={[styles.reserved, styles.bar].join(" ")}></div> */}
           </span>
       case 3:
-        return <span>
+        return <span key={-5}>
             <div key={i+400} className={(arrow)?
               [styles.futureOccupied, styles.arrowFutureOccupied, styles.indicators].join(" "):
               (this.state.globalState >= 2)?
@@ -242,13 +263,19 @@ class Main extends React.Component {
     let classroom = ["F16", "F18", "C05", "C06"]
     let classroomMap = []
     // Get computer status of the classroom
-    for (const [i, r] of this.occupation[classroom[this.classroomToShow]].Computers.entries()) {
-      classroomMap.push(this.getComputerDiv(r, i, classroom[this.classroomToShow]))
-      if (this.classroomToShow < 2) {
-        // 4.0.F classrooms
-        if (i === 1 || (i > 3 && (i - 1) % 3 === 0)) classroomMap.push(<br/>)
-      } else {
-        // 2.2.C classrooms
+    if (this.classroomToShow < 2) {
+      // 4.0.F classrooms
+      classroomMap.push(<div key={-1} className={styles.fakeComputer}></div>)
+      const f = [5, 8, 11, 14, 17, 20, 2, 4, 7, 10, 13, 16, 19, 1, 3, 6, 9, 12, 15, 18]
+      for (const [i, r] of f.entries()) {
+        classroomMap.push(this.getComputerDiv(this.occupation[classroom[this.classroomToShow]].Computers[r-1], i, classroom[this.classroomToShow]))
+        if (i == 5 || (i > 5 && (i - 5) % 7 === 0)) classroomMap.push(<br/>)
+        // if (i === 1 || (i > 3 && (i - 1) % 3 === 0)) classroomMap.push(<br/>)
+      }
+    } else {
+      // 2.2.C classrooms
+      for (const [i, r] of this.occupation[classroom[this.classroomToShow]].Computers.entries()) {
+        classroomMap.push(this.getComputerDiv(r, i, classroom[this.classroomToShow]))
         if (i === 0) classroomMap.push(<br/>)
       }
     }
