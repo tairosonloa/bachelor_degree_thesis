@@ -159,7 +159,15 @@
   to { background-color: var(--occupied-primary-color); }
 }
 
-.free, .occupied, .reserved, .futureOccupied, .indicators, .bar {
+.asideClassrom {
+  display: block;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  text-align: right
+}
+
+.free, .occupied, .reserved, .futureOccupied, .indicators {
   color: black;
   display: inline-block;
   border-bottom: 2px solid var(--secondary-color);
@@ -171,13 +179,13 @@
 .free, .occupied, .reserved, .futureOccupied {
   font-size: 5vw;
   text-align: center;
-  width: 65%;
-  height: 25%;
+  width: 63%;
+  height: 20vh;
 }
 
 .indicators {
-  width: 35%;
-  height: 25%;
+  width: 37%;
+  height: 20vh;
   text-align: right;
   line-height: 29vh;
   background-image: url("./img/user.png");
@@ -212,140 +220,16 @@
   animation: blink 1s steps(2, start) infinite
 }
 
-.unselectedFree {
-  background-image: linear-gradient(
-    90deg,
-  var(--free-primary-color) 25%,
-  var(--free-secondary-color) 25%,
-  var(--free-secondary-color) 50%,
-  var(--free-primary-color) 50%,
-  var(--free-primary-color) 75%,
-  var(--free-secondary-color) 75%,
-  var(--free-secondary-color) 100%
-  );
-  background-size: 1.75vw;
-  background-repeat: repeat;
+.selected {
+  height: 24.8vh;
+  line-height: 35vh;
+  font-size: 6vw;
 }
 
-.unselectedOccupied {
-  background-image: linear-gradient(
-    90deg,
-  var(--occupied-primary-color) 25%,
-  var(--occupied-secondary-color) 25%,
-  var(--occupied-secondary-color) 50%,
-  var(--occupied-primary-color) 50%,
-  var(--occupied-primary-color) 75%,
-  var(--occupied-secondary-color) 75%,
-  var(--occupied-secondary-color) 100%
-    
-  );
-  background-size: 1.75vw;
-  background-repeat: repeat;
+.unselected {
+  height: 18.4vh;
+  max-width: 45%;
+  max-height: 20%;
+  line-height: 25vh;
 }
 
-.unselectedReserved {
-  background-image: linear-gradient(
-    90deg,
-  var(--reserved-primary-color) 25%,
-  var(--reserved-secondary-color) 25%,
-  var(--reserved-secondary-color) 50%,
-  var(--reserved-primary-color) 50%,
-  var(--reserved-primary-color) 75%,
-  var(--reserved-secondary-color) 75%,
-  var(--reserved-secondary-color) 100%
-  );
-  background-size: 1.75vw;
-  background-repeat: repeat;
-}
-
-.unselectedFutureOccupied {
-  background-image: linear-gradient(
-    90deg,
-  var(--reserved-primary-color) 25%,
-  var(--reserved-secondary-color) 25%,
-  var(--reserved-secondary-color) 50%,
-  var(--reserved-primary-color) 50%,
-  var(--reserved-primary-color) 75%,
-  var(--reserved-secondary-color) 75%,
-  var(--reserved-secondary-color) 100%
-  );
-  background-size: 1.75vw;
-  background-repeat: repeat;
-  animation: blink 1s steps(2, start) infinite
-}
-
-.unselectedFreeIndicators {
-  background-image: url("./img/user.png"), linear-gradient(
-    90deg,
-  var(--free-primary-color) 25%,
-  var(--free-secondary-color) 25%,
-  var(--free-secondary-color) 50%,
-  var(--free-primary-color) 50%,
-  var(--free-primary-color) 75%,
-  var(--free-secondary-color) 75%,
-  var(--free-secondary-color) 100%
-  );
-  background-size: 8vh, 1.75vw;
-  background-repeat: no-repeat, repeat;
-  background-position: left bottom, auto;
-  background-position-y: 85%, auto;
-}
-
-.unselectedOccupiedIndicators {
-  background-image: url("./img/user.png"), linear-gradient(
-    90deg,
-  var(--occupied-primary-color) 25%,
-  var(--occupied-secondary-color) 25%,
-  var(--occupied-secondary-color) 50%,
-  var(--occupied-primary-color) 50%,
-  var(--occupied-primary-color) 75%,
-  var(--occupied-secondary-color) 75%,
-  var(--occupied-secondary-color) 100%
-    
-  );
-  background-size: 8vh, 1.75vw;
-  background-repeat: no-repeat, repeat;
-  background-position: left bottom, auto;
-  background-position-y: 85%, auto;
-}
-
-.unselectedReservedIndicators {
-  background-image: url("./img/user.png"), linear-gradient(
-    90deg,
-  var(--reserved-primary-color) 25%,
-  var(--reserved-secondary-color) 25%,
-  var(--reserved-secondary-color) 50%,
-  var(--reserved-primary-color) 50%,
-  var(--reserved-primary-color) 75%,
-  var(--reserved-secondary-color) 75%,
-  var(--reserved-secondary-color) 100%
-  );
-  background-size: 8vh, 1.75vw;
-  background-repeat: no-repeat, repeat;
-  background-position: left bottom, auto;
-  background-position-y: 85%, auto;
-}
-
-.unselectedFutureOccupiedIndicators {
-  background-image: url("./img/user.png"), linear-gradient(
-    90deg,
-  var(--reserved-primary-color) 25%,
-  var(--reserved-secondary-color) 25%,
-  var(--reserved-secondary-color) 50%,
-  var(--reserved-primary-color) 50%,
-  var(--reserved-primary-color) 75%,
-  var(--reserved-secondary-color) 75%,
-  var(--reserved-secondary-color) 100%
-  );
-  background-size: 8vh, 1.75vw;
-  background-repeat: no-repeat, repeat;
-  background-position: left bottom, auto;
-  background-position-y: 85%, auto;
-  animation: blink 1s steps(2, start) infinite
-}
-
-.bar {
-  width: 10%;
-  height: 25%;
-  line-height: 30vh; 
-}
