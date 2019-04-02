@@ -158,15 +158,15 @@
 .free, .occupied, .reserved, .futureOccupied {
   font-size: 5vw;
   text-align: center;
-  width: 68%;
+  width: 65%;
   height: 25%;
 }
 
 .indicators {
-  width: 32%;
+  width: 35%;
   height: 25%;
   text-align: right;
-  line-height: 30vh;
+  line-height: 28vh;
   background-image: url("./img/user.png");
   background-size: 8vh;
   background-repeat: no-repeat;
