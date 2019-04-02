@@ -110,7 +110,6 @@ class Main extends React.Component {
         ip = 151 + i
         break;
     }
-    console.log(i+", "+ip+", "+f[i])
     if (classroom.includes("F")) {
       switch (c) {
         case 0:
@@ -179,7 +178,7 @@ class Main extends React.Component {
     }
     switch (this.classrooms[c]) {
       case 0:
-        return <span>
+        return <span key={c}>
             <div key={i+400} className={(arrow)?
               [styles.free, styles.arrow, styles.indicators].join(" "):
               (this.state.globalState >= 2)?
@@ -191,7 +190,7 @@ class Main extends React.Component {
             {/* <div key={i+405} className={[styles.free, styles.bar].join(" ")}></div> */}
           </span>
       case 1:
-        return <span>
+        return <span key={c}>
             <div key={i+400} className={(arrow)?
               [styles.occupied, styles.arrow, styles.indicators].join(" "):
               (this.state.globalState >= 2)?
@@ -203,7 +202,7 @@ class Main extends React.Component {
             {/* <div key={i+405} className={[styles.occupied, styles.bar].join(" ")}></div> */}
           </span>
       case 2:
-        return <span>
+        return <span key={c}>
             <div key={i+400} className={(arrow)?
               [styles.reserved, styles.arrow, styles.indicators].join(" "):
               (this.state.globalState >= 2)?
@@ -215,7 +214,7 @@ class Main extends React.Component {
             {/* <div key={i+405} className={[styles.reserved, styles.bar].join(" ")}></div> */}
           </span>
       case 3:
-        return <span>
+        return <span key={c}>
             <div key={i+400} className={(arrow)?
               [styles.futureOccupied, styles.arrowFutureOccupied, styles.indicators].join(" "):
               (this.state.globalState >= 2)?
@@ -269,13 +268,13 @@ class Main extends React.Component {
       const f = [5, 8, 11, 14, 17, 20, 2, 4, 7, 10, 13, 16, 19, 1, 3, 6, 9, 12, 15, 18]
       for (const [i, r] of f.entries()) {
         classroomMap.push(this.getComputerDiv(this.occupation[classroom[this.classroomToShow]].Computers[r-1], i, classroom[this.classroomToShow]))
-        if (i == 5 || (i > 5 && (i - 5) % 7 === 0)) classroomMap.push(<br/>)
+        if (i == 5 || (i > 5 && (i - 5) % 7 === 0)) classroomMap.push(<br key={1000+i}/>)
       }
     } else {
       // 2.2.C classrooms
       for (const [i, r] of this.occupation[classroom[this.classroomToShow]].Computers.entries()) {
         classroomMap.push(this.getComputerDiv(r, i, classroom[this.classroomToShow]))
-        if (i === 0) classroomMap.push(<br/>)
+        if (i === 0) classroomMap.push(<br key={1000+i}/>)
       }
     }
     // Change between classrooms and update global state
@@ -324,10 +323,8 @@ class Main extends React.Component {
     this.getReservations()
     this.getClassrooms()
     this.getOccupation()
-    console.log(this.state.globalState)
     this.timer1 = setInterval(() => {
       this.setState({globalState: (this.state.globalState + 1) % 6})
-      console.log(this.state.globalState)
     }, 10000);
     this.timer2 = setInterval(() => {
       this.getReservations()
