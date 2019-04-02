@@ -179,28 +179,23 @@
 .free, .occupied, .reserved, .futureOccupied {
   font-size: 5vw;
   text-align: center;
-  width: 63%;
+  width: 58%;
   height: 20vh;
 }
 
 .indicators {
-  width: 37%;
+  width: 42%;
   height: 20vh;
-  text-align: right;
-  line-height: 29vh;
-  background-image: url("./img/user.png");
-  background-size: 8vh;
-  background-repeat: no-repeat;
-  background-position: left bottom;
-  background-position-y: 85%;
+  text-align: left;
+  line-height: 20vh;
 }
 
 .arrow {
-  background-image: url("./img/arrow.png"), url("./img/user.png");
-  background-size: 10vh, 8vh;
-  background-repeat: no-repeat, no-repeat;
-  background-position: left top, left bottom;
-  background-position-y: 0, 85%;
+  background-image: url("./img/arrow.png");
+  background-size: 10vh;
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-position-y: 0;
 }
 
 .free {
@@ -222,14 +217,18 @@
 
 .selected {
   height: 24.8vh;
-  line-height: 35vh;
-  font-size: 6vw;
+  line-height: 31vh;
+  font-size: 5vw;
 }
 
 .unselected {
   height: 18.4vh;
-  max-width: 45%;
+  max-width: 40%;
   max-height: 20%;
-  line-height: 25vh;
+  line-height: 23vh;
+  font-size: 4.5vw;
 }
 
+.userIcon {
+  max-height: 0.9em;
+}

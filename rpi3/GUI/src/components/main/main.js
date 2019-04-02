@@ -1,6 +1,6 @@
 import React from "react"
 import styles from "./main.module.css"
-
+import userIcon from "./img/user.png";
 
 class Main extends React.Component {
   constructor(props) {
@@ -184,7 +184,7 @@ class Main extends React.Component {
               (this.state.globalState >= 2)?
               [styles.free, styles.indicators, styles.unselected].join(" "):
               [styles.free, styles.indicators].join(" ")}>
-                {logins}
+                <img className={styles.userIcon} src={userIcon}></img>{logins}
             </div>
             <div key={i} className={(arrow)? [styles.free, styles.selected].join(" ") : (this.state.globalState < 2)? styles.free : [styles.free, styles.unselected].join(" ")}>{c}</div>
           </span>
@@ -195,7 +195,7 @@ class Main extends React.Component {
               (this.state.globalState >= 2)?
               [styles.occupied, styles.indicators, styles.unselected].join(" "):
               [styles.occupied, styles.indicators].join(" ")}>
-                {logins}
+                <img className={styles.userIcon} src={userIcon}></img>{logins}
               </div>
               <div key={i} className={(arrow)? [styles.occupied, styles.selected].join(" ") : (this.state.globalState < 2)? styles.occupied : [styles.occupied, styles.unselected].join(" ")}>{c}</div>
           </span>
@@ -206,7 +206,7 @@ class Main extends React.Component {
               (this.state.globalState >= 2)?
               [styles.reserved, styles.indicators, styles.unselected].join(" "):
               [styles.reserved, styles.indicators].join(" ")}>
-                {logins}
+                <img className={styles.userIcon} src={userIcon}></img>{logins}
               </div>
               <div key={i} className={(arrow)? [styles.reserved, styles.selected].join(" ") : (this.state.globalState < 2)? styles.reserved : [styles.reserved, styles.unselected].join(" ")}>{c}</div>
           </span>
@@ -217,10 +217,9 @@ class Main extends React.Component {
               (this.state.globalState >= 2)?
               [styles.futureOccupied, styles.indicators, styles.unselected].join(" "):
               [styles.futureOccupied, styles.indicators].join(" ")}>
-                {logins}
+                <img className={styles.userIcon} src={userIcon}></img>{logins}
               </div>
               <div key={i} className={(arrow)? [styles.futureOccupied, styles.selected].join(" ") : (this.state.globalState < 2)? styles.futureOccupied : [styles.futureOccupied, styles.unselected].join(" ")}>{c}</div>
-            {/* <div key={i+405} className={[styles.futureOccupied, styles.bar].join(" ")}></div> */}
           </span>
     }
   }
