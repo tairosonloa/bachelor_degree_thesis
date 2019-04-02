@@ -179,7 +179,7 @@ class Main extends React.Component {
     }
     switch (this.classrooms[c]) {
       case 0:
-        return <span key={-2}>
+        return <span key={-6}>
             <div key={i+400} className={(arrow)?
               [styles.free, styles.arrow, styles.indicators].join(" "):
               (this.state.globalState >= 2)?
@@ -265,12 +265,11 @@ class Main extends React.Component {
     // Get computer status of the classroom
     if (this.classroomToShow < 2) {
       // 4.0.F classrooms
-      classroomMap.push(<div key={-1} className={styles.fakeComputer}></div>)
+      classroomMap.push(<div key={-1} className={styles.classroomF}></div>)
       const f = [5, 8, 11, 14, 17, 20, 2, 4, 7, 10, 13, 16, 19, 1, 3, 6, 9, 12, 15, 18]
       for (const [i, r] of f.entries()) {
         classroomMap.push(this.getComputerDiv(this.occupation[classroom[this.classroomToShow]].Computers[r-1], i, classroom[this.classroomToShow]))
         if (i == 5 || (i > 5 && (i - 5) % 7 === 0)) classroomMap.push(<br/>)
-        // if (i === 1 || (i > 3 && (i - 1) % 3 === 0)) classroomMap.push(<br/>)
       }
     } else {
       // 2.2.C classrooms

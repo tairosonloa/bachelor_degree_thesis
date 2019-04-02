@@ -89,7 +89,7 @@
   padding: 5px;
 }
 
-.classroomF, .fakeComputer {
+.classroomF {
   margin: 0.9%;
   display: inline-block;
   font-weight: 900;
@@ -100,10 +100,6 @@
   max-width: 11%;
   height: 27%;
   vertical-align: top;
-}
-
-.fakeComputer {
-  display: inline-block;
 }
 
 .shutdown {
@@ -175,15 +171,15 @@
 .free, .occupied, .reserved, .futureOccupied {
   font-size: 5vw;
   text-align: center;
-  width: 65%;
+  width: 63%;
   height: 25%;
 }
 
 .indicators {
-  width: 35%;
+  width: 37%;
   height: 25%;
   text-align: right;
-  line-height: 28vh;
+  line-height: 29vh;
   background-image: url("./img/user.png");
   background-size: 8vh;
   background-repeat: no-repeat;
