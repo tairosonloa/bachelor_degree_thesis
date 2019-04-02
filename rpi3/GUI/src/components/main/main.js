@@ -244,6 +244,13 @@ class Main extends React.Component {
     // Get computer status of the classroom
     for (const [i, r] of this.occupation[classroom[this.classroomToShow]].Computers.entries()) {
       classroomMap.push(this.getComputerDiv(r, i, classroom[this.classroomToShow]))
+      if (this.classroomToShow < 2) {
+        // 4.0.F classrooms
+        if (i === 1 || (i > 3 && (i - 1) % 3 === 0)) classroomMap.push(<br/>)
+      } else {
+        // 2.2.C classrooms
+        if (i === 0) classroomMap.push(<br/>)
+      }
     }
     // Change between classrooms and update global state
     this.classroomToShow = (this.classroomToShow + 1) % 4
