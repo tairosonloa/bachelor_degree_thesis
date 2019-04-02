@@ -171,12 +171,12 @@
 .free, .occupied, .reserved, .futureOccupied {
   font-size: 5vw;
   text-align: center;
-  width: 63%;
+  width: 65%;
   height: 25%;
 }
 
 .indicators {
-  width: 37%;
+  width: 35%;
   height: 25%;
   text-align: right;
   line-height: 29vh;
