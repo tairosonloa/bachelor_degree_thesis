@@ -68,9 +68,5 @@ yarn-error.log
 # Yarn Integrity file
 .yarn-integrity
 
-# Lock files
-package-lock.json
-*.lock
-
 # Custom scripts
 build.sh
