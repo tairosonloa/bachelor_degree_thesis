@@ -57,6 +57,41 @@ class Main extends React.Component {
   /********** AUXILIARY FUNCTIONS **********/
 
   /**
+   * Returns a loading bubbles svg
+   */
+  loading = () => {
+    return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="96" height="96" fill="white">
+      <circle cx="16" cy="3" r="0">
+        <animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" />
+      </circle>
+      <circle transform="rotate(45 16 16)" cx="16" cy="3" r="0">
+        <animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.125s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" />
+      </circle>
+      <circle transform="rotate(90 16 16)" cx="16" cy="3" r="0">
+        <animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.25s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" />
+      </circle>
+      <circle transform="rotate(135 16 16)" cx="16" cy="3" r="0">
+        <animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.375s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" />
+      </circle>
+      <circle transform="rotate(180 16 16)" cx="16" cy="3" r="0">
+        <animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" />
+      </circle>
+      <circle transform="rotate(225 16 16)" cx="16" cy="3" r="0">
+        <animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.625s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" />
+      </circle>
+      <circle transform="rotate(270 16 16)" cx="16" cy="3" r="0">
+        <animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.75s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" />
+      </circle>
+      <circle transform="rotate(315 16 16)" cx="16" cy="3" r="0">
+        <animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.875s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" />
+      </circle>
+      <circle transform="rotate(180 16 16)" cx="16" cy="3" r="0">
+        <animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0.5s" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" />
+      </circle>
+    </svg>
+  }
+
+  /**
    * Updates the current time, used to display only future reservations
    */
   updateCurrentTime = () => {
@@ -257,7 +292,7 @@ class Main extends React.Component {
     if (this.state.globalState >= 0) {
       return <div className={styles.endCard}>No hay reservas para el día de hoy o ya han finalizado todas las reservas</div>
     }
-    return <div className={styles.endCard}>Solicitando los recursos a las API's<br/>Por favor, espere</div>
+    return <div className={styles.endCard}>{this.loading()}<br/>Solicitando los recursos a las API's<br/>Por favor, espere</div>
   }
 
   /**
