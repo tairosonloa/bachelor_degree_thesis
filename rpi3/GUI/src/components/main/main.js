@@ -173,7 +173,11 @@ class Main extends React.Component {
         break;
     }
     let logins = 0
-    if (this.occupation !== undefined && this.occupation.length !== 0) {
+    // Check if errors getting occupation
+    if ("error" in this.occupation) {
+      logins = "err"
+    } // Else update occupation on aside
+    else if (this.occupation !== undefined && this.occupation.length !== 0 && this.occupation[classroom] !== undefined) {
       logins = this.occupation[classroom].LoginsLinux + this.occupation[classroom].LoginsWindows
     }
     switch (this.classrooms[c]) {
@@ -229,8 +233,13 @@ class Main extends React.Component {
    */
   getCardsArray = () => {
     this.updateCurrentTime()
+    // Check if errors getting reservations
+    if ("error" in this.reservations) {
+      return <div className={styles.errorCard}>No se ha podido recuperar las reservas para hoy desde la web</div>
+    }
     let cards = [];
     // Get reservations to show
+    console.log(this.reservations)
     for (const [i, r] of this.reservations.entries()) {
       let card = this.getCardDiv(r, i)
       if (card != null) {
@@ -255,6 +264,10 @@ class Main extends React.Component {
    * Returns an array of html <div>, where every <div> is a computers of the same classroom
    */
   getComputersArray = () => {
+    // Check if errors getting occupation
+    if ("error" in this.occupation) {
+      return <div className={styles.errorCard}>No se ha podido recuperar los datos de ocupación desde el servidor</div>
+    }
     let classroom = ["F16", "F18", "C05", "C06"]
     let classroomMap = []
     // Get computer status of the classroom
@@ -282,9 +295,9 @@ class Main extends React.Component {
   /********** RENDER FUNCTIONS **********/
 
   /**
-   * Article (left) component. Returns element to show on <article> tab.
+   * main rotative (left article) component. Returns element to show on <article> tab.
    */
-  article = () => {
+  mainRotative = () => {
     if (this.state.globalState < 2) {
       return <article className={styles.article}>{this.getCardsArray()}</article>
     } else if (this.occupation.length !== 0) {
@@ -298,6 +311,12 @@ class Main extends React.Component {
    * Aside (right) component. Returns element to show on <aside> tab.
    */
   aside = () => {
+    // Check if errors getting reservations
+    if ("error" in this.reservations) {
+      return <aside className={styles.aside}>
+        <div className={styles.asideError}>No se ha podido recuperar las reservas para hoy desde la web</div>
+      </aside>
+    }
     let divs = []
     let i = 0
     for (let c in this.classrooms) {
@@ -311,7 +330,7 @@ class Main extends React.Component {
 
   render() {
     return (
-      <main>{this.article()}{this.aside()}</main>
+      <main>{this.mainRotative()}{this.aside()}</main>
     );
   }
 

@@ -11,6 +11,7 @@
   --linux-color: #50c878;
   --windows-color: #007bd7;
   --timeout-color: #ce83d8;
+  --error: #ff0000;
 }
 
 .main {
@@ -41,14 +42,13 @@
 }
 
 /********** MAIN ROTATIVE **********/
-.card, .endCard {
+.card, .endCard, .errorCard {
   background-color: var(--primary-color);
   color: var(--primary-text-color);
-  /* border: 2px solid var(--primary-text-color); */
+  border-radius: 25px;
 }
 
 .card {
-  border-radius: 15px;
   display: inline-block;
   width: 43%;
   height: 40%;
@@ -63,13 +63,18 @@
   margin: 5px;
 }
 
-.endCard {
+.endCard, .errorCard {
   text-align: center;
   font-size: 6vw;
   width: 80%;
   height: 80%;
   margin: 5% auto;
   padding: 0.1em;
+  vertical-align: center;
+}
+
+.errorCard {
+  background-color: var(--error);
 }
 
 .classroom {
@@ -157,6 +162,17 @@
 /********** ASIDE OCCUPATION **********/
 @keyframes blink {
   to { background-color: var(--occupied-primary-color); }
+}
+
+.asideError {
+  background-color: var(--error);
+  color: var(--primary-text-color);
+  border-radius: 25px;
+  font-size: 4vw;
+  text-align: center;
+  width: 80%;
+  margin: 5% auto;
+  padding: 0.5em;
 }
 
 .asideClassrom {
