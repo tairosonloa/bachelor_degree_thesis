@@ -15,3 +15,11 @@
   0%   { transform: translate(0, 0); }
   100% { transform: translate(-100%, 0); }
 }
+
+.error {
+  font-size: 3vw;
+  padding: 1vh 0;
+  background-color: #ff0000;
+  height: 100%;
+  text-align: center;
+}

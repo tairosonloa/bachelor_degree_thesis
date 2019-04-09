@@ -210,7 +210,7 @@ class Main extends React.Component {
     let logins = 0
     // Check if errors getting occupation
     if ("error" in this.occupation) {
-      logins = "err"
+      logins = -1
     } // Else update occupation on aside
     else if (this.occupation !== undefined && this.occupation.length !== 0 && this.occupation[classroom] !== undefined) {
       logins = this.occupation[classroom].LoginsLinux + this.occupation[classroom].LoginsWindows
