@@ -15,6 +15,9 @@ class Main extends React.Component {
     this.currentMinutes = 0
     this.classroomToShow = 0
     this.lastShow = 0
+    this.failedAttepmsReservations = 0
+    this.failedAttepmsClassrooms = 0
+    this.failedAttepmsOccupation = 0
     try { // Load config
       this.config = require("/etc/rpi3_conf.json")
     } catch {
@@ -30,8 +33,16 @@ class Main extends React.Component {
   getReservations = () => {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/reservations")
       .then(response => response.json())
-      .then(json => this.reservations = json)
-      .catch(error => console.log('Request HTTP GET /reservations failed', error))
+      .then(json => {
+        this.failedAttepmsReservations = 0
+        this.reservations = json
+      })
+      .catch(error =>{
+        if (this.failedAttepmsReservations <= 0) {
+          this.failedAttepmsReservations++
+        }
+        console.log("main:js request HTTP GET to rpi3 API /reservations failed:", error)
+      })
   }
 
   /**
@@ -40,8 +51,16 @@ class Main extends React.Component {
   getClassrooms = () => {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/classrooms")
       .then(response => response.json())
-      .then(json => this.classrooms = json)
-      .catch(error => console.log('Request HTTP GET /classrooms failed', error))
+      .then(json => {
+        this.failedAttepmsClassrooms = 0
+        this.classrooms = json
+      })
+      .catch(error => {
+        if (this.failedAttepmsClassrooms <= 0) {
+          this.failedAttepmsClassrooms++
+        }
+        console.log("main.js: request HTTP GET to rpi3 API /classrooms failed:", error)
+      })
   }
 
   /**
@@ -50,8 +69,16 @@ class Main extends React.Component {
   getOccupation = () => {
     fetch("http://" + this.config.Rpi3APIAddress + ":" + this.config.Rpi3APIPort + "/occupation")
       .then(response => response.json())
-      .then(json => this.occupation = json)
-      .catch(error => console.log('Request HTTP GET /occupation failed', error))
+      .then(json => {
+        this.failedAttepmsOccupation = 0
+        this.occupation = json
+      })
+      .catch(error => {
+        if (this.failedAttepmsOccupation <= 0) {
+          this.failedAttepmsOccupation++
+        }
+        console.log("main.js: request HTTP GET to rpi3 API /occupation failed:", error)
+      })
   }
 
   /********** AUXILIARY FUNCTIONS **********/
@@ -207,12 +234,8 @@ class Main extends React.Component {
         classroom = "C06"
         break;
     }
-    let logins = 0
-    // Check if errors getting occupation
-    if ("error" in this.occupation) {
-      logins = -1
-    } // Else update occupation on aside
-    else if (this.occupation !== undefined && this.occupation.length !== 0 && this.occupation[classroom] !== undefined) {
+    let logins = -1
+    if (this.occupation !== undefined && this.occupation.length !== 0 && this.occupation[classroom] !== undefined) {
       logins = this.occupation[classroom].LoginsLinux + this.occupation[classroom].LoginsWindows
     }
     switch (this.classrooms[c]) {
@@ -269,12 +292,11 @@ class Main extends React.Component {
   getCardsArray = () => {
     this.updateCurrentTime()
     // Check if errors getting reservations
-    if ("error" in this.reservations) {
-      return <div className={styles.errorCard}>No se ha podido recuperar las reservas para hoy desde la web</div>
+    if ("error" in this.reservations || this.failedAttepmsReservations > 0) {
+      return <div key="getCardsArrayError" className={styles.errorCard}>No se ha podido recuperar las reservas para hoy desde la web</div>
     }
     let cards = [];
     // Get reservations to show
-    console.log(this.reservations)
     for (const [i, r] of this.reservations.entries()) {
       let card = this.getCardDiv(r, i)
       if (card != null) {
@@ -290,9 +312,9 @@ class Main extends React.Component {
       return cards
     }
     if (this.state.globalState >= 0) {
-      return <div className={styles.endCard}>No hay reservas para el día de hoy o ya han finalizado todas las reservas</div>
+      return <div key="end" className={styles.endCard}>No hay reservas para el día de hoy o ya han finalizado todas las reservas</div>
     }
-    return <div className={styles.endCard}>{this.loading()}<br/>Solicitando los recursos a las API's<br/>Por favor, espere</div>
+    return <div key="end" className={styles.endCard}>{this.loading()}<br/>Solicitando los recursos a las API's<br/>Por favor, espere</div>
   }
 
   /**
@@ -300,8 +322,8 @@ class Main extends React.Component {
    */
   getComputersArray = () => {
     // Check if errors getting occupation
-    if ("error" in this.occupation) {
-      return <div className={styles.errorCard}>No se ha podido recuperar los datos de ocupación desde el servidor</div>
+    if ("error" in this.occupation || this.failedAttepmsOccupation > 0) {
+      return <div key="getComputersArrayError" className={styles.errorCard}>No se ha podido recuperar los datos de ocupación desde instalador</div>
     }
     let classroom = ["F16", "F18", "C05", "C06"]
     let classroomMap = []
@@ -334,11 +356,11 @@ class Main extends React.Component {
    */
   mainRotative = () => {
     if (this.state.globalState < 2) {
-      return <article className={styles.article}>{this.getCardsArray()}</article>
+      return <article key="mainRotative" className={styles.article}>{this.getCardsArray()}</article>
     } else if (this.occupation.length !== 0) {
-      return <article className={styles.article}>{this.getComputersArray()}</article>
+      return <article key="mainRotative" className={styles.article}>{this.getComputersArray()}</article>
     } else {
-      return <article className={styles.article}>{this.getCardsArray()}</article>
+      return <article key="mainRotative" className={styles.article}>{this.getCardsArray()}</article>
     }
   }
 
@@ -347,9 +369,9 @@ class Main extends React.Component {
    */
   aside = () => {
     // Check if errors getting reservations
-    if ("error" in this.reservations) {
-      return <aside className={styles.aside}>
-        <div className={styles.asideError}>No se ha podido recuperar las reservas para hoy desde la web</div>
+    if ("error" in this.reservations || this.failedAttepmsReservations > 0) {
+      return <aside key="aside" className={styles.aside}>
+        <div key="asideError" className={styles.asideError}>No se ha podido recuperar las reservas para hoy desde la web</div>
       </aside>
     }
     let divs = []
@@ -358,14 +380,14 @@ class Main extends React.Component {
       divs.push(this.getClassroomDiv(i, c))
       i++
     }
-    return <aside className={styles.aside}>{divs}</aside>
+    return <aside key="aside" className={styles.aside}>{divs}</aside>
   }
 
   /********** REACT FUNCTIONS **********/
 
   render() {
     return (
-      <main>{this.mainRotative()}{this.aside()}</main>
+      <main key="main">{[this.mainRotative(), this.aside()]}</main>
     );
   }
 
@@ -379,15 +401,12 @@ class Main extends React.Component {
     this.timer2 = setInterval(() => {
       this.getReservations()
       this.getClassrooms()
-    }, 10000);
-    this.timer3 = setInterval(() => {
       this.getOccupation()
     }, 60000);
   }
   componentWillUnmount() {
     clearInterval(this.timer1);
     clearInterval(this.timer2);
-    clearInterval(this.timer3);
   }
 }
 
