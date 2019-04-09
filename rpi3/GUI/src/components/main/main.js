@@ -275,7 +275,7 @@ class Main extends React.Component {
       case 3:
         return <span key={c} className={styles.asideClassrom}>
             <div key={i+400} className={(arrow)?
-              [styles.futureOccupied, styles.arrowFutureOccupied, styles.indicators, styles.selected].join(" "):
+              [styles.futureOccupied, styles.arrow, styles.indicators, styles.selected].join(" "):
               (this.state.globalState >= 2)?
               [styles.futureOccupied, styles.indicators, styles.unselected].join(" "):
               [styles.futureOccupied, styles.indicators].join(" ")}>
