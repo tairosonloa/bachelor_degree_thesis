@@ -11,7 +11,8 @@
   --linux-color: #50c878;
   --windows-color: #007bd7;
   --timeout-color: #ce83d8;
-  --error: #ff0000;
+  --error-color: #ff0000;
+  --aside-text-color: #000000;
 }
 
 .main {
@@ -41,6 +42,10 @@
   overflow: hidden;
 }
 
+@keyframes blink {
+  to { background-color: var(--occupied-primary-color); }
+}
+
 /********** MAIN ROTATIVE **********/
 .card, .endCard, .errorCard {
   background-color: var(--primary-color);
@@ -63,6 +68,22 @@
   margin: 5px;
 }
 
+.cardReserved div, .cardFutureOccupied div {
+  color: var(--aside-text-color);
+}
+
+.cardOccupied {
+  background-color: var(--occupied-primary-color);
+}
+
+.cardReserved {
+  background-color: var(--reserved-primary-color);
+}
+
+.cardFutureOccupied {
+  animation: blink 1s steps(2, start) infinite
+}
+
 .endCard, .errorCard {
   text-align: center;
   font-size: 5vw;
@@ -73,7 +94,7 @@
 }
 
 .errorCard {
-  background-color: var(--error);
+  background-color: var(--error-color);
 }
 
 .classroom {
@@ -159,12 +180,8 @@
 }
 
 /********** ASIDE OCCUPATION **********/
-@keyframes blink {
-  to { background-color: var(--occupied-primary-color); }
-}
-
 .asideError {
-  background-color: var(--error);
+  background-color: var(--error-color);
   color: var(--primary-text-color);
   border-radius: 25px;
   font-size: 4vw;
@@ -183,7 +200,7 @@
 }
 
 .free, .occupied, .reserved, .futureOccupied, .indicators {
-  color: black;
+  color: var(--aside-text-color);
   display: inline-block;
   border-bottom: 2px solid var(--secondary-color);
   border-top: none;

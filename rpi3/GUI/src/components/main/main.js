@@ -138,6 +138,37 @@ class Main extends React.Component {
       return null
     }
     if (this.currentHour < r["EndHour"] || (this.currentHour === r["EndHour"] && this.currentMinutes < r["EndMinute"])) {
+      if (this.currentHour > r["StartHour"] || (this.currentHour === r["StartHour"] && this.currentMinutes >= r["StartMinute"])) {
+        // Currently occupied
+        return <div key={256+i} className={[styles.card, styles.cardOccupied].join(" ")}>
+          <div className={styles.subject}>{r["Subject"]}</div>
+          <div className={styles.study}>{r["Study"]}</div>
+          <div className={styles.classroom}>{r["Classroom"]} de {r["StartHour"] + ":" + 
+            (r["StartMinute"] === 0 ? "00" : r["StartMinute"])} a {r["EndHour"] + ":" + 
+            (r["EndMinute"] === 0 ? "00" : r["EndMinute"])}</div>
+        </div>;
+      }
+      if ((r["StartHour"] === this.currentHour && r["StartMinute"] <= 30 + this.currentMinutes) ||
+        (r["StartHour"] === this.currentHour + 1 && 60 - this.currentMinutes + r["StartMinute"] <= 30)) {
+        if (60 - this.currentMinutes + r["StartMinute"] <= 10) {
+          // Will be occupied in 10 min
+          return <div key={256+i} className={[styles.card, styles.cardFutureOccupied].join(" ")}>
+            <div className={styles.subject}>{r["Subject"]}</div>
+            <div className={styles.study}>{r["Study"]}</div>
+            <div className={styles.classroom}>{r["Classroom"]} de {r["StartHour"] + ":" + 
+              (r["StartMinute"] === 0 ? "00" : r["StartMinute"])} a {r["EndHour"] + ":" + 
+              (r["EndMinute"] === 0 ? "00" : r["EndMinute"])}</div>
+          </div>;
+        }
+        // Will be occupied in 30 min
+        return <div key={256+i} className={[styles.card, styles.cardReserved].join(" ")}>
+          <div className={styles.subject}>{r["Subject"]}</div>
+          <div className={styles.study}>{r["Study"]}</div>
+          <div className={styles.classroom}>{r["Classroom"]} de {r["StartHour"] + ":" + 
+            (r["StartMinute"] === 0 ? "00" : r["StartMinute"])} a {r["EndHour"] + ":" + 
+            (r["EndMinute"] === 0 ? "00" : r["EndMinute"])}</div>
+        </div>;
+      }
       return <div key={256+i} className={styles.card}>
         <div className={styles.subject}>{r["Subject"]}</div>
         <div className={styles.study}>{r["Study"]}</div>
@@ -243,7 +274,7 @@ class Main extends React.Component {
       logins = this.occupation[classroom].LoginsLinux + this.occupation[classroom].LoginsWindows
     }
     switch (this.classrooms[c]) {
-      case 0:
+      case 0: // Free classroom
         return <span key={c} className={styles.asideClassrom}>
             <div key={i+400} className={(arrow)?
               [styles.free, styles.arrow, styles.indicators, styles.selected].join(" "):
@@ -254,7 +285,7 @@ class Main extends React.Component {
             </div>
             <div key={i} className={(arrow)? [styles.free, styles.selected].join(" ") : (this.state.globalState < 2)? styles.free : [styles.free, styles.unselected].join(" ")}>{c}</div>
           </span>
-      case 1:
+      case 1: // Currently occupied
         return <span key={c} className={styles.asideClassrom}>
             <div key={i+400} className={(arrow)?
               [styles.occupied, styles.arrow, styles.indicators, styles.selected].join(" "):
@@ -265,7 +296,7 @@ class Main extends React.Component {
               </div>
               <div key={i} className={(arrow)? [styles.occupied, styles.selected].join(" ") : (this.state.globalState < 2)? styles.occupied : [styles.occupied, styles.unselected].join(" ")}>{c}</div>
           </span>
-      case 2:
+      case 2: // Will be occupied in 30 min
         return <span key={c} className={styles.asideClassrom}>
             <div key={i+400} className={(arrow)?
               [styles.reserved, styles.arrow, styles.indicators, styles.selected].join(" "):
@@ -276,7 +307,7 @@ class Main extends React.Component {
               </div>
               <div key={i} className={(arrow)? [styles.reserved, styles.selected].join(" ") : (this.state.globalState < 2)? styles.reserved : [styles.reserved, styles.unselected].join(" ")}>{c}</div>
           </span>
-      case 3:
+      case 3: // Will be occupied in 10 min
         return <span key={c} className={styles.asideClassrom}>
             <div key={i+400} className={(arrow)?
               [styles.futureOccupied, styles.arrow, styles.indicators, styles.selected].join(" "):
