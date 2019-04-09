@@ -86,8 +86,8 @@ class Main extends React.Component {
   /**
    * Returns a loading bubbles svg
    */
-  loading = () => {
-    return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="96" height="96" fill="white">
+  loading = (size, color) => {
+    return <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width={size} height={size} fill={color}>
       <circle cx="16" cy="3" r="0">
         <animate attributeName="r" values="0;3;0;0" dur="1s" repeatCount="indefinite" begin="0" keySplines="0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8;0.2 0.2 0.4 0.8" calcMode="spline" />
       </circle>
@@ -234,8 +234,12 @@ class Main extends React.Component {
         classroom = "C06"
         break;
     }
-    let logins = -1
-    if (this.occupation !== undefined && this.occupation.length !== 0 && this.occupation[classroom] !== undefined) {
+    let logins = this.loading(56, "black")
+    // Check if errors getting occupation
+    if ("error" in this.occupation || this.failedAttepmsOccupation > 0) {
+      logins = -1
+    } // Else update occupation on aside
+    else if (this.occupation !== undefined && this.occupation.length !== 0 && this.occupation[classroom] !== undefined) {
       logins = this.occupation[classroom].LoginsLinux + this.occupation[classroom].LoginsWindows
     }
     switch (this.classrooms[c]) {
@@ -314,7 +318,7 @@ class Main extends React.Component {
     if (this.state.globalState >= 0) {
       return <div key="end" className={styles.endCard}>No hay reservas para el día de hoy o ya han finalizado todas las reservas</div>
     }
-    return <div key="end" className={styles.endCard}>{this.loading()}<br/>Solicitando los recursos a las API's<br/>Por favor, espere</div>
+    return <div key="end" className={styles.endCard}>{this.loading(96, "white")}<br/>Solicitando los recursos a las API's<br/>Por favor, espere</div>
   }
 
   /**
