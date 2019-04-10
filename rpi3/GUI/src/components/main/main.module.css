@@ -81,6 +81,7 @@
 }
 
 .cardFutureOccupied {
+  background-color: var(--reserved-primary-color);
   animation: blink 1s steps(2, start) infinite
 }
 
