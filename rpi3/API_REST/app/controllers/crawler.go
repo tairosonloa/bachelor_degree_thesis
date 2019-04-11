@@ -91,23 +91,24 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 						if subject != "" { // Ignore empty cells
 							study := ""
 							group := -1
-							if subject == "Reserva Puntual:" {
+							if strings.Contains(strings.ToLower(subject), "reserva puntual") {
 								// We detected a one-time reservation
-
-								// Get subject for the one-time reservation and concat the two strings
-								// Ignore html tags
-								inner = tokenizer.Next()
-								for inner != html.TextToken {
+								if strings.Contains(strings.ToLower(subject), "reserva puntual:") { // Two dots means it have subject info
+									// Get subject for the one-time reservation and concat the two strings
+									// Ignore html tags
 									inner = tokenizer.Next()
-								}
-								// Get subject
-								text = (string)(tokenizer.Text())
-								text = strings.TrimSpace(text)
-								subject = join(subject, " ", text)
+									for inner != html.TextToken {
+										inner = tokenizer.Next()
+									}
+									// Get subject
+									text = (string)(tokenizer.Text())
+									text = strings.TrimSpace(text)
+									subject = join(subject, " ", text)
 
-								// Get count of every one-time reservation to check professor later
-								oneTimeReservation = true
-								toCheck++
+									// Get count of every one-time reservation to check professor later
+									oneTimeReservation = true
+									toCheck++
+								}
 							} else {
 								// Step two: Get study (degree master) name
 								// Ignore html tags
@@ -123,10 +124,12 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 							// Steep three, separate subject from group
 							trimmed := strings.Split(subject, "(")
 							subject = trimmed[0]
-							group, _ = strconv.Atoi(
-								strings.TrimPrefix(strings.TrimSuffix(trimmed[1], ")"), "G"))
+							if len(trimmed) > 1 {
+								group, _ = strconv.Atoi(strings.TrimPrefix(strings.TrimSuffix(trimmed[1], ")"), "G"))
+							}
 
 							// Step four calculate end time
+							log.Printf("Asignatura %v row %v", subject, row)
 							startTimeH := 9 + (int)(row/4)            // start hour
 							startTimeM := 15 * (row%4 - 1)            // start minutes
 							endTimeH := startTimeH + (int)(rowspan/4) // end hour
