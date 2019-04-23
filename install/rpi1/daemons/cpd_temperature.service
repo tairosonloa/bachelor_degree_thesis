@@ -2,8 +2,8 @@
 Description=Prints datacenter temperature on LED panel
 
 [Service]
-User=lab
-Group=lab
+User=<user>
+Group=<group>
 Type=simple
 Restart=on-failure
 RestartSec=2
