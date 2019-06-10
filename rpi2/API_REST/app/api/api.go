@@ -22,7 +22,7 @@ func Initialize(apiAuthorizedToken string, hueBridgeAddress string, hueBridgeTok
 
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("/cpd-status", cpdStatus)
-	mux.HandleFunc("/cpd-update", cpdUpdate)
+	mux.HandleFunc("/cpd-update", cpdStatus)
 
 	mux.HandleFunc("/favicon.ico", func(_ http.ResponseWriter, _ *http.Request) {})
 
@@ -58,9 +58,14 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 // cpdStatus is the API server handler for "/cpd-status"
 // If method is GET, it responds with a JSON containing CPD values and info
+// else if methos is POST, calls cpdUpdate
 // else, it responds with a JSON containing an error message
 func cpdStatus(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	if r.Method == http.MethodPost {
+		cpdUpdate(w, r)
+		return
+	}
 	// Only method GET is allowed
 	if r.Method != http.MethodGet {
 		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
@@ -96,19 +101,13 @@ func cpdStatus(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s /cpd-status from %s status %d\n", r.Method, r.RemoteAddr, http.StatusOK)
 }
 
-// cpdUpdate is the API server handler for "/cpd-update"
+// cpdUpdate is the API server handler for "/cpd-status POST"
 // If method is POST and authentication is susccessful, it updates CPD values and info (inner state)
 // else, it responds with a JSON containing an error message
 func cpdUpdate(w http.ResponseWriter, r *http.Request) {
-	// Only method POST is allowed
-	if r.Method != http.MethodPost {
-		respondWithError(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
-		log.Printf("%s /cpd-update from %s status %d\n", r.Method, r.RemoteAddr, http.StatusMethodNotAllowed)
-		return
-	}
 	// Check authentication
 	if !validateToken(w, r) {
-		log.Printf("%s /cpd-update from %s status %d\n", r.Method, r.RemoteAddr, http.StatusUnauthorized)
+		log.Printf("%s /cpd-status from %s status %d\n", r.Method, r.RemoteAddr, http.StatusUnauthorized)
 		return
 	}
 
@@ -118,7 +117,7 @@ func cpdUpdate(w http.ResponseWriter, r *http.Request) {
 	e := decoder.Decode(&cpd)
 	if e != nil {
 		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
-		log.Printf("%s /cpd-update from %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
+		log.Printf("%s /cpd-status from %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
 		log.Println(e.Error())
 		return
 	}
@@ -133,7 +132,7 @@ func cpdUpdate(w http.ResponseWriter, r *http.Request) {
 		Message: "OK",
 	}
 	respondWithJSON(w, http.StatusOK, m)
-	log.Printf("%s /cpd-update from %s status %d %+v\n", r.Method, r.RemoteAddr, http.StatusOK, cpd)
+	log.Printf("%s /cpd-status from %s status %d %+v\n", r.Method, r.RemoteAddr, http.StatusOK, cpd)
 }
 
 // validateToken checks if the request is authenticated (bearer token) and authorized
