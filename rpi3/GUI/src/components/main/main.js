@@ -431,7 +431,8 @@ class Main extends React.Component {
     this.getClassrooms()
     this.getOccupation()
     this.timer1 = setInterval(() => {
-      this.setState({globalState: (this.state.globalState + 1) % 6})
+      this.setState(state => ({
+        globalState: (state.globalState + 1) % 6}))
     }, 10000);
     this.timer2 = setInterval(() => {
       this.getReservations()
