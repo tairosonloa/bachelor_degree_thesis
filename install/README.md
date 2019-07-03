@@ -13,5 +13,8 @@ Daemons, scripts and binaries used to deploy rpi3. More information is inside th
 ## .bashrc
 Bash configuration file used on the Raspberry Pi computers. It coaints a colored prompt, ls colors, and ls aliases
 
+## default.config
+Example of file with default configuration values, used by the installation script to automatize or speed up the installation process.
+
 ## .raspi-monitor
 A bash script used by the installation script to automatically switch on/off the monitor of rpi2 and rpi3 accordingly with the laboratory working hours.

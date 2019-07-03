@@ -17,9 +17,12 @@ function host_configuration {
     sed -i "s/# es_ES.UTF-8/es_ES.UTF-8/g" /etc/locale.gen
     locale-gen
     sed -i "s/en_GB.UTF-8/es_ES.UTF-8/g" /etc/default/locale
-    echo -e "\t##### Creating user $INSTALL_USER"
+    echo -e "\t##### Creating user $INSTALL_USER..."
     useradd -m -s /bin/bash $INSTALL_USER
     passwd $INSTALL_USER
+    while [ $? -ne 0 ]; do
+        passwd $INSTALL_USER
+    done
     usermod -aG sudo $INSTALL_USER
 }
 
@@ -42,31 +45,48 @@ function daemons_setup  {
         systemctl enable $s
     done
     cd -
+    systemctl enable ssh
 }
 
 function set_config_json {
     echo -e "\n\t##### Generating /etc/$1_conf.json...\n"
     answ="n"
+    # Load default config values
+    . install/default.config
+    echo "NOTE: Default values are shown between parenthesis. If you don't give a value, default value will be taken."
     while [ $answ != "y" ] && [ $answ != "Y" ]; do
-        read -p "Indicate rpi 2 IP address (XXX.XXX.XXX.XXX): " addr2
-        read -p "Indicate rpi 2 API port (XXXX): " port2
+        read -p "Indicate rpi 2 IP address ($addr2_default): " addr2
+        if [ -z "$addr2" ]; then addr2=$addr2_default; fi
+        read -p "Indicate rpi 2 API port ($port2_default): " port2
+        if [ -z "$port2" ]; then port2=$port2_default; fi
         case $1 in
         "rpi1")
-            read -p "Indicate rpi 2 API POST Bearer token (XXXXXXXXXXXX): " token2
+            read -p "Indicate rpi 2 API POST Bearer token ($token2_default): " token2
+            if [ -z "$token2" ]; then token2=$token2_default; fi
             conf='{\n\t"Rpi2APIAddress" : "'$addr2'",\n\t"Rpi2APIPort" : '$port2',\n\t"Rpi2APIAuthorizedToken" : "Bearer '$token2'"\n}'
             ;;
         "rpi2")
-            read -p "Indicate rpi 2 API POST Bearer token (XXXXXXXXXXXX): " token2
-            read -p "Indicate Philips Hue bridge IP address (XXX.XXX.XXX.XXX): " hue
-            read -p "Indicate Philips Hue bridge secret string (XXXXXXXXXXXX): " secret
+            read -p "Indicate rpi 2 API POST Bearer token ($token2_default): " token2
+            if [ -z "$token2" ]; then token2=$token2_default; fi
+            read -p "Indicate Philips Hue bridge IP address ($hue_default): " hue
+            if [ -z "$hue" ]; then hue=$hue_default; fi
+            read -p "Indicate Philips Hue bridge secret string ($secret_default): " secret
+            if [ -z "$secret" ]; then secret=$secret_default; fi
             echo "Adding the alarm sound file path to the config file..."
             conf='{\n\t"Rpi2APIAddress" : "'$addr2'",\n\t"Rpi2APIPort" : '$port2',\n\t"Rpi2APIAuthorizedToken" : "Bearer '$token2'",\n\t"HueBridgeAddress" : "'$hue'",\n\t"HueBridgeToken" : "'$secret'",\n\t"AlarmSoundPath" : "/usr/local/share/alarm.mp3"\n}'
             ;;
         "rpi3")
-            read -p "Indicate rpi 3 IP address (XXX.XXX.XXX.XXX): " addr3
-            read -p "Indicate rpi 3 API port (XXXX): " port3
-            read -p "Indicate classrooms control server domain name (host.domain.name): " server
-            conf='{\n\t"Rpi2APIAddress" : "'$addr2'",\n\t"Rpi2APIPort" : '$port2',\n\t"Rpi3APIAddress" : "'$addr3'",\n\t"Rpi3APIPort" : '$port3',\n\t"ControlServer" : "'$server'",\n\t"OccupationCmd" : "comprobar_ocupacion.py --au"\n}'
+            read -p "Indicate rpi 3 IP address ($addr3_default): " addr3
+            if [ -z "$addr3" ]; then addr3=$addr3_default; fi
+            read -p "Indicate rpi 3 API port ($port3_default): " port3
+            if [ -z "$port3" ]; then port3=$port3_default; fi
+            read -p "Indicate classrooms control server domain name and ssh port ($server_default): " server
+            if [ -z "$server" ]; then server=$server_default; fi
+            read -p "Indicate check classrooms occupation command ($cmd_default): " cmd
+            if [ -z "$cmd" ]; then cmd=$cmd_default; fi
+            read -p "Indicate laboratory reservations web page url ($web_default): " web
+            if [ -z "$web" ]; then web=$web_default; fi
+            conf='{\n\t"Rpi2APIAddress" : "'$addr2'",\n\t"Rpi2APIPort" : '$port2',\n\t"Rpi3APIAddress" : "'$addr3'",\n\t"Rpi3APIPort" : '$port3',\n\t"ControlServer" : "'$server'",\n\t"OccupationCmd" : "'$cmd'",\n\t"OccupationWeb" : "'$web'"\n}'
             ;;
         esac
         echo "/etc/$1_conf.json generated:"
@@ -132,7 +152,7 @@ function install_rpi1 {
     host_configuration "rpi1"
 
     # Install python libs and zabbix agent
-    packages=(python-numpy python3-picamera python3-sense-hat zabbix-agent)
+    packages="python-numpy python3-picamera python3-sense-hat zabbix-agent"
     install_dependencies $packages
     
     # Install the core
@@ -157,13 +177,15 @@ function install_rpi1 {
     # Configure zabbix
     echo -e "\n\t##### Configuring zabbix...\n"
     answ="n"
+    . install/default.config
     while [ $answ != "y" ] && [ $answ != "Y" ]; do
-        read -p "Indicate zabbix server address (XXX.XXX.XXX.XXX): " addr
-        read -p "Is the IP $addr correct? (Y/n): " answ
+        read -p "Indicate zabbix server address ($addrZ_default): " addrZ
+        if [ -z "$addrZ" ]; then addrZ=$addrZ_default; fi
+        read -p "Is the IP $addrZ correct? (Y/n): " answ
         answ=${answ:-Y}
     done
-    sed -i "s/Server=127.0.0.1/Server=$addr/g" /etc/zabbix/zabbix_agentd.conf
-    sed -i "s/ServerActive=127.0.0.1/ServerActive=$addr/g" /etc/zabbix/zabbix_agentd.conf
+    sed -i "s/Server=127.0.0.1/Server=$addrZ/g" /etc/zabbix/zabbix_agentd.conf
+    sed -i "s/ServerActive=127.0.0.1/ServerActive=$addrZ/g" /etc/zabbix/zabbix_agentd.conf
     sed -i '/# UserParameter=/a UserParameter=cpd.hum, /bin/cat /tmp/last_hum.txt' /etc/zabbix/zabbix_agentd.conf
     sed -i '/# UserParameter=/a UserParameter=cpd.temp, /bin/cat /tmp/last_temp.txt' /etc/zabbix/zabbix_agentd.conf
 
@@ -184,7 +206,7 @@ function install_rpi2 {
     host_configuration "rpi2"
 
     # Install openbox and chromium to display grafana dashboard, lightdm to autologin on GUI, omxplayer to play alarm sound
-    packages=(openbox chromium-browser lightdm omxplayer)
+    packages="openbox chromium-browser lightdm omxplayer"
     install_dependencies $packages
     
     # Install the core
@@ -235,7 +257,7 @@ function install_rpi3 {
     host_configuration "rpi3"
 
     # Install openbox and chromium to display website, lightdm to autologin on GUI, npm to build
-    packages=(openbox chromium-browser lightdm npm)
+    packages="openbox chromium-browser lightdm npm"
     install_dependencies $packages
 
     echo -e "\n\t##### Installing binary in /usr/local/bin/ and web in /srv/rpi3/..."
@@ -273,8 +295,6 @@ function install_rpi3 {
     iptables -A INPUT -p tcp --dport 9000 -s 163.117.142.0/24 -j ACCEPT
     # Save rules so they persist after reboot
     iptables-save > /etc/iptables/rules.v4
-
-    
 }
 
 echo -e "What rpi are you trying to install?\n"
@@ -287,21 +307,23 @@ case "$opt" in
 "1")
     # Install rpi1
     install_rpi1
-    echo "Done. If you see this message, everything should work after reboot."
-    echo "Rebooting now..."
-    reboot
     ;;
 "2")
     # Install rpi2
     install_rpi2
-    echo "Done. If you see this message, everything should work after reboot."
-    echo "Rebooting now..."
-    reboot
     ;;
 "3")
-    # Install rpi2
+    # Install rpi3
     install_rpi3
-    echo "Done. If you see this message, everything should work after reboot."
-    echo "Please. Generate an ssh key to rpi3 and copy pub key into <classrooms control server>/.ssh/authorized_keys"
+    .install/default.config
+    echo "Please. Generate an ssh key to rpi3 and copy pub key into $server_default:/root/.ssh/authorized_keys"
     ;;
 esac
+echo "Done. If you see this message, everything should work after reboot."
+echo "REMEMBER TO REMOVE PI USER FOR SECURITY."
+answ="n"
+read -p "Do you want to reboot now? (Y/n): " answ
+answ=${answ:-Y}
+if [ $answ == "y" ] || [ $answ == "Y" ]; then
+    reboot
+fi
