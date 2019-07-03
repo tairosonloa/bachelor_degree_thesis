@@ -33,7 +33,8 @@ type App struct {
 // Default is file "config.json" in current directory
 // Run the binary with --help or -h for more info
 func (a *App) readCmd() {
-	configFile := flag.String("conf", "../../config.json", "Path to the file config.json")
+	currentDir, _ := os.Getwd()
+	configFile := flag.String("conf", currentDir+"/config.json", "Path to the file config.json")
 	flag.Parse()
 	a.configFile = string(*configFile)
 }
