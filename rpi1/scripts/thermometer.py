@@ -12,6 +12,7 @@ import os, math
 FILE_PATH = "/tmp/last_temp.txt" # Where last measurement is/will be stored
 # If readed temp differs from last temp in more than 1 celsius degree we treat it
 # as a measurement error, so we will wait 5 seconds and try again for 3 times
+SECONDS_BETWEEN_MEASURES = 60
 ERROR_TRESHOLD = 1
 TRIES = 3
 WAIT_SECONDS = 5
@@ -71,4 +72,4 @@ def get_temp():
 if __name__ == "__main__":
     while True:
         get_temp()
-        sleep(60)
+        sleep(SECONDS_BETWEEN_MEASURES)

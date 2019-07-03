@@ -6,33 +6,29 @@ from sense_hat import SenseHat
 from threading import Thread
 from time import sleep
 
-
-PIXEL_OFF = [0,0,0] # RGB for pixel off
+BLINK_TRESHOLD = 30 # Celsius degrees when led panel starts blinking
+# RGB for pixels
+PIXEL_OFF = [0,0,0]
+RED = [255, 0, 0]
+ORANGE = [255, 128, 0]
+YELLOW = [255, 255, 0]
+GREEN = [0, 255, 0]
+BLUE = [0, 191, 255]
 
 
 def colour_by_temp(temp):
     """Returns rgb color code list based on temperature range and pixel off rgb list"""
     
-    if(temp >= 40):
-        X = [255, 0, 0]     # Red
-    elif(temp >= 30):
-        X = [255, 128, 0]   # Orange
-    elif(temp >= 20):
-        X = [255, 255, 0]   # Yellow
-    elif(temp >= 10):
-        X = [0, 255, 0]     # Green
-    elif(temp >= 0):
-        X = [0, 255, 128]   # Turquoise
-    elif(temp >= -10):
-        X = [0, 255, 255]   # Light blue
-    elif(temp >= -20):
-        X = [0, 191, 255]   # Blue
-    elif(temp >= -30):
-        X = [0, 127, 255]   # Darker blue
-    elif(temp >= -40):
-        X = [0, 64, 255]    # Dark blue
+    if(temp > 35):
+        X = RED
+    elif(temp > 27):
+        X = ORANGE
+    elif(temp > 20):
+        X = YELLOW
+    elif(temp > 5):
+        X = GREEN
     else:
-        X = [0, 0, 255]     # Very dark blue
+        X = BLUE
 
     O = PIXEL_OFF # Black == off state
 
@@ -90,7 +86,7 @@ class Display:
                 else:
                     self.pixels_matrix[24] = O
             # Refresh the display
-            if temp >= 30:
+            if temp >= BLINK_TRESHOLD:
                 if not self.blinking:
                     self.blinking = True
                     thread = Thread(target=self.blink)
@@ -102,7 +98,7 @@ class Display:
 
     def blink(self):
         """Makes the display blink"""
-        while self.temp >= 30:
+        while self.temp >= BLINK_TRESHOLD:
             self.sense.set_pixels(self.pixels_matrix)
             sleep(0.4)
             self.sense.set_pixels(self.pixels_matrix_off)

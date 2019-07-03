@@ -8,7 +8,7 @@ import picamera, picamera.array
 import time, os, math, json
 
 
-WATCHER_SECONDS = 10 # Time between two measurements
+SECONDS_BETWEEN_MEASURES = 10 # Time between two measurements
 TRESHOLD = 50 # Brightness treshold to distinguish light off from light on
 
 
@@ -40,7 +40,7 @@ def main():
             update_values_api({ "Light" : True })
         else:
             update_values_api({ "Light" : False })
-        time.sleep(WATCHER_SECONDS)
+        time.sleep(SECONDS_BETWEEN_MEASURES)
 
 
 if __name__ == "__main__":

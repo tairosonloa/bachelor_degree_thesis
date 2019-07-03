@@ -11,6 +11,7 @@ import os, math
 FILE_PATH = "/tmp/last_hum.txt" # Where last measurement is/will be stored
 # If readed hum differs from last hum in more than 4 % we treat it as a
 # measurement error, so we will wait 5 seconds and try again for 3 times
+SECONDS_BETWEEN_MEASURES = 60
 ERROR_TRESHOLD = 4
 TRIES = 3
 WAIT_SECONDS = 5
@@ -62,4 +63,4 @@ def get_hum():
 if __name__ == "__main__":
     while True:
         get_hum()
-        sleep(60)
+        sleep(SECONDS_BETWEEN_MEASURES)
