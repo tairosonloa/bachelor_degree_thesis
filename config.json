@@ -1,7 +1,7 @@
 {
-	"Rpi2APIAddress" :         "localhost",
+	"Rpi2APIAddress" :         "192.168.1.2",
 	"Rpi2APIPort" :            3002,
-	"Rpi3APIAddress" :         "localhost",
+	"Rpi3APIAddress" :         "192.168.1.3",
 	"Rpi3APIPort" :            3003,
 	"Rpi2APIAuthorizedToken" : "Bearer top_secret_string",
 	"HueBridgeAddress" :       "192.168.1.123",
