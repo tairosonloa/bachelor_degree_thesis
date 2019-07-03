@@ -17,6 +17,7 @@ type configValues struct {
 	Rpi3APIPort    int
 	ControlServer  string
 	OccupationCmd  string
+	OccupationWeb  string
 }
 
 // App represents the core of the application (server and API)
@@ -31,7 +32,8 @@ type App struct {
 // Default is file "config.json" in current directory
 // Run the binary with --help or -h for more info
 func (a *App) readCmd() {
-	configFile := flag.String("conf", "../../config.json", "Path to the file config.json")
+	currentDir, _ := os.Getwd()
+	configFile := flag.String("conf", currentDir+"/config.json", "Path to the file config.json")
 	flag.Parse()
 	a.configFile = string(*configFile)
 }
@@ -59,7 +61,7 @@ func (a *App) Initialize() {
 	a.readCmd()
 	a.loadConfig()
 	log.Println("Initializating server")
-	a.handlers = api.Initialize(a.config.ControlServer, a.config.OccupationCmd)
+	a.handlers = api.Initialize(a.config.ControlServer, a.config.OccupationCmd, a.config.OccupationWeb)
 	a.server = &http.Server{Handler: a.handlers, Addr: fmt.Sprintf("%s:%d", a.config.Rpi3APIAddress, a.config.Rpi3APIPort)}
 }
 

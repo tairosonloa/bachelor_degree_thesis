@@ -12,10 +12,11 @@ import (
 var (
 	controlServer string
 	occupationCmd string
+	occupationWeb string
 )
 
 // Initialize initializes the API server handlers and inner state
-func Initialize(server, cmd string) *http.ServeMux {
+func Initialize(server, cmd, web string) *http.ServeMux {
 
 	// Handlers
 	mux := http.NewServeMux()
@@ -30,6 +31,7 @@ func Initialize(server, cmd string) *http.ServeMux {
 	// Inner state
 	controlServer = server
 	occupationCmd = cmd
+	occupationWeb = web
 
 	return mux
 }
@@ -70,7 +72,7 @@ func reservations(w http.ResponseWriter, r *http.Request) {
 // getReservations responds with a JSON cantaining all reservations
 func getReservations(w http.ResponseWriter, r *http.Request) {
 	// TODO: filter by url params
-	reservations := controllers.GetTodayReservations()
+	reservations := controllers.GetTodayReservations(occupationWeb)
 	if reservations == nil {
 		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		log.Printf("%s /reservation %s status %d\n", r.Method, r.RemoteAddr, http.StatusInternalServerError)
@@ -100,7 +102,7 @@ func classrooms(w http.ResponseWriter, r *http.Request) {
 // getClassroomsStatus responds with a JSON containing all classrooms status
 func getClassroomsStatus(w http.ResponseWriter, r *http.Request) {
 	// TODO: filter by url params
-	reservations := controllers.GetTodayReservations()
+	reservations := controllers.GetTodayReservations(occupationWeb)
 	if reservations == nil {
 		respondWithError(w, http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError))
 		log.Printf("%s /classrooms %s status %d: ", r.Method, r.RemoteAddr, http.StatusInternalServerError)

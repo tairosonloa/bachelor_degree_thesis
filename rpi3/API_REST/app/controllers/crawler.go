@@ -12,8 +12,7 @@ import (
 )
 
 const (
-	reservationsWebPage = "http://www.lab.inf.uc3m.es/informacion/ocupacion-de-las-aulas/ocupacion-diaria/"
-	tableSize           = 48
+	tableSize = 48
 )
 
 // join concats strings
@@ -197,8 +196,8 @@ func getReservations(body io.ReadCloser) []*models.Reservation {
 }
 
 // GetTodayReservations returns a slice of pointers to models.Reservation struct with today reservations
-func GetTodayReservations() []*models.Reservation {
-	body := fecthURL(reservationsWebPage)
+func GetTodayReservations(url string) []*models.Reservation {
+	body := fecthURL(url)
 	if body == nil {
 		// TODO: better error handling
 		log.Println("ERROR: cannot fecth reservations URL. Body is nil.")

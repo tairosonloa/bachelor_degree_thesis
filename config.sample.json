@@ -8,5 +8,6 @@
 	"HueBridgeToken" :         "top_secret_string",
 	"AlarmSoundPath" :         "/path/to/file/mp3",
 	"ControlServer" :          "domain.name:port",
-	"OccupationCmd" :          "comprobar_ocupacion.py --au"
+	"OccupationCmd" :          "comprobar_ocupacion.py --au",
+	"OccupationWeb" :          "http://www.lab.inf.uc3m.es/informacion/ocupacion-de-las-aulas/ocupacion-diaria/"
 }
