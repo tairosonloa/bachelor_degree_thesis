@@ -1,7 +1,7 @@
 # Data center monitoring
-This repository contains the implementation of my Bachelor Degree Thesis, a system to monitor the status of the service of the laboratory of the Computer Engineering Department at my university (Universidad Carlos III de Madrid), with the aim to simplify the daily work at the laboratory.
+This repository contains the implementation of my Bachelor's Degree Thesis, a system to monitor the status of the service of the laboratory of the Computer Engineering Department at my university (Universidad Carlos III de Madrid), with the aim to simplify the daily work at the laboratory.
 
-My thesis report is written in Spanish under the title "Sistema de monitorización y alertas de estado para el laboratorio del Departamento de Informática". However, it contains a ten pages summary in English. My thesis and the summary can be found at [my university digital archive](https://e-archivo.uc3m.es) (login required) or publicly on my web site (link will be provided soon).
+My thesis report is written in Spanish under the title "Sistema de monitorización y alertas de estado para el laboratorio del Departamento de Informática". However, it contains a ten pages summary in English. My thesis and the summary can be found at [my university digital archive](https://e-archivo.uc3m.es) (login required) or [publicly on my web site](https://aalonso.eu/TFG/TFG_Aitor_Alonso_Nuñez.pdf).
 
 **This work has obtained a grade of 10 with a distinction of Honor**, which makes me highly proud of it.
 
