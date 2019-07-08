@@ -121,6 +121,10 @@ func GetClassroomsOccupation(server, command string) *models.Occupation {
 				} else if strings.Contains(strings.ToLower(scanner.Text()), "timeout") {
 					stats.Computers[j-1] = 5
 					stats.TimeOut++
+				} else if strings.Contains(strings.ToLower(scanner.Text()), "instalacion") {
+					stats.Computers[j] = 6
+					stats.PXE++
+					j++
 				}
 			}
 			// Check classroom

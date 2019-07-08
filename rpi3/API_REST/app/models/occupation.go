@@ -8,6 +8,7 @@ type OccupationStats struct {
 	TimeOut       int
 	LoginsLinux   int
 	LoginsWindows int
+	PXE           int
 	Computers     []int
 }
 

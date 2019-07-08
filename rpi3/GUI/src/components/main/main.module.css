@@ -11,6 +11,7 @@
   --linux-color: #50c878;
   --windows-color: #007bd7;
   --timeout-color: #ce83d8;
+  --pxe-color: #fde351;
   --error-color: #ff0000;
   --aside-text-color: #000000;
 }
@@ -104,7 +105,7 @@
   height: 100%;
 }
 
-.shutdown, .linux, .windows, .linuxUser, .windowsUser, .timeout {
+.shutdown, .linux, .windows, .linuxUser, .windowsUser, .timeout, .pxe {
   width: 17%;
   height: 14%;
   margin: 0.9%;
@@ -175,6 +176,14 @@
 .timeout {
   background-color: var(--timeout-color);
   background-image: url("./img/timeout.png");
+  background-size: 10vh;
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+
+.pxe {
+  background-color: var(--pxe-color);
+  background-image: url("./img/pxe.png");
   background-size: 10vh;
   background-repeat: no-repeat;
   background-position: left center;

@@ -217,6 +217,8 @@ class Main extends React.Component {
           return <div key={ip+f[i]} className={[styles.windowsUser, styles.classroomF].join(" ")}>{"F" + (ip + f[i]).toString()}</div>
         case 5:
           return <div key={ip+f[i]} className={[styles.timeout, styles.classroomF].join(" ")}>{"F" + (ip + f[i]).toString()}</div>
+        case 6:
+          return <div key={ip+f[i]} className={[styles.pxe, styles.classroomF].join(" ")}>{"F" + (ip + f[i]).toString()}</div>
         default:
           return <div key={ip+f[i]}></div>
       }
@@ -234,6 +236,8 @@ class Main extends React.Component {
           return <div key={ip} className={styles.windowsUser}>{"C" + ip.toString()}</div>
         case 5:
           return <div key={ip} className={styles.timeout}>{"C" + ip.toString()}</div>
+        case 6:
+          return <div key={ip} className={styles.pxe}>{"C" + ip.toString()}</div>
         default:
           return <div key={ip}></div>
       }
