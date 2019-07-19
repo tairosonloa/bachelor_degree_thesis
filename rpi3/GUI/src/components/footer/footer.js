@@ -47,7 +47,7 @@ class Footer extends React.Component {
   render() {
     // Check if errors getting cpd status
     if (this.failedAttepms > 0) {
-      return (<div key="error" className={styles.error}>No se ha podido recuperar los datos del CPD desde rpi1</div>)
+      return (<div key="error" className={styles.error}>No se puede recuperar los datos del CPD desde rpi2_api</div>)
     }
     let temp = "La temperatura en el CPD es de " + this.state.cpdStatus["temperature"] + " ºC"
     let hum = "La humedad en el CPD está al " + this.state.cpdStatus["humidity"] + " %"
