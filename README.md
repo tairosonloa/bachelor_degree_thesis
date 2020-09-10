@@ -3,7 +3,7 @@ This repository contains the implementation of my Bachelor's Degree Thesis, a sy
 
 The origin of this system responds to **a need I identified when I started to work at** the Computer Science Department at my university. I saw some tasks and things that could be improved, then **I got and idea and I shared it** with my superiors. They liked it so much that they encourage me to make it a reality
 
-My thesis report is written in Spanish under the title "Sistema de monitorización y alertas de estado para el laboratorio del Departamento de Informática". However, it contains a ten pages summary in English. My thesis and the summary can be found at [my university digital archive](https://e-archivo.uc3m.es) (login required) or [publicly on my web site](https://aalonso.eu/documents/TFG_Aitor_Alonso_Nuñez.pdf).
+My thesis report is written in Spanish under the title "Sistema de monitorización y alertas de estado para el laboratorio del Departamento de Informática". However, it contains a ten pages summary in English. My thesis and the summary can be found at [my university digital archive](https://e-archivo.uc3m.es/handle/10016/29695).
 
 **This work has obtained a grade of 10 with a distinction of Honor**, which makes me highly proud of it.
 
